@@ -94,3 +94,8 @@ src
 
 - **Tests:**  
   Unit tests: `src/test/java/...` replicando la misma
+
+## 🚀 Pasos posteriores al clonado
+- El archivo `application.properties` ya está configurado en el proyecto.
+- Debes crear la base de datos en tu servidor local con el nombre indicado en `application.properties`.
+- Actualiza el archivo con tu usuario y contraseña de la base de datos.
