@@ -9,20 +9,19 @@ import learning.platform.enums.Category;
 import learning.platform.mapper.CourseMapper;
 import learning.platform.repository.CourseRepository;
 import learning.platform.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
 @Service
-public class CoursServiceImpl implements CourseService{
+public class CourseServiceImpl implements CourseService{
 
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
 
-    public CoursServiceImpl(UserRepository userRepository, CourseRepository courseRepository, CourseMapper courseMapper) {
+    public CourseServiceImpl(UserRepository userRepository, CourseRepository courseRepository, CourseMapper courseMapper) {
         this.userRepository = userRepository;
         this.courseRepository = courseRepository;
         this.courseMapper = courseMapper;
@@ -47,7 +46,7 @@ public class CoursServiceImpl implements CourseService{
 
     @Override
     public Page<CourseListItems> getByCategory(Category category, Pageable pageable) {
-        return courseRepository.findByCategory(pageable, category).map(CourseListItems::new);
+        return courseRepository.findByCategory(category,pageable).map(CourseListItems::new);
     }
 
     @Override

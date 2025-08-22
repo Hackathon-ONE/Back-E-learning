@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface CourseRepository extends JpaRepository<Course, Long> {
     Page<Course> findByPublishedTrue(Pageable pageable);
 
-    Page<Course> findByCategory(Pageable pageable, Category category);
+    Page<Course> findByCategory(Category category,Pageable pageable);
 
 
     Optional<Course> findBySlug(String slug);

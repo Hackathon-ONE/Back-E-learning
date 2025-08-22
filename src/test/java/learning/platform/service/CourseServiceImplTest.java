@@ -31,7 +31,7 @@ class CourseServiceImplTest {
     private CourseMapper courseMapper;
 
     @InjectMocks
-    private CoursServiceImpl courseService;
+    private CourseServiceImpl courseService;
 
     private User instructor;
     private CourseCreateRequest request;

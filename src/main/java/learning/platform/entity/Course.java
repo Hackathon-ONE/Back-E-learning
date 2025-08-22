@@ -18,7 +18,8 @@ public class Course {
     private String title;
     @Getter
     private String description;
-    @Getter
+
+    @Enumerated(EnumType.STRING)
     private Category category;
     private String slug;
     @Getter
@@ -32,13 +33,13 @@ public class Course {
     public Course() {
     }
 
-    public Course(CourseCreateRequest request, User istructor) {
+    public Course(CourseCreateRequest request, User instructor) {
         this.title = request.title();
         this.description = request.description();
         this.category = request.category();
         this.published = true;
         this.slug = request.title().replace(" ", "-");
-        this.instructor = istructor;
+        this.instructor = instructor;
     }
 
     public void update(CourseCreateRequest request) {
