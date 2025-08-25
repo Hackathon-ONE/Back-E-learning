@@ -1,3 +1,5 @@
+package learning.platform.dto.lesson;
+
 public class LessonCreateRequest {
 
     private Integer courseId;

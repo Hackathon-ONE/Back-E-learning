@@ -1,3 +1,8 @@
+package learning.platform.service;
+
+import learning.platform.dto.lesson.LessonCreateRequest;
+import learning.platform.dto.lesson.LessonResponse;
+import learning.platform.repository.LessonRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;

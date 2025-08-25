@@ -1,4 +1,4 @@
-package learning.platform.entity.lesson;
+package learning.platform.entity;
 
 import jakarta.persistence.*;
 import java.time.Duration;

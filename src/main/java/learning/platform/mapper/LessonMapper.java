@@ -1,3 +1,7 @@
+package learning.platform.mapper;
+
+import learning.platform.dto.lesson.LessonCreateRequest;
+import learning.platform.dto.lesson.LessonResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

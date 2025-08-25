@@ -1,3 +1,9 @@
+package learning.platform.lesson_tests;
+
+import learning.platform.dto.lesson.LessonCreateRequest;
+import learning.platform.dto.lesson.LessonResponse;
+import learning.platform.repository.LessonRepository;
+import learning.platform.service.LessonServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

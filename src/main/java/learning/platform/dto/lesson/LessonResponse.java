@@ -1,3 +1,5 @@
+package learning.platform.dto.lesson;
+
 public class LessonResponse {
 
     private Integer id;
