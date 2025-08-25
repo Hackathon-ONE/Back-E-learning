@@ -5,6 +5,8 @@ CREATE TABLE courses (
     description TEXT,
     category VARCHAR(25) NOT NULL,
     instructor_id BIGINT NOT NULL,
+    is_active BOOLEAN NOT NULL,
+    is_open BOOLEAN NOT NULL,
     published BOOLEAN DEFAULT FALSE,
 
     CONSTRAINT fk_instructor
