@@ -1,6 +1,9 @@
 package learning.platform.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import learning.platform.dto.lesson.LessonCreateRequest;
+import learning.platform.dto.lesson.LessonResponse;
+import learning.platform.service.LessonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +23,7 @@ public class LessonController {
     private LessonService lessonService;
 
     @PostMapping
-    @PreAuthorize("hasRole('INSTRUCTOR')") // Solo los instructores pueden crear lecciones
+    @PreAuthorize("hasRole('INSTRUCTOR')") // Solo los instructores pueden crear lecciones.
     public ResponseEntity<LessonResponse> createLesson(
             @RequestBody @Validated LessonCreateRequest request,
             UriComponentsBuilder uriComponentsBuilder) {
@@ -31,14 +34,14 @@ public class LessonController {
     }
 
     @GetMapping("/course/{courseId}")
-    @PreAuthorize("hasAnyRole('STUDENT', 'INSTRUCTOR', 'ADMIN')") // Todos pueden listar lecciones de un curso
+    @PreAuthorize("hasAnyRole('STUDENT', 'INSTRUCTOR', 'ADMIN')") // Todos pueden listar lecciones de un curso.
     public ResponseEntity<List<LessonResponse>> getLessonsByCourse(@PathVariable Integer courseId) {
         List<LessonResponse> lessons = lessonService.getLessonsByCourse(courseId);
         return ResponseEntity.ok(lessons);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('INSTRUCTOR')") // Solo los instructores pueden actualizar lecciones
+    @PreAuthorize("hasRole('INSTRUCTOR')") // Solo los instructores pueden actualizar lecciones.
     public ResponseEntity<LessonResponse> updateLesson(
             @PathVariable Integer id,
             @RequestBody @Validated LessonCreateRequest request) {
@@ -47,14 +50,14 @@ public class LessonController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('INSTRUCTOR')") // Solo los instructores pueden eliminar lecciones
+    @PreAuthorize("hasRole('INSTRUCTOR')") // Solo los instructores pueden eliminar lecciones.
     public ResponseEntity<Void> deleteLesson(@PathVariable Integer id) {
         lessonService.deleteLesson(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/reorder/{courseId}")
-    @PreAuthorize("hasRole('INSTRUCTOR')") // Solo los instructores pueden reordenar lecciones
+    @PreAuthorize("hasRole('INSTRUCTOR')") // Solo los instructores pueden reordenar lecciones.
     public ResponseEntity<Void> reorderLessons(
             @PathVariable Integer courseId,
             @RequestBody List<Integer> newOrder) {

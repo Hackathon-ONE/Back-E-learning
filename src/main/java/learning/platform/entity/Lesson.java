@@ -1,8 +1,9 @@
 package learning.platform.entity;
 
 import jakarta.persistence.*;
+import learning.platform.enums.ContentType;
+
 import java.time.Duration;
-import learning.platform.entity.lesson.ContentType;
 
 @Entity
 @Table(name = "lessons")
@@ -23,13 +24,13 @@ public class Lesson {
     private String contentUrl;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type")
+    @Column(name = "content_type")
     private ContentType contentType;
 
     @Column(name = "order_index")
     private Integer orderIndex;
 
-    @Column(name = "duration")
+    @Column(name = "duration", columnDefinition = "INTERVAL")
     private Duration duration;
 
     // Getters and Setters:
@@ -37,7 +38,7 @@ public class Lesson {
     public Long getId() {
         return id;
     }
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
