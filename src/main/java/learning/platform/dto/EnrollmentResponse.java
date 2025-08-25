@@ -1,7 +1,7 @@
 package learning.platform.dto;
 
 import learning.platform.entity.Enrollment;
-import learning.platform.enums.Status;
+import learning.platform.enums.EnrollmentStatus;
 
 import java.time.LocalDateTime;
 
@@ -9,7 +9,7 @@ public record EnrollmentResponse(
       Long id,
       Long studentId,
       Long courseId,
-      Status status,
+      EnrollmentStatus enrollmentStatus,
       LocalDateTime enrolledAt,
       int progressPercent
 ) {

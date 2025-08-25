@@ -2,7 +2,7 @@ package learning.platform.entity;
 
 import jakarta.persistence.*;
 import learning.platform.dto.EnrollmentRequest;
-import learning.platform.enums.Status;
+import learning.platform.enums.EnrollmentStatus;
 import org.hibernate.annotations.CurrentTimestamp;
 
 import java.time.LocalDateTime;
@@ -23,7 +23,7 @@ public class Enrollment {
     private Course course;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private EnrollmentStatus enrollmentStatus;
 
     @CurrentTimestamp
     private LocalDateTime enrolledAt;
@@ -49,8 +49,8 @@ public class Enrollment {
         return course;
     }
 
-    public Status getStatus() {
-        return status;
+    public EnrollmentStatus getStatus() {
+        return enrollmentStatus;
     }
 
     public LocalDateTime getEnrolledAt() {
