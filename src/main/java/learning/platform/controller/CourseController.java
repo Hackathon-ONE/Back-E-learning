@@ -35,12 +35,13 @@ public class CourseController {
     // Crear un curso (solo INSTRUCTOR)
     @PostMapping
     @PreAuthorize("hasRole('INSTRUCTOR')")
-    public ResponseEntity<CourseResponseDTO> createCourse(@RequestBody CourseRequestDTO dto/*, @AuthenticationPrincipal User instructor*/) {
+    public ResponseEntity<CourseResponseDTO> createCourse(@RequestBody CourseRequestDTO dto, @AuthenticationPrincipal User instructor) {
 
         //Simula el instructor obteniéndolo de la BD
         // Asegúrate de tener un usuario con ID=1 y rol INSTRUCTOR en tu base de datos
-        User instructor = userRepository.findById(1L)
+        /*User instructor = userRepository.findById(1L)
                 .orElseThrow(() -> new RuntimeException("Usuario instructor de prueba no encontrado"));
+         */
 
 
         CourseResponseDTO newCourse = courseService.createCourse(dto, instructor);
