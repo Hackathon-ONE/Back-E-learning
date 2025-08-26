@@ -9,4 +9,6 @@ public interface EnrollmentService {
     EnrollmentResponse enrollStudent(EnrollmentRequest request);
     Page<EnrollmentResponse> findByStudent(Long studentId, Pageable pageable);
     Page<EnrollmentResponse> findByCourse(Long courseId, Pageable pageable);
+    EnrollmentResponse completeCourse(Long enrollmentId);
+    EnrollmentResponse cancelCourse(Long enrollmentId);
 }

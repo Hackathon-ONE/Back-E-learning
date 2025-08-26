@@ -15,7 +15,7 @@ public class Enrollment {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "student_id")
     private User student;
 
     @ManyToOne
@@ -23,7 +23,7 @@ public class Enrollment {
     private Course course;
 
     @Enumerated(EnumType.STRING)
-    private EnrollmentStatus enrollmentStatus;
+    private EnrollmentStatus status;
 
     @CurrentTimestamp
     private LocalDateTime enrolledAt;
@@ -35,6 +35,7 @@ public class Enrollment {
     public Enrollment(EnrollmentRequest request, Course course, User student) {
         this.student = student;
         this.course = course;
+        this.status = EnrollmentStatus.ENROLLED;
     }
 
     public Long getId() {
@@ -50,7 +51,7 @@ public class Enrollment {
     }
 
     public EnrollmentStatus getStatus() {
-        return enrollmentStatus;
+        return status;
     }
 
     public LocalDateTime getEnrolledAt() {
@@ -59,5 +60,9 @@ public class Enrollment {
 
     public int getProgressPercent() {
         return progressPercent;
+    }
+
+    public void setStatus(EnrollmentStatus status) {
+        this.status = status;
     }
 }

@@ -1,9 +1,9 @@
 package learning.platform.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import learning.platform.dto.EnrollmentRequest;
 import learning.platform.dto.EnrollmentResponse;
 import learning.platform.entity.Enrollment;
+import learning.platform.enums.EnrollmentStatus;
 import learning.platform.exception.ResourceNotFoundException;
 import learning.platform.mapper.EnrollmentMapper;
 import learning.platform.repository.CourseRepository;
@@ -11,6 +11,7 @@ import learning.platform.repository.EnrollmentRepository;
 import learning.platform.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -51,6 +52,31 @@ public class EnrollmentServiceImpl implements EnrollmentService{
     @Override
     public Page<EnrollmentResponse> findByCourse(Long courseId, Pageable pageable) {
         return repository.findByCourseId(courseId,pageable).map(EnrollmentResponse::new);
+    }
+
+    @Override
+    public EnrollmentResponse completeCourse(Long enrollmentId) {
+        Enrollment enrollment = repository.findById(enrollmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Enrollment no encontrado"));
+        enrollment.setStatus(EnrollmentStatus.COMPLETED);
+        repository.save(enrollment);
+
+        return new EnrollmentResponse(enrollment);
+    }
+
+
+    @Override
+    public EnrollmentResponse cancelCourse(Long enrollmentId) {
+        Enrollment enrollment = repository.findById(enrollmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Enrollment no encontrado"));
+        enrollment.setStatus(EnrollmentStatus.CANCELLED);
+        repository.save(enrollment);
+
+        return new EnrollmentResponse(enrollment);
+    }
+
+    public void deleteEnrollment(Long id) {
+        repository.deleteById(id);
     }
 }
 

@@ -1,7 +1,6 @@
 package learning.platform.entity;
 
 import jakarta.persistence.*;
-import learning.platform.dto.CourseCreateRequest;
 import learning.platform.enums.Category;
 import lombok.Getter;
 
@@ -32,28 +31,6 @@ public class Course {
 
     public Course() {
     }
-
-    public Course(CourseCreateRequest request, User instructor) {
-        this.title = request.title();
-        this.description = request.description();
-        this.category = request.category();
-        this.published = true;
-        this.slug = request.title().replace(" ", "-");
-        this.instructor = instructor;
-    }
-
-    public void update(CourseCreateRequest request) {
-        if (request.title() != null && !request.title().isEmpty()){
-            this.title = request.title();
-        }
-        if (request.description() != null && !request.description().isEmpty()){
-            this.description = request.description();
-        }
-        if (request.category() != this.category){
-            this.category = request.category();
-        }
-    }
-
     public Long getId() {
         return id;
     }
