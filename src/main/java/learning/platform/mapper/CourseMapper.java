@@ -23,7 +23,7 @@ public class CourseMapper {
         CourseResponseDTO dto = new CourseResponseDTO();
         dto.setId(course.getId());
         dto.setTitle(course.getTitle());
-        // ... otros campos ...
+        dto.setSlug(course.getSlug());
         if (course.getInstructor() != null) {
             dto.setInstructorName(course.getInstructor().getName());
         }

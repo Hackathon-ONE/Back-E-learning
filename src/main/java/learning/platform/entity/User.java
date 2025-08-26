@@ -19,6 +19,9 @@ public class User implements UserDetails {
     private String name;
     private String email;
     private String password;
+
+    //Osiris Se agregó esta línea para poder tratar los enum co
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     public Long getId() {

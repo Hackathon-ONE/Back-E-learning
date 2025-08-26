@@ -10,7 +10,8 @@ public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Column(nullable = false, unique = true) // El slug no puede ser nulo y debe ser único
+    private String slug;
     private String title;
     private String description;
     private String category;
