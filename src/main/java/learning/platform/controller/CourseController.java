@@ -2,8 +2,6 @@ package learning.platform.controller;
 
 import learning.platform.dto.CourseRequestDTO;
 import learning.platform.dto.CourseResponseDTO;
-import learning.platform.entity.User;
-import learning.platform.repository.UserRepository;
 import learning.platform.service.CourseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
