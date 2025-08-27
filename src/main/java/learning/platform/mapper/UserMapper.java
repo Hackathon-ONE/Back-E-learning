@@ -11,8 +11,7 @@ import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
 
     // Mapea el DTO de registro a la entidad User
@@ -34,7 +33,7 @@ public interface UserMapper {
     @Mapping(source = "active", target = "active")
     UserResponse toResponse(User user);
 
-    // Mapea una lista de usuarios a una lista de respuestas
+    // Mapea una lista de entidades User a una lista de respuestas
     List<UserResponse> toResponseList(List<User> users);
 
     // Convierte String a Enum Role

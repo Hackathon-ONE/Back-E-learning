@@ -34,14 +34,17 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("El email ya está registrado");
         }
 
-        // Validación defensiva del rol
+        // Validación defensiva del rol (ya validado por @Pattern en el DTO)
+        Role roleEnum;
         try {
-            Role.valueOf(request.role().toUpperCase());
+            roleEnum = Role.valueOf(request.role().toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Rol inválido: " + request.role());
         }
 
+        // Mapeo del DTO a entidad
         User user = userMapper.toEntity(request);
+        user.setRole(roleEnum); // Asignación explícita del enum
         user.setPasswordHash(passwordEncoder.encode(request.password()));
         user.setActive(true);
 
