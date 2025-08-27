@@ -2,7 +2,6 @@ package learning.platform.controller;
 
 import learning.platform.dto.CourseRequestDTO;
 import learning.platform.dto.CourseResponseDTO;
-import learning.platform.entity.Course;
 import learning.platform.entity.User;
 import learning.platform.repository.UserRepository;
 import learning.platform.service.CourseService;
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/courses")
 public class CourseController {
 
-    private final CourseService courseService;
+    private final CourseService  courseService;
     private final UserRepository userRepository;
 
     //Inicializamos
@@ -49,15 +48,18 @@ public class CourseController {
     }
 
     // Inscribirse a un curso (solo STUDENT)
+    /*
     @PostMapping("/{courseId}/enroll")
     @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<String> enrollInCourse(@PathVariable Long courseId, @AuthenticationPrincipal User student) {
-        courseService.enrollStudentInCourse(courseId, student);
+        courseServiceImpl.enrollStudentInCourse(courseId, student);
         return ResponseEntity.ok("Successfully enrolled.");
     }
 
+     */
+
     /**
-     * Get a course by its ID (Public)
+     * Obtener curso por ID
      */
     @GetMapping("/{id}")
     public ResponseEntity<CourseResponseDTO> getCourseById(@PathVariable Long id) {
@@ -65,7 +67,7 @@ public class CourseController {
     }
 
     /**
-     * Update a course (INSTRUCTOR only)
+     * Actualizar el curso (Solamente puede el instructor)
      */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('INSTRUCTOR')")

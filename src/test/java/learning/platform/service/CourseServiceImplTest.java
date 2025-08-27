@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CourseServiceTest {
+class CourseServiceImplTest {
 
     @Mock
     private CourseRepository courseRepository;
@@ -28,7 +28,7 @@ class CourseServiceTest {
     private CourseMapper courseMapper;
 
     @InjectMocks
-    private CourseService courseService;
+    private CourseServiceImpl courseServiceImpl;
 
     @Test
     void testCreateCourse() {
@@ -62,7 +62,7 @@ class CourseServiceTest {
         when(courseMapper.toResponseDTO(savedCourse)).thenReturn(expectedResponse);
 
         // --- 2. Act (Actuar) ---
-        CourseResponseDTO result = courseService.createCourse(requestDTO, instructor);
+        CourseResponseDTO result = courseServiceImpl.createCourse(requestDTO, instructor);
 
         // --- 3. Assert (Afirmar) ---
         assertNotNull(result);
@@ -94,7 +94,7 @@ class CourseServiceTest {
         when(courseMapper.toResponseDTO(any(Course.class))).thenReturn(responseDTO);
 
         // Act
-        CourseResponseDTO result = courseService.updateCourse(courseId, requestDTO);
+        CourseResponseDTO result = courseServiceImpl.updateCourse(courseId, requestDTO);
 
         // Assert
         assertNotNull(result);
@@ -112,7 +112,7 @@ class CourseServiceTest {
         doNothing().when(courseRepository).deleteById(courseId);
 
         // Act
-        courseService.deleteCourse(courseId);
+        courseServiceImpl.deleteCourse(courseId);
 
         // Assert
         // Verificamos que el método deleteById fue llamado exactamente una vez con el ID correcto
