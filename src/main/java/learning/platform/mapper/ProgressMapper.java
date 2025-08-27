@@ -1,21 +1,36 @@
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+package learning.platform.mapper;
 
-@Mapper(componentModel = "spring")
-public interface ProgressMapper {
+import learning.platform.dto.lesson.LessonCreateRequest;
+import learning.platform.dto.lesson.LessonResponse;
+import learning.platform.entity.Lesson;
+import org.springframework.stereotype.Component;
 
-    @Mapping(target = "enrollment", ignore = true)
-    @Mapping(target = "lesson", ignore = true)
-    Progress toEntity(ProgressUpdateRequest request);
+@Component
+public class ProgressMapper {
 
-    @Mapping(source = "enrollment.id", target = "enrollmentId")
-    @Mapping(source = "lesson.id", target = "lessonId")
-    ProgressResponse toResponse(Progress progress);
+    // Convierte un DTO en entidad (sin asignar Course)
+    public Lesson toEntity(LessonCreateRequest request) {
+        Lesson lesson = new Lesson(); // constructor vacío
+        lesson.setTitle(request.getTitle());
+        lesson.setContentUrl(request.getContentUrl());
+        lesson.setContentType(request.getContentType());
+        lesson.setOrderIndex(request.getOrderIndex());
+        lesson.setDuration(request.getDuration());
+        return lesson;
+    }
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "enrollment", ignore = true)
-    @Mapping(target = "lesson", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    void updateEntityFromRequest(@MappingTarget Progress progress, ProgressUpdateRequest request);
+    // Convierte una entidad en DTO de respuesta
+    public LessonResponse toResponse(Lesson lesson) {
+        return new LessonResponse(lesson);
+    }
+
+    // Actualiza los campos simples de una entidad a partir del DTO
+    public void updateEntityFromRequest(Lesson lesson, LessonCreateRequest request) {
+        lesson.setTitle(request.getTitle());
+        lesson.setContentUrl(request.getContentUrl());
+        lesson.setContentType(request.getContentType());
+        lesson.setOrderIndex(request.getOrderIndex());
+        lesson.setDuration(request.getDuration());
+        // NOTA: Course no se toca aquí.
+    }
 }
