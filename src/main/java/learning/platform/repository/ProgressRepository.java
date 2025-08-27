@@ -1,9 +1,13 @@
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-import java.util.List;
+package learning.platform.repository;
 
-@Repository
+import learning.platform.entity.Progress;
+import learning.platform.entity.Enrollment;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
+
 public interface ProgressRepository extends JpaRepository<Progress, Integer> {
     List<Progress> findByEnrollment(Enrollment enrollment);
-    Progress findByEnrollmentAndLesson(Enrollment enrollment, Lesson lesson);
+    Optional<Progress> findByEnrollmentAndLesson(Enrollment enrollment, Lesson lesson);
 }

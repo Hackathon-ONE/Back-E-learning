@@ -1,8 +1,13 @@
+package learning.platform.progress;
+
+import learning.platform.mapper.ProgressMapper;
+import learning.platform.repository.ProgressRepository;
+import learning.platform.service.progress.ProgressServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import java.time.Instant;
+
 import java.util.Arrays;
 import java.util.List;
 import static org.mockito.Mockito.*;
