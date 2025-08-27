@@ -1,11 +1,11 @@
 package learning.platform.dto.lesson;
 
-import ch.qos.logback.core.util.Duration;
 import learning.platform.enums.ContentType;
+import java.time.Duration;
 
 public class LessonCreateRequest {
 
-    private Integer courseId;
+    private Long courseId;
     private String title;
     private String contentUrl;
     private ContentType contentType;
@@ -13,11 +13,11 @@ public class LessonCreateRequest {
     private Duration duration;
 
     // Getters and Setters:
-    public Integer getCourseId() {
+    public Long getCourseId() {
         return courseId;
     }
 
-    public void setCourseId(Integer courseId) {
+    public void setCourseId(Long courseId) {
         this.courseId = courseId;
     }
 
@@ -52,7 +52,7 @@ public class LessonCreateRequest {
         this.orderIndex = orderIndex;
     }
 
-    public Duration getDuration() {
+    public java.time.Duration getDuration() {
         return duration;
     }
 

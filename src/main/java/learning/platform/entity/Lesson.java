@@ -1,8 +1,8 @@
 package learning.platform.entity;
 
 import jakarta.persistence.*;
+import learning.platform.dto.lesson.LessonCreateRequest;
 import learning.platform.enums.ContentType;
-
 import java.time.Duration;
 
 @Entity
@@ -32,6 +32,18 @@ public class Lesson {
 
     @Column(name = "duration", columnDefinition = "INTERVAL")
     private Duration duration;
+
+    public Lesson(LessonCreateRequest request, Course title) {
+        this.title = request.getTitle();
+        this.contentUrl = request.getContentUrl();
+        this.contentType = request.getContentType();
+        this.orderIndex = request.getOrderIndex();
+        this.duration = request.getDuration();
+    }
+
+    public Lesson() {
+        // Constructor vacío requerido por Hibernate
+    }
 
     // Getters and Setters:
     

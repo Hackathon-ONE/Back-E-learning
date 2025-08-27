@@ -1,6 +1,7 @@
 package learning.platform.dto.lesson;
 
 import ch.qos.logback.core.util.Duration;
+import learning.platform.entity.Lesson;
 import learning.platform.enums.ContentType;
 
 public class LessonResponse {
@@ -12,6 +13,10 @@ public class LessonResponse {
     private ContentType contentType;
     private Integer orderIndex;
     private Duration duration;
+
+    public LessonResponse(Lesson lesson) {
+
+    }
 
     // Getters and Setters:
     public Integer getId() {

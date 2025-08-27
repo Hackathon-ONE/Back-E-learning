@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface LessonRepository extends JpaRepository<Lesson, Integer> {
-    List<Lesson> findByCourseOrderByOrderIndex(Course course);
+    List<Lesson> findByCourseOrderByOrderIndex(Integer course);
 }

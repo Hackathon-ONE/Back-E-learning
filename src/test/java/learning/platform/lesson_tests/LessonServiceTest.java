@@ -2,6 +2,9 @@ package learning.platform.lesson_tests;
 
 import learning.platform.dto.lesson.LessonCreateRequest;
 import learning.platform.dto.lesson.LessonResponse;
+import learning.platform.entity.Course;
+import learning.platform.entity.Lesson;
+import learning.platform.mapper.LessonMapper;
 import learning.platform.repository.LessonRepository;
 import learning.platform.service.LessonServiceImpl;
 import org.junit.jupiter.api.Test;

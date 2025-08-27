@@ -82,4 +82,7 @@ public class Course {
     }
 
 
+    public void setId(Integer courseId) {
+
+    }
 }
