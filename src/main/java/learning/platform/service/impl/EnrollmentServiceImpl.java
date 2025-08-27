@@ -1,4 +1,4 @@
-package learning.platform.service;
+package learning.platform.service.impl;
 
 import learning.platform.dto.EnrollmentRequest;
 import learning.platform.dto.EnrollmentResponse;
@@ -9,13 +9,13 @@ import learning.platform.mapper.EnrollmentMapper;
 import learning.platform.repository.CourseRepository;
 import learning.platform.repository.EnrollmentRepository;
 import learning.platform.repository.UserRepository;
+import learning.platform.service.EnrollmentService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EnrollmentServiceImpl implements EnrollmentService{
+public class EnrollmentServiceImpl implements EnrollmentService {
     private final EnrollmentRepository repository;
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;

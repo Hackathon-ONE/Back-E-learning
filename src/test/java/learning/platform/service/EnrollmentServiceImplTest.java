@@ -10,6 +10,7 @@ import learning.platform.mapper.EnrollmentMapper;
 import learning.platform.repository.CourseRepository;
 import learning.platform.repository.EnrollmentRepository;
 import learning.platform.repository.UserRepository;
+import learning.platform.service.impl.EnrollmentServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;

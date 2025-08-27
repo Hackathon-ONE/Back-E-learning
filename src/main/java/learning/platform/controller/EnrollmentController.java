@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import learning.platform.config.TokenService;
 import learning.platform.dto.EnrollmentRequest;
 import learning.platform.dto.EnrollmentResponse;
-import learning.platform.service.EnrollmentServiceImpl;
+import learning.platform.service.impl.EnrollmentServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
