@@ -1,4 +1,4 @@
-package learning.platform.service;
+package learning.platform.service.lesson;
 
 import learning.platform.dto.lesson.LessonCreateRequest;
 import learning.platform.dto.lesson.LessonResponse;

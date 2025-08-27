@@ -47,7 +47,7 @@ src
    │           ├─ service                # Lógica de negocio / Services
    │           │   ├─ UserService.java
    │           │   ├─ CourseService.java
-   │           │   ├─ learning.platform.service.LessonService.java
+   │           │   ├─ learning.platform.service.lesson.LessonService.java
    │           │   └─ ...
    │           │
    │           ├─ mapper                 # MapStruct o ModelMapper

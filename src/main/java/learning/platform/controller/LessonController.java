@@ -3,7 +3,7 @@ package learning.platform.controller;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import learning.platform.dto.lesson.LessonCreateRequest;
 import learning.platform.dto.lesson.LessonResponse;
-import learning.platform.service.LessonService;
+import learning.platform.service.lesson.LessonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
