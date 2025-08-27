@@ -29,13 +29,13 @@ public class EnrollmentController {
     }
 
     @PutMapping("/complete/{enrollmentId}")
-    public ResponseEntity<EnrollmentResponse> endEnrollment(@PathVariable Long enrollmentId, @Valid @RequestBody EnrollmentRequest datos){
+    public ResponseEntity<EnrollmentResponse> endEnrollment(@PathVariable Long enrollmentId){
         var erollment = enrollmentService.completeCourse(enrollmentId);
         return  ResponseEntity.ok(erollment);
     }
 
     @PutMapping("/cancel/{enrollmentId}")
-    public ResponseEntity<EnrollmentResponse> cancellEnrollment(@PathVariable Long enrollmentId, @Valid @RequestBody EnrollmentRequest datos){
+    public ResponseEntity<EnrollmentResponse> cancellEnrollment(@PathVariable Long enrollmentId){
         var erollment = enrollmentService.cancelCourse(enrollmentId);
         return  ResponseEntity.ok(erollment);
     }
