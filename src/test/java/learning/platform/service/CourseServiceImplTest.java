@@ -1,5 +1,11 @@
 package learning.platform.service;
 
+import learning.platform.dto.CourseRequestDTO;
+import learning.platform.dto.CourseResponseDTO;
+import learning.platform.entity.Course;
+import learning.platform.entity.User;
+import learning.platform.mapper.CourseMapper;
+import learning.platform.repository.CourseRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
