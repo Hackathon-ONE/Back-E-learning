@@ -1,0 +1,2 @@
+INSERT INTO users (id, full_name, email, password, role, active)
+VALUES (1, 'Ángeles Escudero', 'angeles.escudero@example.com', 'SecurePass123!', 'ADMIN', true);
