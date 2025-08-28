@@ -1,48 +1,19 @@
 package learning.platform.dto.progress;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.Instant;
 
-public class ProgressResponse {
-    private Integer id;
-    private Integer enrollmentId;
-    private Integer lessonId;
-    private Boolean completed;
-    private Integer score;
-    private Instant updatedAt;
-
-    // Constructor
-    public ProgressResponse(Integer id, Integer enrollmentId, Integer lessonId,
-                            Boolean completed, Integer score, Instant updatedAt) {
-        this.id = id;
-        this.enrollmentId = enrollmentId;
-        this.lessonId = lessonId;
-        this.completed = completed;
-        this.score = score;
-        this.updatedAt = updatedAt;
-    }
-
-    // Getters
-    public Integer getId() {
-        return id;
-    }
-
-    public Integer getEnrollmentId() {
-        return enrollmentId;
-    }
-
-    public Integer getLessonId() {
-        return lessonId;
-    }
-
-    public Boolean getCompleted() {
-        return completed;
-    }
-
-    public Integer getScore() {
-        return score;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-}
+public record ProgressResponse(
+        @Schema(description = "ID único del progreso.", example = "1")
+        Long id,
+        @Schema(description = "ID de la inscripción asociada.", example = "1")
+        Long enrollmentId,
+        @Schema(description = "ID de la lección asociada.", example = "1")
+        Long lessonId,
+        @Schema(description = "Indica si la lección está completada.", example = "true")
+        Boolean completed,
+        @Schema(description = "Puntaje obtenido (opcional).", example = "85")
+        Integer score,
+        @Schema(description = "Fecha y hora de la última actualización.")
+        Instant updatedAt
+) {}

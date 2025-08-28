@@ -3,36 +3,23 @@ package learning.platform.mapper;
 import learning.platform.dto.progress.ProgressUpdateRequest;
 import learning.platform.dto.progress.ProgressResponse;
 import learning.platform.entity.Progress;
-import learning.platform.entity.Enrollment;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class ProgressMapper {
+@Mapper(componentModel = "spring")
+public interface ProgressMapper {
 
-    public Progress toEntity(ProgressUpdateRequest request, Enrollment enrollment, Lesson lesson) {
-        Progress progress = new Progress();
-        progress.setEnrollment(enrollment);
-        progress.setLesson(lesson);
-        progress.setCompleted(request.getCompleted());
-        progress.setScore(request.getScore());
-        progress.setUpdatedAt(request.getUpdatedAt());
-        return progress;
-    }
+    @Mapping(source = "enrollmentId", target = "enrollment.id")
+    @Mapping(source = "lessonId", target = "lesson.id")
+    @Mapping(source = "completed", target = "completed")
+    @Mapping(source = "score", target = "score")
+    @Mapping(source = "updatedAt", target = "updatedAt")
+    Progress toEntity(ProgressUpdateRequest request); // Enrollment y Lesson se inyectan en el servicio
 
-    public void updateEntityFromRequest(Progress progress, ProgressUpdateRequest request) {
-        progress.setCompleted(request.getCompleted());
-        progress.setScore(request.getScore());
-        progress.setUpdatedAt(request.getUpdatedAt());
-    }
-
-    public ProgressResponse toResponse(Progress progress) {
-        return new ProgressResponse(
-                progress.getId(),
-                progress.getEnrollment().getId(),
-                progress.getLesson().getId(),
-                progress.getCompleted(),
-                progress.getScore(),
-                progress.getUpdatedAt()
-        );
-    }
+    @Mapping(source = "enrollment.id", target = "enrollmentId")
+    @Mapping(source = "lesson.id", target = "lessonId")
+    @Mapping(source = "completed", target = "completed")
+    @Mapping(source = "score", target = "score")
+    @Mapping(source = "updatedAt", target = "updatedAt")
+    ProgressResponse toResponse(Progress progress);
 }

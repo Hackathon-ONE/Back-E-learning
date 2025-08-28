@@ -1,11 +1,19 @@
 package learning.platform.progress;
 
+import learning.platform.entity.Enrollment;
+import learning.platform.entity.Lesson;
+import learning.platform.entity.Progress;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+
+import java.time.Instant;
 import java.util.List;
-import static org.assertj.core.api.Assertions.assertThat;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
 public class ProgressRepositoryTest {
@@ -13,25 +21,41 @@ public class ProgressRepositoryTest {
     @Autowired
     private ProgressRepository progressRepository;
 
-    @Test
-    @Sql(scripts = "/data/progress.sql")
-    void shouldFindByEnrollment() {
-        Enrollment enrollment = new Enrollment();
-        enrollment.setId(1); // Assuming enrollment with id 1 exists
-        List<Progress> progresses = progressRepository.findByEnrollment(enrollment);
-        assertThat(progresses).hasSize(2);
+    @Autowired
+    private TestEntityManager entityManager;
+
+    private Enrollment enrollment;
+    private Lesson lesson;
+
+    @BeforeEach
+    void setUp() {
+        enrollment = new Enrollment();
+        enrollment.setId(1L);
+        entityManager.persist(enrollment);
+
+        lesson = new Lesson();
+        lesson.setId(1L);
+        entityManager.persist(lesson);
+
+        Progress progress = new Progress();
+        progress.setEnrollment(enrollment);
+        progress.setLesson(lesson);
+        progress.setCompleted(true);
+        progress.setUpdatedAt(Instant.now());
+        entityManager.persist(progress);
     }
 
     @Test
-    @Sql(scripts = "/data/progress.sql")
+    void shouldFindByEnrollment() {
+        List<Progress> progresses = progressRepository.findByEnrollment(enrollment);
+        assertEquals(1, progresses.size());
+        assertEquals(true, progresses.get(0).getCompleted());
+    }
+
+    @Test
     void shouldFindByEnrollmentAndLesson() {
-        Enrollment enrollment = new Enrollment();
-        enrollment.setId(1);
-        Lesson lesson = new Lesson();
-        lesson.setId(1);
         Progress progress = progressRepository.findByEnrollmentAndLesson(enrollment, lesson);
-        assertThat(progress).isNotNull();
-        assertThat(progress.getEnrollment().getId()).isEqualTo(1);
-        assertThat(progress.getLesson().getId()).isEqualTo(1);
+        assertNotNull(progress);
+        assertEquals(true, progress.getCompleted());
     }
 }

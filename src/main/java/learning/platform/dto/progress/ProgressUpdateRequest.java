@@ -1,54 +1,23 @@
 package learning.platform.dto.progress;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.time.Instant;
 
-public class ProgressUpdateRequest {
-
-    private Long enrollmentId;
-    private Long lessonId;
-    private Boolean completed;
-    private Integer score;
-    private Instant updatedAt;
-
-    // Getters and Setters:
-
-    public Long getEnrollmentId() {
-        return enrollmentId;
-    }
-
-    public void setEnrollmentId(Long enrollmentId) {
-        this.enrollmentId = enrollmentId;
-    }
-
-    public Long getLessonId() {
-        return lessonId;
-    }
-
-    public void setLessonId(Long lessonId) {
-        this.lessonId = lessonId;
-    }
-
-    public Boolean getCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(Boolean completed) {
-        this.completed = completed;
-    }
-
-    public Integer getScore() {
-        return score;
-    }
-
-    public void setScore(Integer score) {
-        this.score = score;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-}
+public record ProgressUpdateRequest(
+        @Schema(description = "ID de la inscripción asociada.", example = "1")
+        @NotNull(message = "El ID de la inscripción es obligatorio")
+        Long enrollmentId,
+        @Schema(description = "ID de la lección asociada.", example = "1")
+        @NotNull(message = "El ID de la lección es obligatorio")
+        Long lessonId,
+        @Schema(description = "Indica si la lección está completada.", example = "true")
+        @NotNull(message = "El estado de completado es obligatorio")
+        Boolean completed,
+        @Schema(description = "Puntaje obtenido (opcional).", example = "85")
+        @PositiveOrZero(message = "El puntaje debe ser cero o positivo")
+        Integer score,
+        @Schema(description = "Fecha y hora de la última actualización.")
+        Instant updatedAt
+) {}

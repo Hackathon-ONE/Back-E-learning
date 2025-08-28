@@ -18,7 +18,15 @@ public class ProgressController {
         this.progressService = progressService;
     }
 
-    // Crear o actualizar progreso en una lección
+    @PostMapping("/mark-completed")
+    public ResponseEntity<ProgressResponse> markCompleted(
+            @RequestParam Long enrollmentId,
+            @RequestParam Long lessonId) {
+        ProgressResponse response = progressService.markCompleted(enrollmentId, lessonId);
+        return ResponseEntity.ok(response);
+    }
+
+    // Crear o actualizar progreso en una lección:
     @PostMapping
     public ResponseEntity<ProgressResponse> createOrUpdateProgress(
             @RequestBody ProgressUpdateRequest request) {
@@ -26,15 +34,15 @@ public class ProgressController {
         return ResponseEntity.ok(response);
     }
 
-    // Obtener progreso por enrollment
+    // Obtener progreso por enrollment:
     @GetMapping("/{enrollmentId}")
     public ResponseEntity<List<ProgressResponse>> getProgressByEnrollment(
-            @PathVariable Integer enrollmentId) {
+            @PathVariable Long enrollmentId) {
         List<ProgressResponse> responses = progressService.getProgressByEnrollment(enrollmentId);
         return ResponseEntity.ok(responses);
     }
 
-    // Calcular porcentaje de completitud del curso
+    // Calcular porcentaje de completitud del curso:
     @GetMapping("/{enrollmentId}/completion")
     public ResponseEntity<Double> calculateCompletionPercentage(
             @PathVariable Integer enrollmentId) {

@@ -1,11 +1,27 @@
 package learning.platform.service.progress;
 
-import learning.platform.dto.progress.ProgressUpdateRequest;
+import learning.platform.entity.Progress;
+import learning.platform.entity.Enrollment;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProgressService {
-    ProgressResponse markCompleted(Integer enrollmentId, Integer lessonId);
+import java.util.List;
 
-    ProgressResponse updateProgress(Integer enrollmentId, Integer lessonId, ProgressUpdateRequest request);
+public interface ProgressRepository extends JpaRepository<Progress, Long> {
 
-    Float calculateCourseCompletionPercentage(Integer enrollmentId);
+    /**
+     * Encuentra todos los progresos asociados a una inscripción.
+     *
+     * @param enrollment Inscripción a buscar.
+     * @return Lista de progresos.
+     */
+    List<Progress> findByEnrollment(Enrollment enrollment);
+
+    /**
+     * Encuentra el progreso asociado a una inscripción y una lección específicas.
+     *
+     * @param enrollment Inscripción a buscar.
+     * @param lesson Lección a buscar.
+     * @return Progreso encontrado, o null si no existe.
+     */
+    Progress findByEnrollmentAndLesson(Enrollment enrollment, Lesson lesson);
 }
