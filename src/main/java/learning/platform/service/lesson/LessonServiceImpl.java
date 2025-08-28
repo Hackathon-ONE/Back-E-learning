@@ -2,10 +2,8 @@ package learning.platform.service.lesson;
 
 import learning.platform.dto.lesson.LessonCreateRequest;
 import learning.platform.dto.lesson.LessonResponse;
-import learning.platform.entity.Course;
 import learning.platform.entity.Lesson;
 import learning.platform.mapper.LessonMapper;
-import learning.platform.repository.CourseRepository;
 import learning.platform.repository.LessonRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
