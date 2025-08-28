@@ -35,6 +35,9 @@ public class User implements UserDetails { // ✅ Implementa UserDetails para in
     @Column(nullable = false)
     private boolean active = true;
 
+    @Column(nullable = false)
+    private  boolean isSubscribed;
+
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
@@ -61,6 +64,7 @@ public class User implements UserDetails { // ✅ Implementa UserDetails para in
         this.passwordHash = passwordHash;
         this.role = role;
         this.active = active;
+        this.isSubscribed = false;
     }
 
     // Getters y Setters
