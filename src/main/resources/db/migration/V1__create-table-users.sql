@@ -5,6 +5,7 @@ CREATE TABLE users(
     password_hash VARCHAR(250) NOT NULL,
     role VARCHAR(10) NOT NULL,
     active BOOLEAN NOT NULL DEFAULT true,
+    is_subscribed BOOLEAN NOT NULL DEFAULT false,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP
 );
