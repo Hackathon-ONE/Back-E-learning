@@ -1,6 +1,11 @@
 package learning.platform.service.impl;
 
+import learning.platform.dto.UserRegisterRequest;
+import learning.platform.dto.UserResponse;
+import learning.platform.entity.User;
 import learning.platform.enums.Role;
+import learning.platform.mapper.UserMapper;
+import learning.platform.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -2,35 +2,49 @@ package learning.platform.mapper;
 
 import learning.platform.dto.lesson.LessonCreateRequest;
 import learning.platform.dto.lesson.LessonResponse;
+import learning.platform.entity.Course;
 import learning.platform.entity.Lesson;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
 
-@Component
-public class LessonMapper {
+import java.util.List;
 
-    // Convierte un DTO en entidad (sin asignar Course)
-    public Lesson toEntity(LessonCreateRequest request) {
-        Lesson lesson = new Lesson(); // constructor vacío
-        lesson.setTitle(request.getTitle());
-        lesson.setContentUrl(request.getContentUrl());
-        lesson.setContentType(request.getContentType());
-        lesson.setOrderIndex(request.getOrderIndex());
-        lesson.setDuration(request.getDuration());
-        return lesson;
-    }
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface LessonMapper {
 
-    // Convierte una entidad en DTO de respuesta
-    public LessonResponse toResponse(Lesson lesson) {
-        return new LessonResponse(lesson);
-    }
+    // Mapea el DTO de creación a la entidad Lesson:
+    @Mapping(source = "courseId", target = "course", qualifiedByName = "mapCourse")
+    @Mapping(source = "title", target = "title")
+    @Mapping(source = "contentUrl", target = "contentUrl")
+    @Mapping(source = "contentType", target = "contentType")
+    @Mapping(source = "orderIndex", target = "orderIndex")
+    @Mapping(source = "duration", target = "duration")
+    @Mapping(target = "id", ignore = true)
+    Lesson toEntity(LessonCreateRequest request);
 
-    // Actualiza los campos simples de una entidad a partir del DTO
-    public void updateEntityFromRequest(Lesson lesson, LessonCreateRequest request) {
-        lesson.setTitle(request.getTitle());
-        lesson.setContentUrl(request.getContentUrl());
-        lesson.setContentType(request.getContentType());
-        lesson.setOrderIndex(request.getOrderIndex());
-        lesson.setDuration(request.getDuration());
-        // NOTA: Course no se toca aquí.
+    // Mapea la entidad Lesson al DTO de respuesta:
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "course.id", target = "courseId")
+    @Mapping(source = "title", target = "title")
+    @Mapping(source = "contentUrl", target = "contentUrl")
+    @Mapping(source = "contentType", target = "contentType")
+    @Mapping(source = "orderIndex", target = "orderIndex")
+    @Mapping(source = "duration", target = "duration")
+    LessonResponse toResponse(Lesson lesson);
+
+    // Mapea una lista de entidades Lesson a una lista de respuestas:
+    List<LessonResponse> toResponseList(List<Lesson> lessons);
+
+    // Convierte Long a entidad Course:
+    @Named("mapCourse")
+    default Course mapCourse(Long courseId) {
+        if (courseId == null) {
+            return null;
+        }
+        Course course = new Course();
+        course.setId(courseId);
+        return course;
     }
 }

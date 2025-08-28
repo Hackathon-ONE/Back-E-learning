@@ -1,62 +1,34 @@
 package learning.platform.dto.lesson;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import learning.platform.enums.ContentType;
 import java.time.Duration;
 
-public class LessonCreateRequest {
+@Schema(description = "DTO para la creación de una lección")
+public record LessonCreateRequest(
+        @Schema(description = "ID del curso al que pertenece la lección", example = "1")
+        @NotNull(message = "El ID del curso es obligatorio")
+        Long courseId,
 
-    private Long courseId;
-    private String title;
-    private String contentUrl;
-    private ContentType contentType;
-    private Integer orderIndex;
-    private Duration duration;
+        @Schema(description = "Título de la lección", example = "Introducción a Java")
+        @NotBlank(message = "El título no puede estar vacío")
+        String title,
 
-    // Getters and Setters:
-    public Long getCourseId() {
-        return courseId;
-    }
+        @Schema(description = "URL del contenido de la lección", example = "https://example.com/video.mp4")
+        @NotBlank(message = "La URL del contenido no puede estar vacía")
+        String contentUrl,
 
-    public void setCourseId(Long courseId) {
-        this.courseId = courseId;
-    }
+        @Schema(description = "Tipo de contenido de la lección", example = "VIDEO")
+        @NotNull(message = "El tipo de contenido es obligatorio")
+        ContentType contentType,
 
-    public String getTitle() {
-        return title;
-    }
-    public void setTitle(String title) {
-        this.title = title;
-    }
+        @Schema(description = "Índice de orden de la lección dentro del curso", example = "1")
+        @PositiveOrZero(message = "El índice de orden debe ser cero o positivo")
+        Integer orderIndex,
 
-    public String getContentUrl() {
-        return contentUrl;
-    }
-
-    public void setContentUrl(String contentUrl) {
-        this.contentUrl = contentUrl;
-    }
-
-    public ContentType getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(ContentType contentType) {
-        this.contentType = contentType;
-    }
-
-    public Integer getOrderIndex() {
-        return orderIndex;
-    }
-
-    public void setOrderIndex(Integer orderIndex) {
-        this.orderIndex = orderIndex;
-    }
-
-    public java.time.Duration getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Duration duration) {
-        this.duration = duration;
-    }
-}
+        @Schema(description = "Duración de la lección (opcional)", example = "PT30M")
+        Duration duration
+) {}
