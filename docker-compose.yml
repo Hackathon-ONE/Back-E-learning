@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    env_file: .env
+    ports:
+      - "8082:8080"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: elearning_o16m
+      POSTGRES_USER: elearning_o16m_user
+      POSTGRES_PASSWORD: SE4LCmYpTzmwm9FDwhf0MjgTnLg4GSko
+    ports:
+      - "5432:5432"
