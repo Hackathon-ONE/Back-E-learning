@@ -135,10 +135,11 @@ public class LessonServiceImpl implements LessonService {
      *
      * @param courseId ID del curso
      * @param newOrder Lista de IDs de lecciones en el nuevo orden
+     * @return
      * @throws IllegalArgumentException si el curso no existe, los IDs son inválidos o no coinciden con las lecciones del curso
      */
     @Override
-    public void reorderLessons(Long courseId, List<Long> newOrder) {
+    public List<LessonResponse> reorderLessons(Long courseId, List<Long> newOrder) {
         // Buscar el curso
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("Curso no encontrado con ID: " + courseId));
@@ -166,5 +167,6 @@ public class LessonServiceImpl implements LessonService {
             lesson.setOrderIndex(i + 1);
             lessonRepository.save(lesson);
         }
+        return null;
     }
 }

@@ -47,6 +47,7 @@ public interface LessonService {
      *
      * @param courseId ID del curso
      * @param newOrder Lista de IDs de lecciones en el nuevo orden
+     * @return
      */
-    void reorderLessons(Long courseId, List<Long> newOrder);
+    List<LessonResponse> reorderLessons(Long courseId, List<Long> newOrder);
 }
