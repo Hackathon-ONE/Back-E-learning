@@ -3,10 +3,12 @@ package learning.platform.service;
 import learning.platform.dto.CourseRequestDTO;
 import learning.platform.dto.CourseResponseDTO;
 import learning.platform.entity.Course;
+import learning.platform.entity.User;
 import learning.platform.mapper.CourseMapper;
 import learning.platform.repository.CourseRepository;
 import learning.platform.repository.EnrollmentRepository;
 import jakarta.persistence.EntityNotFoundException; // Para manejar errores
+import learning.platform.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

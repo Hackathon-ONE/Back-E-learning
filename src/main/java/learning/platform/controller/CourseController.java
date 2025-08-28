@@ -2,6 +2,8 @@ package learning.platform.controller;
 
 import learning.platform.dto.CourseRequestDTO;
 import learning.platform.dto.CourseResponseDTO;
+import learning.platform.entity.User;
+import learning.platform.repository.UserRepository;
 import learning.platform.service.CourseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,12 +17,10 @@ import org.springframework.web.bind.annotation.*;
 public class CourseController {
 
     private final CourseService  courseService;
-    private final UserRepository userRepository;
 
     //Inicializamos
     public CourseController(CourseService courseService, UserRepository userRepository) {
         this.courseService = courseService;
-        this.userRepository = userRepository;
     }
 
     // Listar cursos (público)
@@ -29,10 +29,11 @@ public class CourseController {
         return ResponseEntity.ok(courseService.findAllPublicCourses(pageable));
     }
 
-    // Crear un curso (solo INSTRUCTOR)
+    // Crear un curso (solo INSTRUCTOR):
     @PostMapping
     @PreAuthorize("hasRole('INSTRUCTOR')")
-    public ResponseEntity<CourseResponseDTO> createCourse(@RequestBody CourseRequestDTO dto, @AuthenticationPrincipal User instructor) {
+    public ResponseEntity<CourseResponseDTO> createCourse(@RequestBody CourseRequestDTO dto,
+                                                          @AuthenticationPrincipal User instructor) {
 
         //Simula el instructor obteniéndolo de la BD
         // Asegúrate de tener un usuario con ID=1 y rol INSTRUCTOR en tu base de datos

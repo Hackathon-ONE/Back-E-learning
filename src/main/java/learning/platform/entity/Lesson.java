@@ -57,12 +57,12 @@ public class Lesson {
      */
 
     public Lesson(LessonCreateRequest request, Course course) {
-        this.course = course;
-        this.title = request.getTitle();
-        this.contentUrl = request.getContentUrl();
-        this.contentType = request.getContentType();
-        this.orderIndex = request.getOrderIndex();
-        this.duration = request.getDuration();
+            this.course = course;
+            this.title = request.title();
+            this.contentUrl = request.contentUrl();
+            this.contentType = request.contentType();
+            this.orderIndex = request.orderIndex();
+            this.duration = request.duration();
     }
 
     // Getters y Setters:
