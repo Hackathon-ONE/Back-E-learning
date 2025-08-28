@@ -25,7 +25,7 @@ public class CourseMapper {
         dto.setTitle(course.getTitle());
         dto.setSlug(course.getSlug());
         if (course.getInstructor() != null) {
-            dto.setInstructorName(course.getInstructor().getName());
+            dto.setInstructorName(course.getInstructor().getFullName());
         }
         return dto;
     }
