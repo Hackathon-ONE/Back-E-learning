@@ -18,7 +18,7 @@ public class Lesson {
     private Long id;
 
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "course_id", referencedColumnName = "course_id", nullable=false)
+    @JoinColumn(name = "course_id", nullable=false)
     @Schema(description = "Curso al que pertenece la lección.")
     private Course course;
 
