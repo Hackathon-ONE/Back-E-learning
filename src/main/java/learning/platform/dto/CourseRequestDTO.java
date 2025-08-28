@@ -1,13 +1,25 @@
 package learning.platform.dto;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
-// No se importa lombok.Data
 public class CourseRequestDTO {
+
+    //Validaciones para cursos
+    @NotBlank(message = "El título no puede estar vacío.")
+    @Size(min = 5, max = 100, message = "El título debe tener entre 5 y 100 caracteres.")
     private String title;
+
+    @NotBlank(message = "La descripción no puede estar vacía.")
     private String description;
+
+    @NotBlank(message = "La categoría no puede estar vacía.")
     private String category;
+
+    @NotNull(message = "El estado de publicación es requerido.")
     private Boolean published;
 
-    // --- Getters y Setters añadidos manualmente ---
+    //Agregamos los getters y setters
 
     public String getTitle() {
         return title;
