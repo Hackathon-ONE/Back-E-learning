@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/courses")
@@ -34,7 +35,7 @@ public class CourseController {
     // Crear un curso (solo INSTRUCTOR)
     @PostMapping
     @PreAuthorize("hasRole('INSTRUCTOR')")
-    public ResponseEntity<CourseResponseDTO> createCourse(@RequestBody CourseRequestDTO dto, @AuthenticationPrincipal User instructor) {
+    public ResponseEntity<CourseResponseDTO> createCourse(@Valid @RequestBody CourseRequestDTO dto, @AuthenticationPrincipal User instructor) {
 
         //Simula el instructor obteniéndolo de la BD
         // Asegúrate de tener un usuario con ID=1 y rol INSTRUCTOR en tu base de datos
@@ -71,7 +72,7 @@ public class CourseController {
      */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('INSTRUCTOR')")
-    public ResponseEntity<CourseResponseDTO> updateCourse(@PathVariable Long id, @RequestBody CourseRequestDTO dto) {
+    public ResponseEntity<CourseResponseDTO> updateCourse(@Valid @PathVariable Long id, @RequestBody CourseRequestDTO dto) {
         return ResponseEntity.ok(courseService.updateCourse(id, dto));
     }
 
