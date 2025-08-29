@@ -2,7 +2,7 @@ package learning.platform.progress;
 
 import learning.platform.mapper.ProgressMapper;
 import learning.platform.repository.ProgressRepository;
-import learning.platform.service.progress.ProgressServiceImpl;
+import learning.platform.service.impl.ProgressServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

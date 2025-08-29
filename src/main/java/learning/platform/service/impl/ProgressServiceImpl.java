@@ -1,7 +1,7 @@
-package learning.platform.service.progress;
+package learning.platform.service.impl;
 
-import learning.platform.dto.progress.ProgressResponse;
-import learning.platform.dto.progress.ProgressUpdateRequest;
+import learning.platform.dto.ProgressResponse;
+import learning.platform.dto.ProgressUpdateRequest;
 import learning.platform.entity.Enrollment;
 import learning.platform.entity.Lesson;
 import learning.platform.entity.Progress;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProgressServiceImpl implements ProgressService {

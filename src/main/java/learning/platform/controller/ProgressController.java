@@ -1,7 +1,7 @@
 package learning.platform.controller;
 
-import learning.platform.dto.progress.ProgressUpdateRequest;
-import learning.platform.dto.progress.ProgressResponse;
+import learning.platform.dto.ProgressUpdateRequest;
+import learning.platform.dto.ProgressResponse;
 import learning.platform.service.ProgressService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

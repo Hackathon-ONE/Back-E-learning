@@ -1,7 +1,7 @@
 package learning.platform.mapper;
 
-import learning.platform.dto.progress.ProgressUpdateRequest;
-import learning.platform.dto.progress.ProgressResponse;
+import learning.platform.dto.ProgressUpdateRequest;
+import learning.platform.dto.ProgressResponse;
 import learning.platform.entity.Progress;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

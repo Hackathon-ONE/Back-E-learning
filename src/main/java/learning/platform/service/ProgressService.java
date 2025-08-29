@@ -1,4 +1,4 @@
-package learning.platform.service.progress;
+package learning.platform.service;
 
 import learning.platform.entity.Progress;
 import learning.platform.entity.Enrollment;
