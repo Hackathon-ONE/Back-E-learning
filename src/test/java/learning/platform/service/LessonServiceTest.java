@@ -4,7 +4,7 @@ import learning.platform.dto.lesson.LessonCreateRequest;
 import learning.platform.dto.lesson.LessonResponse;
 import learning.platform.entity.Course;
 import learning.platform.entity.Lesson;
-import learning.platform.mapper.LessonMapper;
+import learning.platform.mapper.LessonMapper_2;
 import learning.platform.repository.CourseRepository;
 import learning.platform.repository.LessonRepository;
 import learning.platform.service.lesson.LessonServiceImpl;
@@ -35,7 +35,7 @@ public class LessonServiceTest {
     private CourseRepository courseRepository;
 
     @Mock
-    private LessonMapper lessonMapper;
+    private LessonMapper_2 lessonMapper;
 
     @InjectMocks
     private LessonServiceImpl lessonService;
