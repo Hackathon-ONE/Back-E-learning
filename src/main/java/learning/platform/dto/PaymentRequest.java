@@ -1,4 +1,15 @@
 package learning.platform.dto;
 
-public record PaymentRequest() {
+import jakarta.validation.constraints.NotNull;
+
+import java.math.BigDecimal;
+
+public record PaymentRequest(
+
+        @NotNull
+        Long userId,
+
+        @NotNull
+        BigDecimal amount
+) {
 }
