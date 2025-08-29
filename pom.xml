@@ -156,7 +156,6 @@
                         <path>
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
-                            <!--suppress UnresolvedMavenProperty -->
                             <version>${mapstruct.version}</version>
                         </path>
                     </annotationProcessorPaths>

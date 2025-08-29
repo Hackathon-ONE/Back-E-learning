@@ -1,5 +1,3 @@
-/**
-
 package learning.platform.mapper;
 
 import learning.platform.dto.lesson.LessonCreateRequest;
@@ -14,7 +12,7 @@ import org.mapstruct.ReportingPolicy;
 import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface LessonMapper_2 {
+public interface LessonMapper {
 
     // Mapea el DTO de creación a la entidad Lesson:
     @Mapping(source = "courseId", target = "course", qualifiedByName = "mapCourse")
@@ -28,7 +26,7 @@ public interface LessonMapper_2 {
 
     // Mapea la entidad Lesson al DTO de respuesta:
     @Mapping(source = "id", target = "id")
-    @Mapping(source = "course.id", target = "courseId")
+    @Mapping(source = "courseId", target = "courseId")
     @Mapping(source = "title", target = "title")
     @Mapping(source = "contentUrl", target = "contentUrl")
     @Mapping(source = "contentType", target = "contentType")
@@ -50,5 +48,3 @@ public interface LessonMapper_2 {
         return course;
     }
 }
-
- */

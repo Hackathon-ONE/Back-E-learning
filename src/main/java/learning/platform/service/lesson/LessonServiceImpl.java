@@ -4,7 +4,7 @@ import learning.platform.dto.lesson.LessonCreateRequest;
 import learning.platform.dto.lesson.LessonResponse;
 import learning.platform.entity.Course;
 import learning.platform.entity.Lesson;
-import learning.platform.mapper.LessonMapper_2;
+import learning.platform.mapper.LessonMapper;
 import learning.platform.repository.CourseRepository;
 import learning.platform.repository.LessonRepository;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ public class LessonServiceImpl implements LessonService {
 
     private final LessonRepository lessonRepository;
     private final CourseRepository courseRepository;
-    private final LessonMapper_2 lessonMapper;
+    private final LessonMapper lessonMapper;
 
     /**
      * Constructor para inyección de dependencias.
@@ -35,7 +35,7 @@ public class LessonServiceImpl implements LessonService {
      */
     public LessonServiceImpl(LessonRepository lessonRepository,
                              CourseRepository courseRepository,
-                             LessonMapper_2 lessonMapper) {
+                             LessonMapper lessonMapper) {
         this.lessonRepository = lessonRepository;
         this.courseRepository = courseRepository;
         this.lessonMapper = lessonMapper;
