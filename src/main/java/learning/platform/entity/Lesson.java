@@ -1,7 +1,7 @@
 package learning.platform.entity;
 
 import jakarta.persistence.*;
-import learning.platform.dto.lesson.LessonCreateRequest;
+import learning.platform.dto.LessonCreateRequest;
 import learning.platform.enums.ContentType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -69,6 +69,34 @@ public class Lesson {
     }
 
     // Getters y Setters:
+
+    public Long getId() {
+        return id;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContentUrl() {
+        return contentUrl;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public Integer getOrderIndex() {
+        return orderIndex;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
 
     public void setId(Long id) {
         this.id = id;

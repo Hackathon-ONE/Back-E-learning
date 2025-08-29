@@ -1,8 +1,8 @@
 package learning.platform.controller;
 
-import learning.platform.dto.lesson.LessonCreateRequest;
-import learning.platform.dto.lesson.LessonResponse;
-import learning.platform.service.lesson.LessonService;
+import learning.platform.dto.LessonCreateRequest;
+import learning.platform.dto.LessonResponse;
+import learning.platform.service.LessonService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

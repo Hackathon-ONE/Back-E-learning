@@ -1,12 +1,13 @@
-package learning.platform.service.lesson;
+package learning.platform.service.impl;
 
-import learning.platform.dto.lesson.LessonCreateRequest;
-import learning.platform.dto.lesson.LessonResponse;
+import learning.platform.dto.LessonCreateRequest;
+import learning.platform.dto.LessonResponse;
 import learning.platform.entity.Course;
 import learning.platform.entity.Lesson;
 import learning.platform.mapper.LessonMapper;
 import learning.platform.repository.CourseRepository;
 import learning.platform.repository.LessonRepository;
+import learning.platform.service.LessonService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,13 +27,20 @@ public class LessonServiceImpl implements LessonService {
     private final CourseRepository courseRepository;
     private final LessonMapper lessonMapper;
 
+    public LessonServiceImpl(LessonRepository lessonRepository, CourseRepository courseRepository, LessonMapper lessonMapper) {
+        this.lessonRepository = lessonRepository;
+        this.courseRepository = courseRepository;
+        this.lessonMapper = lessonMapper;
+    }
+
     /**
      * Constructor para inyección de dependencias.
      *
      * @param lessonRepository Repositorio de lecciones.
      * @param courseRepository Repositorio de cursos.
      * @param lessonMapper     Mapeador para convertir entre entidades y DTOs.
-     */
+
+
     public LessonServiceImpl(LessonRepository lessonRepository,
                              CourseRepository courseRepository,
                              LessonMapper lessonMapper) {

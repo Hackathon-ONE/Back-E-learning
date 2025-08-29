@@ -1,7 +1,7 @@
-package learning.platform.service.lesson;
+package learning.platform.service;
 
-import learning.platform.dto.lesson.LessonCreateRequest;
-import learning.platform.dto.lesson.LessonResponse;
+import learning.platform.dto.LessonCreateRequest;
+import learning.platform.dto.LessonResponse;
 
 import java.util.List;
 

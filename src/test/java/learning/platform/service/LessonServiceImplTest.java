@@ -1,14 +1,14 @@
 package learning.platform.service;
 
-import learning.platform.dto.lesson.LessonCreateRequest;
-import learning.platform.dto.lesson.LessonResponse;
+import learning.platform.dto.LessonCreateRequest;
+import learning.platform.dto.LessonResponse;
 import learning.platform.entity.Course;
 import learning.platform.entity.Lesson;
 import learning.platform.mapper.LessonMapper;
 import learning.platform.mapper.LessonMapper_2;
 import learning.platform.repository.CourseRepository;
 import learning.platform.repository.LessonRepository;
-import learning.platform.service.lesson.LessonServiceImpl;
+import learning.platform.service.impl.LessonServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

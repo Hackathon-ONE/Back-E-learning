@@ -1,4 +1,4 @@
-package learning.platform.service;
+package learning.platform.service.impl;
 
 import learning.platform.dto.CourseRequestDTO;
 import learning.platform.dto.CourseResponseDTO;
@@ -9,6 +9,7 @@ import learning.platform.repository.CourseRepository;
 import learning.platform.repository.EnrollmentRepository;
 import jakarta.persistence.EntityNotFoundException; // Para manejar errores
 import learning.platform.repository.UserRepository;
+import learning.platform.service.CourseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
