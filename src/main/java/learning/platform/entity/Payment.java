@@ -26,6 +26,8 @@ public class Payment {
 
     private LocalDateTime expiresAt;
 
+    public  Payment(){}
+
     public Payment(PaymentRequest paymentRequest, User user) {
         this.user = user;
         this.amount = paymentRequest.amount();

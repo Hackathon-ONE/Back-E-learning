@@ -9,7 +9,9 @@ import learning.platform.mapper.PaymentMapper;
 import learning.platform.repository.PaymentRepository;
 import learning.platform.repository.UserRepository;
 import learning.platform.service.PaymentService;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository repository;
@@ -23,8 +25,8 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentResponse pay(PaymentRequest paymentRequest, Long userID) {
-        var user = userRepository.findById(userID).orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+    public PaymentResponse pay(PaymentRequest paymentRequest) {
+        var user = userRepository.findById(paymentRequest.userId()).orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
         var payment = new Payment(paymentRequest,user);
         user.setSubscribed(true);
         userRepository.save(user);

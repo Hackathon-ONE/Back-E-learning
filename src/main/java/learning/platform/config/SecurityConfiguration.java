@@ -55,8 +55,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req -> {
                     req.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                             .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                            .requestMatchers(HttpMethod.POST, "/usuarios/registrar").permitAll()
-                            .requestMatchers(HttpMethod.GET, "/enrollment/**").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
                             .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
                     req.anyRequest().authenticated();
                 }) .headers(headers -> headers
