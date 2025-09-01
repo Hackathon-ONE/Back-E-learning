@@ -41,6 +41,7 @@ public class PaymentController {
     @DeleteMapping
     public  ResponseEntity cancelarPago(@RequestHeader("Authorization") String token){
         var userId = tokenService.getClaimId(token);
+        service.cancelTransaction(userId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 }
