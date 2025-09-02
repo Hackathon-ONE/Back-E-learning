@@ -33,7 +33,7 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretConfig.getSecret());
             return JWT.create()
-                    .withIssuer("e-learnini") // Emisor del token
+                    .withIssuer("elearning") // Emisor del token
                     .withSubject(usuario.getEmail())    // Subject: email del usuario
                     .withClaim("id", usuario.getId())   // Claim adicional: id de usuario
                     .withClaim("role", usuario.getRole().name()) // Claim adicional: rol del usuario
@@ -69,7 +69,7 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretConfig.getSecret());
             verifier = JWT.require(algorithm)
-                    .withIssuer("elearing")
+                    .withIssuer("elearning")
                     .build()
                     .verify(token); // Verifica la firma y validez
         } catch (JWTVerificationException exception){
@@ -111,7 +111,7 @@ public class TokenService {
 
     //Lo mismo pero para rol
 
-    public String getClaimrol(String token) {
+    public String getClaimRole(String token) {
         if (token == null || !token.startsWith("Bearer ")) {
             throw new RuntimeException("No se encontró Bearer token en la cabecera");
         }
