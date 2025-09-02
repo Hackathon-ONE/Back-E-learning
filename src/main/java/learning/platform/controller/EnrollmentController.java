@@ -4,23 +4,25 @@ import jakarta.validation.Valid;
 import learning.platform.config.TokenService;
 import learning.platform.dto.EnrollmentRequest;
 import learning.platform.dto.EnrollmentResponse;
+import learning.platform.entity.User;
 import learning.platform.service.impl.EnrollmentServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/enrollment")
 public class EnrollmentController {
 
-    @Autowired
-    private EnrollmentServiceImpl enrollmentService;
+    private final EnrollmentServiceImpl enrollmentService;
 
-    @Autowired
-    private TokenService tokenService;
+    public EnrollmentController(EnrollmentServiceImpl enrollmentService) {
+        this.enrollmentService = enrollmentService;
+    }
 
     @PostMapping("/create")
     public ResponseEntity<EnrollmentResponse> createEnrollment(@Valid @RequestBody EnrollmentRequest datos){
@@ -41,13 +43,13 @@ public class EnrollmentController {
     }
 
     @GetMapping("/my-enrollments")
-    public ResponseEntity<Page<EnrollmentResponse>> allMyEnrolls(@RequestHeader("Authorization") String token, Pageable pageable){
-        return ResponseEntity.ok(enrollmentService.findByStudent(tokenService.getClaimId(token), pageable));
+    public ResponseEntity<Page<EnrollmentResponse>> allMyEnrolls(@AuthenticationPrincipal User user, Pageable pageable){
+        return ResponseEntity.ok(enrollmentService.findByStudent(user.getId(), pageable));
     }
 
     @GetMapping("/course-enrollments")
-    public ResponseEntity<Page<EnrollmentResponse>> courseEnrolls(@RequestHeader("Authorization") String token, Pageable pageable){
-        return ResponseEntity.ok(enrollmentService.findByCourse(tokenService.getClaimId(token), pageable));
+    public ResponseEntity<Page<EnrollmentResponse>> courseEnrolls(@AuthenticationPrincipal User user, Pageable pageable){
+        return ResponseEntity.ok(enrollmentService.findByCourse(user.getId(), pageable));
     }
 
     @DeleteMapping("/{enrollmentId}")
