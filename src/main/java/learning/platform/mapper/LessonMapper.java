@@ -1,7 +1,8 @@
 package learning.platform.mapper;
 
-import learning.platform.dto.lesson.LessonCreateRequest;
-import learning.platform.dto.lesson.LessonResponse;
+import learning.platform.dto.LessonCreateRequest;
+import learning.platform.dto.LessonResponse;
+import learning.platform.entity.Course;
 import learning.platform.entity.Lesson;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,37 +14,31 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface LessonMapper {
 
-    // Mapea el DTO de creación a la entidad Lesson:
+    // Mapea el DTO de creación a la entidad Lesson
     @Mapping(source = "courseId", target = "course", qualifiedByName = "mapCourse")
-    @Mapping(source = "title", target = "title")
-    @Mapping(source = "contentUrl", target = "contentUrl")
-    @Mapping(source = "contentType", target = "contentType")
-    @Mapping(source = "orderIndex", target = "orderIndex")
-    @Mapping(source = "duration", target = "duration")
     @Mapping(target = "id", ignore = true)
     Lesson toEntity(LessonCreateRequest request);
 
-    // Mapea la entidad Lesson al DTO de respuesta:
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "course.id", target = "courseId")
-    @Mapping(source = "title", target = "title")
-    @Mapping(source = "contentUrl", target = "contentUrl")
-    @Mapping(source = "contentType", target = "contentType")
-    @Mapping(source = "orderIndex", target = "orderIndex")
-    @Mapping(source = "duration", target = "duration")
+    // Mapea la entidad Lesson al DTO de respuesta
+    @Mapping(source = "course", target = "courseId", qualifiedByName = "mapCourseId")
     LessonResponse toResponse(Lesson lesson);
 
-    // Mapea una lista de entidades Lesson a una lista de respuestas:
+    // Lista de entidades a lista de DTOs
     List<LessonResponse> toResponseList(List<Lesson> lessons);
 
-    // Convierte Long a entidad Course:
+    // Convierte Long a entidad Course
     @Named("mapCourse")
     default Course mapCourse(Long courseId) {
-        if (courseId == null) {
-            return null;
-        }
+        if (courseId == null) return null;
         Course course = new Course();
         course.setId(courseId);
         return course;
+    }
+
+    // Convierte Course a Long (id) para el DTO de respuesta
+    @Named("mapCourseId")
+    default Long mapCourseId(Course course) {
+        if (course == null) return null;
+        return course.getId();
     }
 }

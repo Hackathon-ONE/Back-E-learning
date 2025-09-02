@@ -1,12 +1,15 @@
 package learning.platform.entity;
 
 import jakarta.persistence.*;
-import learning.platform.dto.lesson.LessonCreateRequest;
+import learning.platform.dto.LessonCreateRequest;
 import learning.platform.enums.ContentType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+
 import java.time.Duration;
 import java.util.Objects;
 
+@Getter
 @Entity
 @Table(name = "lessons")
 @Schema(description = "Entidad que representa una lección en un curso.")
@@ -70,44 +73,53 @@ public class Lesson {
     public Long getId() {
         return id;
     }
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Course getCourse() {
         return course;
     }
-    public void setCourse(Course course) {
-        this.course = course;
-    }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public String getTitle() {
+        return title;
+    }
 
     public String getContentUrl() {
         return contentUrl;
-    }
-    public void setContentUrl(String contentUrl) {
-        this.contentUrl = contentUrl;
     }
 
     public ContentType getContentType() {
         return contentType;
     }
-    public void setContentType(ContentType contentType) {
-        this.contentType = contentType;
-    }
 
     public Integer getOrderIndex() {
         return orderIndex;
-    }
-    public void setOrderIndex(Integer orderIndex) {
-        this.orderIndex = orderIndex;
     }
 
     public Duration getDuration() {
         return duration;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
+    public void setTitle(String title) { this.title = title; }
+
+    public void setContentUrl(String contentUrl) {
+        this.contentUrl = contentUrl;
+    }
+
+    public void setContentType(ContentType contentType) {
+        this.contentType = contentType;
+    }
+
+    public void setOrderIndex(Integer orderIndex) {
+        this.orderIndex = orderIndex;
+    }
+
     public void setDuration(Duration duration) {
         this.duration = duration;
     }
