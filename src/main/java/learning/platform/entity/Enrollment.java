@@ -1,10 +1,12 @@
 package learning.platform.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import learning.platform.dto.EnrollmentRequest;
+import learning.platform.enums.EnrollmentStatus;
+import org.hibernate.annotations.CurrentTimestamp;
+
 import java.time.LocalDateTime;
 
-@Data
 @Entity
 @Table(name = "enrollments")
 public class Enrollment {
@@ -12,14 +14,55 @@ public class Enrollment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @ManyToOne
+    @JoinColumn(name = "student_id")
     private User student;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @Column(name = "enrolled_at")
-    private LocalDateTime enrolledAt = LocalDateTime.now();
+    @Enumerated(EnumType.STRING)
+    private EnrollmentStatus status;
+
+    @CurrentTimestamp
+    private LocalDateTime enrolledAt;
+
+    private int progressPercent;
+
+    public  Enrollment(){}
+
+    public Enrollment(EnrollmentRequest request, Course course, User student) {
+        this.student = student;
+        this.course = course;
+        this.status = EnrollmentStatus.ENROLLED;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public User getStudent() {
+        return student;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public EnrollmentStatus getStatus() {
+        return status;
+    }
+
+    public LocalDateTime getEnrolledAt() {
+        return enrolledAt;
+    }
+
+    public int getProgressPercent() {
+        return progressPercent;
+    }
+
+    public void setStatus(EnrollmentStatus status) {
+        this.status = status;
+    }
 }
