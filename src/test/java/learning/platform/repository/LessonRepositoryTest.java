@@ -36,13 +36,13 @@ public class LessonRepositoryTest {
         course.setId(1L);
         entityManager.persist(course);
 
-        Lesson lesson1 = new Lesson();
+        Lesson lesson1 = new Lesson(request, course);
         lesson1.setCourse(course);
         lesson1.setTitle("Lesson 1");
         lesson1.setOrderIndex(1);
         entityManager.persist(lesson1);
 
-        Lesson lesson2 = new Lesson();
+        Lesson lesson2 = new Lesson(request, course);
         lesson2.setCourse(course);
         lesson2.setTitle("Lesson 2");
         lesson2.setOrderIndex(2);
@@ -68,7 +68,7 @@ public class LessonRepositoryTest {
      */
     @Test
     void shouldSaveLesson() {
-        Lesson lesson = new Lesson();
+        Lesson lesson = new Lesson(request, course);
         lesson.setCourse(course);
         lesson.setTitle("Lesson 3");
         lesson.setOrderIndex(3);

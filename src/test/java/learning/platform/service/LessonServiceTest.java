@@ -2,8 +2,10 @@ package learning.platform.service;
 
 import learning.platform.dto.LessonCreateRequest;
 import learning.platform.dto.LessonResponse;
+import learning.platform.entity.Course;
 import learning.platform.entity.Lesson;
 import learning.platform.mapper.LessonMapper;
+import learning.platform.repository.CourseRepository;
 import learning.platform.repository.LessonRepository;
 import learning.platform.service.impl.LessonServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +50,7 @@ public class LessonServiceTest {
         course = new Course();
         course.setId(1L);
 
-        lesson = new Lesson();
+        lesson = new Lesson(request, course);
         lesson.setId(1L);
         lesson.setCourse(course);
 

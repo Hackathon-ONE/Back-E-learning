@@ -24,6 +24,7 @@ public record LessonResponse(
         @Schema(description = "Índice de orden de la lección dentro del curso", example = "1")
         Integer orderIndex,
 
-        @Schema(description = "Duración de la lección (opcional)", example = "PT30M")
-        Duration duration
+        @Schema(description = "Duración de la lección en minutos.", example = "30")
+        Integer durationMinutes // 👈 minutos en la respuesta
+
 ) {}

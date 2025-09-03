@@ -1,6 +1,7 @@
 package learning.platform.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -29,6 +30,11 @@ public record LessonCreateRequest(
         Integer orderIndex,
 
         @NotNull(message = "La duración es obligatoria")
-        @Schema(description = "Duración de la lección (opcional)", example = "PT30M")
-        String duration // Luego se transformará en "Duration" en el mapper.
-) {}
+        @Min(1)
+        @Schema(description = "Duración de la lección. En minutos.", example = "30")
+        Integer durationMinutes // 👈 minutos en el request.
+) {
+    public Long durationSeconds() {
+        return 0L;
+    }
+}

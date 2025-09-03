@@ -8,7 +8,6 @@ import learning.platform.mapper.UserMapper;
 import learning.platform.repository.UserRepository;
 import learning.platform.service.UserService;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,14 +16,10 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
-    public UserServiceImpl(UserRepository userRepository,
-                           PasswordEncoder passwordEncoder,
-                           UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
         this.userMapper = userMapper;
     }
 
@@ -34,7 +29,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("El email ya está registrado");
         }
 
-        // Validación defensiva del rol (ya validado por @Pattern en el DTO)
+        // Validación defensiva del rol (si aún es necesario)
         Role roleEnum;
         try {
             roleEnum = Role.valueOf(request.role().toUpperCase());
@@ -45,7 +40,6 @@ public class UserServiceImpl implements UserService {
         // Mapeo del DTO a entidad
         User user = userMapper.toEntity(request);
         user.setRole(roleEnum); // Asignación explícita del enum
-        user.setPasswordHash(passwordEncoder.encode(request.password()));
         user.setActive(true);
 
         User savedUser = userRepository.save(user);

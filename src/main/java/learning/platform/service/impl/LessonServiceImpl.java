@@ -2,13 +2,16 @@ package learning.platform.service.impl;
 
 import learning.platform.dto.LessonCreateRequest;
 import learning.platform.dto.LessonResponse;
+import learning.platform.entity.Course;
 import learning.platform.entity.Lesson;
 import learning.platform.mapper.LessonMapper;
+import learning.platform.repository.CourseRepository;
 import learning.platform.repository.LessonRepository;
 import learning.platform.service.LessonService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -114,7 +117,7 @@ public class LessonServiceImpl implements LessonService {
         lesson.setContentUrl(request.contentUrl());
         lesson.setContentType(request.contentType());
         lesson.setOrderIndex(request.orderIndex());
-        lesson.setDuration(request.duration());
+        lesson.setDurationSeconds(request.durationSeconds());
         lesson.setCourse(course);
 
         // Guardar los cambios:
@@ -171,8 +174,13 @@ public class LessonServiceImpl implements LessonService {
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Lección no encontrada con ID: " + lessonId));
             lesson.setOrderIndex(i + 1);
-            lessonRepository.save(lesson);
         }
-        return null;
+
+        // Guardar todos de una vez
+        lessonRepository.saveAll(lessons);
+
+        // Devolver la lista de DTOs actualizada
+        return lessonMapper.toResponseList(lessons);
     }
+
 }

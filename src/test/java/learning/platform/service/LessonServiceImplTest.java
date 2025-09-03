@@ -51,7 +51,7 @@ public class LessonServiceImplTest {
         course = new Course();
         course.setId(1L);
 
-        lesson = new Lesson();
+        lesson = new Lesson(request, course);
         lesson.setId(1L);
         lesson.setCourse(course);
 
