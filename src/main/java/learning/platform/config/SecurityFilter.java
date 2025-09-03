@@ -20,46 +20,34 @@ import java.io.IOException;
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private TokenService tokenService; // Servicio para validación y extracción de datos del token JWT
+    private final TokenService tokenService; // Servicio para validación y extracción de datos del token JWT
+    private final UserRepository repository;
 
-    @Autowired
-    private UserRepository repository;
+    public SecurityFilter(TokenService tokenService, UserRepository repository) {
+        this.tokenService = tokenService;
+        this.repository = repository;
+    }
+
+    //Metodo principal del filtro, llamado para cada solicitud.
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
-
-        String path = request.getServletPath();
-
-        // Excluir endpoints públicos del filtro
-        if (path.equals("/api/auth/login") ||
-                path.equals("/api/auth/register") ||
-                path.startsWith("/v3/api-docs") ||
-                path.startsWith("/swagger-ui")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        // Validación del token JWT
-        var authHeader = request.getHeader("Authorization");
-        if (authHeader != null && !authHeader.isEmpty() && authHeader.startsWith("Bearer ")) {
-            var token = authHeader.replace("Bearer ", "");
-            var subject = tokenService.getSubject(token);
-            if (subject != null) {
-                var usuarioOptional = repository.findByEmail(subject);
-                if (usuarioOptional.isPresent()) {
-                    var usuario = usuarioOptional.get();
-                    var authentication = new UsernamePasswordAuthenticationToken(
-                            usuario, null, usuario.getAuthorities()
-                    );
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
+                                    HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String rawToken = authHeader.substring(7).trim();
+            try {
+                String subject = tokenService.getSubject(rawToken); // token puro
+                repository.findByEmail(subject).ifPresent(user -> {
+                    var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                });
+            } catch (RuntimeException ex) {
+                // Token inválido -> no autenticamos; opcional: response 401 y return
+                // logger.warn("Token inválido: " + ex.getMessage());
             }
         }
-
-        // Continuar con la cadena de filtros
         filterChain.doFilter(request, response);
     }
 }
