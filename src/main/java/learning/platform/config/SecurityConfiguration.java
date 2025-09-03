@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -54,8 +55,8 @@ public class SecurityConfiguration {
                 // Define las reglas de autorización por ruta
                 .authorizeHttpRequests(req -> {
                     req.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                            .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                            .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                             .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
                     req.anyRequest().authenticated();
                 }) .headers(headers -> headers
@@ -92,7 +93,7 @@ public class SecurityConfiguration {
      */
 
     @Bean
-    public BCryptPasswordEncoder PasswordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
