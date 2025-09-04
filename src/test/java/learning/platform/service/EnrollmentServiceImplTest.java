@@ -50,7 +50,7 @@ class EnrollmentServiceImplTest {
 
         User student = new User();
         student.setId(studentId);
-        student.setName("Alumno");
+        student.setFullName("Alumno");
 
         Course course = new Course(); // adapta si tu entidad necesita constructor con args
         Enrollment enrollment = new Enrollment(request, course, student);

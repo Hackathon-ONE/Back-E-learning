@@ -86,6 +86,14 @@ public class User implements UserDetails { // ✅ Implementa UserDetails para in
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
 
+    public boolean isSubscribed() {
+        return isSubscribed;
+    }
+
+    public void setSubscribed(boolean subscribed) {
+        isSubscribed = subscribed;
+    }
+
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 

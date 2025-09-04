@@ -1,28 +1,25 @@
 package learning.platform.service;
 
-import learning.platform.dto.CourseCreateRequest;
-import learning.platform.dto.CourseResponse;
+import learning.platform.dto.CourseRequestDTO;
+import learning.platform.dto.CourseResponseDTO;
 import learning.platform.entity.Course;
 import learning.platform.entity.User;
-import learning.platform.enums.Category;
 import learning.platform.mapper.CourseMapper;
 import learning.platform.repository.CourseRepository;
-import learning.platform.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class CourseServiceImplTest {
-
-    @Mock
-    private UserRepository userRepository;
 
     @Mock
     private CourseRepository courseRepository;
@@ -31,54 +28,94 @@ class CourseServiceImplTest {
     private CourseMapper courseMapper;
 
     @InjectMocks
-    private CourseServiceImpl courseService;
+    private CourseServiceImpl courseServiceImpl;
 
-    private User instructor;
-    private CourseCreateRequest request;
-    private Course course;
+    @Test
+    void testCreateCourse() {
+        // --- 1. Arrange (Preparar) ---
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+        // Datos de entrada
+        User instructor = new User();
+        CourseRequestDTO requestDTO = new CourseRequestDTO();
+        requestDTO.setTitle("New Course");
 
-        instructor = new User();
-        instructor.setId(1L);
-        instructor.setName("Juan Perez");
-        instructor.setEmail("juan@example.com");
+        // Objetos intermedios que esperamos
+        Course courseToSave = new Course(); // El objeto que el mapper creará
+        courseToSave.setInstructor(instructor);
 
-        request = new CourseCreateRequest("Java Basics", "Curso de Java", Category.TECH, 1L);
+        Course savedCourse = new Course(); // El objeto que el repositorio devolverá
+        savedCourse.setId(1L);
+        savedCourse.setInstructor(instructor);
 
-        course = new Course(request, instructor);
+        CourseResponseDTO expectedResponse = new CourseResponseDTO(); // El DTO final
+        expectedResponse.setId(1L);
+        expectedResponse.setTitle("New Course");
+
+        // --- Simulación explícita de cada paso ---
+        // a) Cuando el mapper convierta el DTO, devuelve 'courseToSave'
+        when(courseMapper.toEntity(requestDTO)).thenReturn(courseToSave);
+
+        // b) Cuando el repositorio guarde esa entidad, devuelve 'savedCourse'
+        when(courseRepository.save(courseToSave)).thenReturn(savedCourse);
+
+        // c) Cuando el mapper convierta la entidad guardada, devuelve 'expectedResponse'
+        when(courseMapper.toResponseDTO(savedCourse)).thenReturn(expectedResponse);
+
+        // --- 2. Act (Actuar) ---
+        CourseResponseDTO result = courseServiceImpl.createCourse(requestDTO, instructor);
+
+        // --- 3. Assert (Afirmar) ---
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals("New Course", result.getTitle());
+
+        // Opcional: Verifica que cada mock fue llamado exactamente una vez
+        verify(courseMapper, times(1)).toEntity(requestDTO);
+        verify(courseRepository, times(1)).save(courseToSave);
+        verify(courseMapper, times(1)).toResponseDTO(savedCourse);
     }
 
     @Test
-    void createCourse_success() {
-        // Mock behaviors
-        when(userRepository.findById(1L)).thenReturn(Optional.of(instructor));
-        when(courseMapper.toEntity(request, instructor)).thenReturn(course);
-        when(courseRepository.save(course)).thenReturn(course);
-        when(courseMapper.toResponse(course)).thenReturn(new CourseResponse(course));
+    void testUpdateCourse() {
+        // Arrange
+        Long courseId = 1L;
+        CourseRequestDTO requestDTO = new CourseRequestDTO();
+        requestDTO.setTitle("Updated Title");
 
-        // Execute
-        CourseResponse response = courseService.create(request);
+        Course existingCourse = new Course();
+        existingCourse.setId(courseId);
+        existingCourse.setTitle("Old Title");
 
-        // Verify
-        assertNotNull(response);
-        assertEquals("Java Basics", response.title());
-        assertEquals("Curso de Java", response.description());
-        verify(userRepository, times(1)).findById(1L);
-        verify(courseRepository, times(1)).save(course);
+        CourseResponseDTO responseDTO = new CourseResponseDTO();
+        responseDTO.setTitle("Updated Title");
+
+        when(courseRepository.findById(courseId)).thenReturn(Optional.of(existingCourse));
+        when(courseRepository.save(any(Course.class))).thenReturn(existingCourse);
+        when(courseMapper.toResponseDTO(any(Course.class))).thenReturn(responseDTO);
+
+        // Act
+        CourseResponseDTO result = courseServiceImpl.updateCourse(courseId, requestDTO);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("Updated Title", result.getTitle());
+        verify(courseRepository, times(1)).findById(courseId);
+        verify(courseRepository, times(1)).save(any(Course.class));
     }
 
     @Test
-    void createCourse_instructorNotFound_throwsException() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+    void testDeleteCourse() {
+        // Arrange
+        Long courseId = 1L;
+        when(courseRepository.existsById(courseId)).thenReturn(true);
+        // Como deleteById no devuelve nada, usamos doNothing()
+        doNothing().when(courseRepository).deleteById(courseId);
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            courseService.create(request);
-        });
+        // Act
+        courseServiceImpl.deleteCourse(courseId);
 
-        assertEquals("Instructor not found", exception.getMessage());
-        verify(courseRepository, never()).save(any());
+        // Assert
+        // Verificamos que el método deleteById fue llamado exactamente una vez con el ID correcto
+        verify(courseRepository, times(1)).deleteById(courseId);
     }
 }
