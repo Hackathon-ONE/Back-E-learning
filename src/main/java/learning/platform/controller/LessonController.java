@@ -4,6 +4,7 @@ import learning.platform.dto.LessonCreateRequest;
 import learning.platform.dto.LessonResponse;
 import learning.platform.service.LessonService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.time.format.DateTimeParseException;
@@ -21,7 +22,7 @@ public class LessonController {
     }
 
     // Crear una lección (sólo un instructor):
-    // @PreAuthorize("hasRole('INSTRUCTOR')")
+    @PreAuthorize("hasRole('INSTRUCTOR')")
     @PostMapping
     public ResponseEntity<LessonResponse> createLesson(@Valid @RequestBody LessonCreateRequest request) {
         LessonResponse response = lessonService.createLesson(request);
@@ -36,7 +37,7 @@ public class LessonController {
     }
 
     // Editar una lección (sólo instructor):
-    // @PreAuthorize("hasRole('INSTRUCTOR')")
+    @PreAuthorize("hasRole('INSTRUCTOR')")
     @PutMapping("/{lessonId}")
     public ResponseEntity<LessonResponse> updateLesson(@PathVariable Long lessonId, @Valid @RequestBody LessonCreateRequest request) {
         LessonResponse response = lessonService.updateLesson(lessonId, request);
@@ -44,7 +45,7 @@ public class LessonController {
     }
 
     // Borrar una lección (sólo instructor):
-    // @PreAuthorize("hasRole('INSTRUCTOR')")
+    @PreAuthorize("hasRole('INSTRUCTOR')")
     @DeleteMapping("/{lessonId}")
     public ResponseEntity<Void> deleteLesson(@PathVariable Long lessonId) {
         lessonService.deleteLesson(lessonId);
@@ -52,7 +53,7 @@ public class LessonController {
     }
 
     // Reordenar lecciones (sólo instructor):
-    // @PreAuthorize("hasRole('INSTRUCTOR')")
+    @PreAuthorize("hasRole('INSTRUCTOR')")
     @PostMapping("/{courseId}/reorder")
     public ResponseEntity<List<LessonResponse>> reorderLessons(@PathVariable Long courseId, @RequestBody List<Long> newOrder) {
         List<LessonResponse> responses = lessonService.reorderLessons(courseId, newOrder);
