@@ -122,4 +122,23 @@ public class ProgressServiceImpl implements ProgressService {
         long completedCount = progressList.stream().filter(Progress::getCompleted).count();
         return (completedCount * 100.0) / progressList.size();
     }
+
+    @Override
+    public ProgressResponse updateScore(Long enrollmentId, Long lessonId, Integer score) {
+        Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Enrollment no encontrado: " + enrollmentId));
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new IllegalArgumentException("Lesson no encontrada: " + lessonId));
+
+        Progress progress = progressRepository.findByEnrollmentAndLesson(enrollment, lesson)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Progress no encontrado para enrollmentId=" + enrollmentId + " y lessonId=" + lessonId));
+
+        progress.setScore(score);
+        progress.setUpdatedAt(Instant.now());
+
+        progressRepository.save(progress);
+        return progressMapper.toResponse(progress);
+    }
+
 }

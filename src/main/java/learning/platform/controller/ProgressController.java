@@ -49,4 +49,14 @@ public class ProgressController {
         Double percentage = progressService.calculateCourseCompletionPercentage(enrollmentId);
         return ResponseEntity.ok(percentage);
     }
+
+    // Actualizar puntaje de una lección para un alumno:
+    @PatchMapping("/update-score")
+    public ResponseEntity<ProgressResponse> updateScore(
+            @RequestParam Long enrollmentId,
+            @RequestParam Long lessonId,
+            @RequestParam Integer score) {
+        ProgressResponse response = progressService.updateScore(enrollmentId, lessonId, score);
+        return ResponseEntity.ok(response);
+    }
 }

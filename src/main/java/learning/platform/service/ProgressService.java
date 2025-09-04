@@ -18,4 +18,15 @@ public interface ProgressService {
     List<ProgressResponse> getProgressByEnrollment(Long enrollmentId);
 
     Double calculateCourseCompletionPercentage(Integer enrollmentId);
+
+    /**
+     * Actualiza el puntaje (score) de una lección dentro de una inscripción.
+     *
+     * @param enrollmentId ID de la inscripción
+     * @param lessonId     ID de la lección
+     * @param score        Puntaje a asignar
+     * @return Progreso actualizado
+     */
+    ProgressResponse updateScore(Long enrollmentId, Long lessonId, Integer score);
+
 }

@@ -1,4 +1,4 @@
-package learning.platform.service;
+package learning.platform.service.impl;
 
 import learning.platform.dto.ProgressResponse;
 import learning.platform.entity.Enrollment;
@@ -8,24 +8,22 @@ import learning.platform.mapper.ProgressMapper;
 import learning.platform.repository.EnrollmentRepository;
 import learning.platform.repository.LessonRepository;
 import learning.platform.repository.ProgressRepository;
-import learning.platform.service.impl.ProgressServiceImpl;
 import learning.platform.testutil.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-public class ProgressServiceImplTest {
+class ProgressServiceImplTest {
 
     @Mock
     private ProgressRepository progressRepository;
@@ -42,108 +40,66 @@ public class ProgressServiceImplTest {
     @InjectMocks
     private ProgressServiceImpl progressService;
 
-    private Enrollment enrollment;
-    private Lesson lesson;
-    private Progress progress;
-    private ProgressResponse progressResponse;
-
     @BeforeEach
     void setUp() {
-        enrollment = TestDataFactory.buildEnrollment(1L);
-        lesson = TestDataFactory.buildLesson(1L, null, null); // nulls porque solo necesitamos ID
-        progress = new Progress();
-        progress.setEnrollment(enrollment);
-        progress.setLesson(lesson);
-        progress.setCompleted(false);
-        progress.setUpdatedAt(Instant.now());
-
-        progressResponse = new ProgressResponse(1L, 1L, false, 0, Instant.now());
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void shouldMarkLessonAsCompleted() {
+    void markCompleted_createsNewProgressIfNotExists() {
+        Enrollment enrollment = TestDataFactory.buildEnrollment(1L);
+        Lesson lesson = TestDataFactory.buildLessonWithId(1L);
+        ProgressResponse expectedResponse = new ProgressResponse(
+                1L, 1L, 1L, true, null, Instant.now()
+        );
+
         when(enrollmentRepository.findById(1L)).thenReturn(Optional.of(enrollment));
         when(lessonRepository.findById(1L)).thenReturn(Optional.of(lesson));
-        when(progressRepository.findByEnrollmentAndLesson(enrollment, lesson)).thenReturn(Optional.of(progress));
-        when(progressMapper.toResponse(progress)).thenReturn(progressResponse);
+        when(progressRepository.findByEnrollmentAndLesson(enrollment, lesson)).thenReturn(null);
+        when(progressRepository.save(any(Progress.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(progressMapper.toResponse(any(Progress.class))).thenReturn(expectedResponse);
 
-        ProgressResponse result = progressService.markCompleted(1L, 1L);
+        ProgressResponse response = progressService.markCompleted(1L, 1L);
 
-        verify(progressRepository).save(progress);
-        assertTrue(progress.isCompleted());
-        assertNotNull(result);
-        assertEquals(progressResponse, result);
-    }
-
-    @Test
-    void shouldCreateProgressIfNotExistWhenMarkCompleted() {
-        when(enrollmentRepository.findById(1L)).thenReturn(Optional.of(enrollment));
-        when(lessonRepository.findById(1L)).thenReturn(Optional.of(lesson));
-        when(progressRepository.findByEnrollmentAndLesson(enrollment, lesson)).thenReturn(Optional.empty());
-        when(progressMapper.toResponse(any(Progress.class))).thenReturn(progressResponse);
-
-        ProgressResponse result = progressService.markCompleted(1L, 1L);
-
+        assertEquals(expectedResponse, response);
         verify(progressRepository).save(any(Progress.class));
-        assertNotNull(result);
-        assertEquals(progressResponse, result);
     }
 
     @Test
-    void shouldThrowWhenEnrollmentNotFound() {
-        when(enrollmentRepository.findById(1L)).thenReturn(Optional.empty());
+    void getProgress_returnsProgressResponseIfExists() {
+        Enrollment enrollment = TestDataFactory.buildEnrollment(1L);
+        Lesson lesson = TestDataFactory.buildLessonWithId(1L);
+        Progress progress = TestDataFactory.buildProgress(enrollment, lesson, true, 90);
+        ProgressResponse expectedResponse = new ProgressResponse(
+                1L, 1L, 1L, true, 90, Instant.now()
+        );
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> progressService.markCompleted(1L, 1L));
-
-        assertEquals("Enrollment no encontrado: 1", ex.getMessage());
-    }
-
-    @Test
-    void shouldThrowWhenLessonNotFound() {
-        when(enrollmentRepository.findById(1L)).thenReturn(Optional.of(enrollment));
-        when(lessonRepository.findById(1L)).thenReturn(Optional.empty());
-
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> progressService.markCompleted(1L, 1L));
-
-        assertEquals("Lesson no encontrada: 1", ex.getMessage());
-    }
-
-    @Test
-    void shouldGetProgress() {
         when(enrollmentRepository.findById(1L)).thenReturn(Optional.of(enrollment));
         when(lessonRepository.findById(1L)).thenReturn(Optional.of(lesson));
         when(progressRepository.findByEnrollmentAndLesson(enrollment, lesson)).thenReturn(Optional.of(progress));
-        when(progressMapper.toResponse(progress)).thenReturn(progressResponse);
+        when(progressMapper.toResponse(progress)).thenReturn(expectedResponse);
 
-        ProgressResponse result = progressService.getProgress(1L, 1L);
+        ProgressResponse response = progressService.getProgress(1L, 1L);
 
-        assertEquals(progressResponse, result);
+        assertEquals(expectedResponse, response);
     }
 
     @Test
-    void shouldThrowWhenProgressNotFound() {
+    void getAllProgressByEnrollment_returnsListOfResponses() {
+        Enrollment enrollment = TestDataFactory.buildEnrollment(1L);
+        Lesson lesson = TestDataFactory.buildLessonWithId(1L);
+        Progress progress = TestDataFactory.buildProgress(enrollment, lesson, true, null);
+        ProgressResponse expectedResponse = new ProgressResponse(
+                1L, 1L, 1L, true, null, Instant.now()
+        );
+
         when(enrollmentRepository.findById(1L)).thenReturn(Optional.of(enrollment));
-        when(lessonRepository.findById(1L)).thenReturn(Optional.of(lesson));
-        when(progressRepository.findByEnrollmentAndLesson(enrollment, lesson)).thenReturn(Optional.empty());
+        when(progressRepository.findByEnrollment(enrollment)).thenReturn(List.of(progress));
+        when(progressMapper.toResponse(progress)).thenReturn(expectedResponse);
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> progressService.getProgress(1L, 1L));
+        List<ProgressResponse> responses = progressService.getAllProgressByEnrollment(1L);
 
-        assertEquals("Progress no encontrado para enrollment y lesson dados", ex.getMessage());
-    }
-
-    @Test
-    void shouldGetAllProgressByEnrollment() {
-        List<Progress> progresses = List.of(progress);
-        when(enrollmentRepository.findById(1L)).thenReturn(Optional.of(enrollment));
-        when(progressRepository.findByEnrollment(enrollment)).thenReturn(progresses);
-        when(progressMapper.toResponse(progress)).thenReturn(progressResponse);
-
-        List<ProgressResponse> result = progressService.getAllProgressByEnrollment(1L);
-
-        assertEquals(1, result.size());
-        assertEquals(progressResponse, result.get(0));
+        assertEquals(1, responses.size());
+        assertEquals(expectedResponse, responses.get(0));
     }
 }

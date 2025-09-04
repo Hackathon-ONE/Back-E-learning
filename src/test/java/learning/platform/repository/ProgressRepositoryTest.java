@@ -3,6 +3,8 @@ package learning.platform.repository;
 import learning.platform.entity.Enrollment;
 import learning.platform.entity.Lesson;
 import learning.platform.entity.Progress;
+import learning.platform.testutil.TestDataFactory;
+import learning.platform.dto.LessonCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +13,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 public class ProgressRepositoryTest {
@@ -29,19 +32,17 @@ public class ProgressRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        enrollment = new Enrollment();
-        enrollment.setId(1L);
+        // Creamos una inscripción y la persistimos
+        enrollment = TestDataFactory.buildEnrollment(null); // id se genera automáticamente
         entityManager.persist(enrollment);
 
-        lesson = new Lesson();
-        lesson.setId(1L);
+        // Creamos un curso y una lección usando el record LessonCreateRequest
+        var lessonRequest = new LessonCreateRequest("1", "título-prueba", Integer.valueOf(1));
+        lesson = TestDataFactory.buildLesson(null, lessonRequest, TestDataFactory.buildCourse(null));
         entityManager.persist(lesson);
 
-        Progress progress = new Progress();
-        progress.setEnrollment(enrollment);
-        progress.setLesson(lesson);
-        progress.setCompleted(true);
-        progress.setUpdatedAt(Instant.now());
+        // Creamos un Progress asociado
+        Progress progress = TestDataFactory.buildProgress(enrollment, lesson, true, 85);
         entityManager.persist(progress);
     }
 
@@ -49,13 +50,16 @@ public class ProgressRepositoryTest {
     void shouldFindByEnrollment() {
         List<Progress> progresses = progressRepository.findByEnrollment(enrollment);
         assertEquals(1, progresses.size());
-        assertEquals(true, progresses.get(0).getCompleted());
+        assertTrue(progresses.get(0).getCompleted());
+        assertEquals(85, progresses.get(0).getScore());
     }
 
     @Test
     void shouldFindByEnrollmentAndLesson() {
-        Progress progress = progressRepository.findByEnrollmentAndLesson(enrollment, lesson);
-        assertNotNull(progress);
-        assertEquals(true, progress.getCompleted());
+        Optional<Progress> progressOpt = progressRepository.findByEnrollmentAndLesson(enrollment, lesson);
+        assertTrue(progressOpt.isPresent());
+        Progress progress = progressOpt.get();
+        assertTrue(progress.getCompleted());
+        assertEquals(85, progress.getScore());
     }
 }

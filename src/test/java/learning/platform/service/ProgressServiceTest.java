@@ -2,6 +2,7 @@ package learning.platform.service;
 
 import learning.platform.dto.ProgressResponse;
 import learning.platform.entity.Enrollment;
+import learning.platform.entity.Lesson;
 import learning.platform.entity.Progress;
 import learning.platform.mapper.ProgressMapper;
 import learning.platform.repository.ProgressRepository;
@@ -67,7 +68,7 @@ public class ProgressServiceTest {
 
         when(progressRepository.findByEnrollment(enrollment)).thenReturn(progresses);
 
-        Float percentage = progressService.calculateCourseCompletionPercentage(enrollmentId);
+        Double percentage = progressService.calculateCourseCompletionPercentage(enrollmentId);
 
         assertEquals(50.0f, percentage);
     }
