@@ -1,5 +1,8 @@
-package learning.platform.progress;
+package learning.platform.service;
 
+import learning.platform.dto.ProgressResponse;
+import learning.platform.entity.Enrollment;
+import learning.platform.entity.Progress;
 import learning.platform.mapper.ProgressMapper;
 import learning.platform.repository.ProgressRepository;
 import learning.platform.service.impl.ProgressServiceImpl;

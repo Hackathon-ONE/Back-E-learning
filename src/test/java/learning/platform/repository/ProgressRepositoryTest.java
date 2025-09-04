@@ -1,4 +1,4 @@
-package learning.platform.progress;
+package learning.platform.repository;
 
 import learning.platform.entity.Enrollment;
 import learning.platform.entity.Lesson;

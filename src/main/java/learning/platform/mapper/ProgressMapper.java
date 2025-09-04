@@ -9,17 +9,13 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface ProgressMapper {
 
-    @Mapping(source = "enrollmentId", target = "enrollment.id")
-    @Mapping(source = "lessonId", target = "lesson.id")
-    @Mapping(source = "completed", target = "completed")
-    @Mapping(source = "score", target = "score")
-    @Mapping(source = "updatedAt", target = "updatedAt")
-    Progress toEntity(ProgressUpdateRequest request); // Enrollment y Lesson se inyectan en el servicio
+    // Solo mapea los campos simples; enrollment y lesson se setean en el servicio
+    @Mapping(target = "enrollment", ignore = true)
+    @Mapping(target = "lesson", ignore = true)
+    Progress toEntity(ProgressUpdateRequest request);
 
+    // Para la respuesta, sí necesitamos extraer los IDs
     @Mapping(source = "enrollment.id", target = "enrollmentId")
     @Mapping(source = "lesson.id", target = "lessonId")
-    @Mapping(source = "completed", target = "completed")
-    @Mapping(source = "score", target = "score")
-    @Mapping(source = "updatedAt", target = "updatedAt")
     ProgressResponse toResponse(Progress progress);
 }

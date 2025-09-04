@@ -1,7 +1,7 @@
 package learning.platform.service.impl;
 
-import learning.platform.dto.ProgressResponse;
 import learning.platform.dto.ProgressUpdateRequest;
+import learning.platform.dto.ProgressResponse;
 import learning.platform.entity.Enrollment;
 import learning.platform.entity.Lesson;
 import learning.platform.entity.Progress;
@@ -9,10 +9,12 @@ import learning.platform.mapper.ProgressMapper;
 import learning.platform.repository.EnrollmentRepository;
 import learning.platform.repository.LessonRepository;
 import learning.platform.repository.ProgressRepository;
+import learning.platform.service.ProgressService;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProgressServiceImpl implements ProgressService {
@@ -22,10 +24,12 @@ public class ProgressServiceImpl implements ProgressService {
     private final LessonRepository lessonRepository;
     private final ProgressMapper progressMapper;
 
-    public ProgressServiceImpl(ProgressRepository progressRepository,
-                               EnrollmentRepository enrollmentRepository,
-                               LessonRepository lessonRepository,
-                               ProgressMapper progressMapper) {
+    public ProgressServiceImpl(
+            ProgressRepository progressRepository,
+            EnrollmentRepository enrollmentRepository,
+            LessonRepository lessonRepository,
+            ProgressMapper progressMapper
+    ) {
         this.progressRepository = progressRepository;
         this.enrollmentRepository = enrollmentRepository;
         this.lessonRepository = lessonRepository;
@@ -35,47 +39,87 @@ public class ProgressServiceImpl implements ProgressService {
     @Override
     public ProgressResponse markCompleted(Long enrollmentId, Long lessonId) {
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
-                .orElseThrow(() -> new IllegalArgumentException("Inscripción no encontrada: " + enrollmentId));
+                .orElseThrow(() -> new IllegalArgumentException("Enrollment no encontrado: " + enrollmentId));
         Lesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(() -> new IllegalArgumentException("Lección no encontrada: " + lessonId));
-        Progress progress = progressRepository.findByEnrollmentAndLesson(enrollment, lesson);
-        if (progress == null) {
-            progress = new Progress();
-            progress.setEnrollment(enrollment);
-            progress.setLesson(lesson);
-        }
+                .orElseThrow(() -> new IllegalArgumentException("Lesson no encontrada: " + lessonId));
+
+        Progress progress = progressRepository.findByEnrollmentAndLesson(enrollment, lesson)
+                .orElseGet(() -> {
+                    Progress newProgress = new Progress();
+                    newProgress.setEnrollment(enrollment);
+                    newProgress.setLesson(lesson);
+                    return newProgress;
+                });
+
         progress.setCompleted(true);
         progress.setUpdatedAt(Instant.now());
-        return progressMapper.toResponse(progressRepository.save(progress));
+
+        progressRepository.save(progress);
+        return progressMapper.toResponse(progress);
+    }
+
+    @Override
+    public ProgressResponse getProgress(Long enrollmentId, Long lessonId) {
+        Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Enrollment no encontrado: " + enrollmentId));
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new IllegalArgumentException("Lesson no encontrada: " + lessonId));
+
+        Progress progress = progressRepository.findByEnrollmentAndLesson(enrollment, lesson)
+                .orElseThrow(() -> new IllegalArgumentException("Progress no encontrado para enrollment y lesson dados"));
+
+        return progressMapper.toResponse(progress);
+    }
+
+    @Override
+    public List<ProgressResponse> getAllProgressByEnrollment(Long enrollmentId) {
+        Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Enrollment no encontrado: " + enrollmentId));
+
+        return progressRepository.findByEnrollment(enrollment)
+                .stream()
+                .map(progressMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
     public ProgressResponse createOrUpdateProgress(ProgressUpdateRequest request) {
         Enrollment enrollment = enrollmentRepository.findById(request.enrollmentId())
-                .orElseThrow(() -> new IllegalArgumentException("Inscripción no encontrada: " + request.enrollmentId()));
+                .orElseThrow(() -> new IllegalArgumentException("Enrollment no encontrado: " + request.enrollmentId()));
         Lesson lesson = lessonRepository.findById(request.lessonId())
-                .orElseThrow(() -> new IllegalArgumentException("Lección no encontrada: " + request.lessonId()));
-        Progress progress = progressRepository.findByEnrollmentAndLesson(enrollment, lesson);
-        if (progress == null) {
-            progress = progressMapper.toEntity(request); // Asume que el mapper resuelve Enrollment y Lesson
-            progress.setEnrollment(enrollment);
-            progress.setLesson(lesson);
-        } else {
-            progressMapper.updateEntityFromRequest(progress, request); // Método no existe, ajustaremos mapper
-        }
-        progress.setUpdatedAt(Instant.now());
-        return progressMapper.toResponse(progressRepository.save(progress));
+                .orElseThrow(() -> new IllegalArgumentException("Lesson no encontrada: " + request.lessonId()));
+
+        Progress progress = progressRepository.findByEnrollmentAndLesson(enrollment, lesson)
+                .orElseGet(() -> {
+                    Progress newProgress = new Progress();
+                    newProgress.setEnrollment(enrollment);
+                    newProgress.setLesson(lesson);
+                    return newProgress;
+                });
+
+        progress.setCompleted(request.completed());
+        progress.setScore(request.score());
+        progress.setUpdatedAt(request.updatedAt() != null ? request.updatedAt() : Instant.now());
+
+        progressRepository.save(progress);
+        return progressMapper.toResponse(progress);
     }
 
     @Override
-    public Double calculateCourseCompletionPercentage(Long enrollmentId) {
-        Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
-                .orElseThrow(() -> new IllegalArgumentException("Inscripción no encontrada: " + enrollmentId));
-        List<Progress> progresses = progressRepository.findByEnrollment(enrollment);
-        if (progresses.isEmpty()) return 0.0;
-        long completed = progresses.stream().filter(Progress::getCompleted).count();
-        // Asumimos que el número total de lecciones viene de LessonRepository
-        long totalLessons = lessonRepository.countByCourse(enrollment.getCourse()); // Ajustar según tu modelo
-        return (double) (completed * 100) / totalLessons;
+    public List<ProgressResponse> getProgressByEnrollment(Long enrollmentId) {
+        return getAllProgressByEnrollment(enrollmentId);
+    }
+
+    @Override
+    public Double calculateCourseCompletionPercentage(Integer enrollmentId) {
+        Enrollment enrollment = enrollmentRepository.findById(Long.valueOf(enrollmentId))
+                .orElseThrow(() -> new IllegalArgumentException("Enrollment no encontrado: " + enrollmentId));
+
+        List<Progress> progressList = progressRepository.findByEnrollment(enrollment);
+
+        if (progressList.isEmpty()) return 0.0;
+
+        long completedCount = progressList.stream().filter(Progress::getCompleted).count();
+        return (completedCount * 100.0) / progressList.size();
     }
 }
