@@ -57,6 +57,7 @@ public class SecurityConfiguration {
                     req.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                             .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                             .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/users/**").hasRole("ADMIN")
                             .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
                     req.anyRequest().authenticated();
                 }) .headers(headers -> headers
