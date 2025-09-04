@@ -1,5 +1,6 @@
 package learning.platform.repository;
 
+import learning.platform.entity.Lesson;
 import learning.platform.entity.Progress;
 import learning.platform.entity.Enrollment;
 import org.springframework.data.jpa.repository.JpaRepository;
