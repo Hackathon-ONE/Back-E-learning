@@ -35,6 +35,6 @@ public record LessonCreateRequest(
         Integer durationMinutes // 👈 minutos en el request.
 ) {
     public Long durationSeconds() {
-        return 0L;
+        return durationMinutes != null ? durationMinutes * 60L : null;
     }
 }

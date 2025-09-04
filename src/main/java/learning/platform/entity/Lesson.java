@@ -43,7 +43,7 @@ public class Lesson {
     )
     private Long durationSeconds;
 
-    // Constructor vacío obligatorio para JPA
+    // Constructor vacío obligatorio para JPA:
     public Lesson() {
     }
 
@@ -67,9 +67,10 @@ public class Lesson {
     public void setOrderIndex(Integer orderIndex) { this.orderIndex = orderIndex; }
 
     public Long getDurationSeconds() { return durationSeconds; }
-    public void setDurationSeconds(Long durationSeconds) { this.durationSeconds = durationSeconds; }
+    public void setDurationSeconds(Long durationSeconds)
+    { this.durationSeconds = durationSeconds; }
 
-    // equals y hashCode
+    // equals y hashCode:
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -83,7 +84,7 @@ public class Lesson {
         return Objects.hash(id);
     }
 
-    // toString
+    // toString:
     @Override
     public String toString() {
         return "Lesson{" +

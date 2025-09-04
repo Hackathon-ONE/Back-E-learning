@@ -59,18 +59,18 @@ public class LessonServiceImpl implements LessonService {
      */
     @Override
     public LessonResponse createLesson(LessonCreateRequest request) {
-        // Buscar el curso
+        // Buscar el curso:
         Course course = courseRepository.findById(request.courseId())
                 .orElseThrow(() -> new IllegalArgumentException("Curso no encontrado con ID: " + request.courseId()));
 
-        // Convertir DTO a entidad
+        // Convertir DTO a entidad:
         Lesson lesson = lessonMapper.toEntity(request);
         lesson.setCourse(course);
 
-        // Guardar en la base de datos
+        // Guardar en la base de datos:
         Lesson saved = lessonRepository.save(lesson);
 
-        // Convertir a DTO de respuesta
+        // Convertir a DTO de respuesta:
         return lessonMapper.toResponse(saved);
     }
 
@@ -85,9 +85,10 @@ public class LessonServiceImpl implements LessonService {
     public List<LessonResponse> getLessonsByCourse(Long courseId) {
         // Buscar el curso
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new IllegalArgumentException("Curso no encontrado con ID: " + courseId));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Curso no encontrado con ID: " + courseId));
 
-        // Obtener lecciones ordenadas por orderIndex
+        // Obtener lecciones ordenadas por orderIndex:
         return lessonRepository.findByCourseOrderByOrderIndex(course)
                 .stream()
                 .map(lessonMapper::toResponse)
@@ -176,10 +177,10 @@ public class LessonServiceImpl implements LessonService {
             lesson.setOrderIndex(i + 1);
         }
 
-        // Guardar todos de una vez
+        // Guardar todos de una vez:
         lessonRepository.saveAll(lessons);
 
-        // Devolver la lista de DTOs actualizada
+        // Devolver la lista de DTOs actualizada:
         return lessonMapper.toResponseList(lessons);
     }
 
