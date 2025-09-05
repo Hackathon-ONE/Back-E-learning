@@ -7,16 +7,22 @@ import learning.platform.entity.Progress;
 import learning.platform.mapper.ProgressMapper;
 import learning.platform.repository.ProgressRepository;
 import learning.platform.service.impl.ProgressServiceImpl;
+import learning.platform.testutil.TestDataFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
 public class ProgressServiceTest {
 
     @Mock
@@ -28,48 +34,47 @@ public class ProgressServiceTest {
     @InjectMocks
     private ProgressServiceImpl progressService;
 
-    public ProgressServiceTest() {
-        MockitoAnnotations.openMocks(this);
+    private Enrollment enrollment;
+    private Lesson lesson1;
+    private Lesson lesson2;
+    private Progress progressCompleted;
+    private Progress progressIncomplete;
+
+    @BeforeEach
+    void setUp() {
+        enrollment = TestDataFactory.buildEnrollment(1L);
+        lesson1 = TestDataFactory.buildLessonWithId(1L);
+        lesson2 = TestDataFactory.buildLessonWithId(2L);
+
+        progressCompleted = TestDataFactory.buildProgress(enrollment, lesson1, true, 90);
+        progressIncomplete = TestDataFactory.buildProgress(enrollment, lesson2, false, null);
     }
 
     @Test
-    void shouldMarkCompleted() {
-        Integer enrollmentId = 1;
-        Integer lessonId = 1;
-        Enrollment enrollment = new Enrollment();
-        enrollment.setId(enrollmentId);
-        Lesson lesson = new Lesson();
-        lesson.setId(lessonId);
-        Progress progress = new Progress();
-        progress.setEnrollment(enrollment);
-        progress.setLesson(lesson);
-        ProgressResponse response = new ProgressResponse();
+    void shouldMarkProgressAsCompleted() {
+        Progress progressToSave = TestDataFactory.buildProgress(enrollment, lesson1, false, null);
 
-        when(progressRepository.findByEnrollmentAndLesson(enrollment, lesson)).thenReturn(null);
-        when(progressMapper.toEntity(any())).thenReturn(progress);
-        when(progressRepository.save(progress)).thenReturn(progress);
-        when(progressMapper.toResponse(progress)).thenReturn(response);
+        when(progressRepository.findByEnrollmentAndLesson(enrollment, lesson1))
+                .thenReturn(null); // o Optional.empty() según la implementación
+        when(progressMapper.toEntity(any())).thenReturn(progressToSave);
+        when(progressRepository.save(progressToSave)).thenReturn(progressToSave);
 
-        ProgressResponse result = progressService.markCompleted(enrollmentId, lessonId);
+        ProgressResponse result = progressService.markCompleted(enrollment.getId(), lesson1.getId());
 
-        verify(progressRepository).save(progress);
-        assertTrue(result.getCompleted());
+        verify(progressRepository).save(progressToSave);
+        // Verifico efectos sobre el entity, no sobre DTO
+        assertTrue(progressToSave.getCompleted());
+        assertEquals(BigDecimal.valueOf(100.0), progressToSave.getCompletionPercentage());
     }
 
     @Test
     void shouldCalculateCourseCompletionPercentage() {
-        Integer enrollmentId = 1;
-        Enrollment enrollment = new Enrollment();
-        enrollment.setId(enrollmentId);
-        List<Progress> progresses = Arrays.asList(
-            new Progress() {{ setCompleted(true); }},
-            new Progress() {{ setCompleted(false); }}
-        );
+        List<Progress> progresses = Arrays.asList(progressCompleted, progressIncomplete);
 
         when(progressRepository.findByEnrollment(enrollment)).thenReturn(progresses);
 
-        Double percentage = progressService.calculateCourseCompletionPercentage(enrollmentId);
+        Double percentage = progressService.calculateCourseCompletionPercentage(Math.toIntExact(enrollment.getId()));
 
-        assertEquals(50.0f, percentage);
+        assertEquals(50.0, percentage);
     }
 }

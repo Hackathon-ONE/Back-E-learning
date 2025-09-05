@@ -7,6 +7,7 @@ import learning.platform.entity.Lesson;
 import learning.platform.entity.Progress;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.time.Instant;
 
 public class TestDataFactory {
@@ -23,9 +24,9 @@ public class TestDataFactory {
         Lesson lesson = new Lesson();
         lesson.setId(id);
         lesson.setCourse(course);
-        lesson.setTitle(request.title());        // ⚠️ getter de record
-        lesson.setContentUrl(request.contentUrl()); // ⚠️ getter de record
-        lesson.setOrderIndex(request.orderIndex()); // ⚠️ getter de record
+        lesson.setTitle(request.title());        // ⚠️ getter de record.
+        lesson.setContentUrl(request.contentUrl()); // ⚠️ getter de record.
+        lesson.setOrderIndex(request.orderIndex()); // ⚠️ getter de record.
         return lesson;
     }
 
@@ -77,7 +78,13 @@ public class TestDataFactory {
         progress.setLesson(lesson);
         progress.setCompleted(completed);
         progress.setScore(score);
+
+        // Si está completado => 100%, sino 0%:
+        progress.setCompletionPercentage(completed ? BigDecimal.valueOf(100.00) : BigDecimal.ZERO);
+
+        // Siempre seteamos la fecha de actualización:
         progress.setUpdatedAt(Instant.now());
+
         return progress;
     }
 }

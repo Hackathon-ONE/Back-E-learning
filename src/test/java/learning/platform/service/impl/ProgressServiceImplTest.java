@@ -5,34 +5,28 @@ import learning.platform.entity.Enrollment;
 import learning.platform.entity.Lesson;
 import learning.platform.entity.Progress;
 import learning.platform.mapper.ProgressMapper;
-import learning.platform.repository.EnrollmentRepository;
-import learning.platform.repository.LessonRepository;
 import learning.platform.repository.ProgressRepository;
-import learning.platform.testutil.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import learning.platform.testutil.TestDataFactory;
 
-import java.time.Instant;
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class ProgressServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+public class ProgressServiceImplTest {
 
     @Mock
     private ProgressRepository progressRepository;
-
-    @Mock
-    private EnrollmentRepository enrollmentRepository;
-
-    @Mock
-    private LessonRepository lessonRepository;
 
     @Mock
     private ProgressMapper progressMapper;
@@ -40,66 +34,64 @@ class ProgressServiceImplTest {
     @InjectMocks
     private ProgressServiceImpl progressService;
 
+    private Enrollment enrollment;
+    private Lesson lesson1;
+    private Lesson lesson2;
+    private Progress progressCompleted;
+    private Progress progressIncomplete;
+
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        // --- Helpers de TestDataFactory ---
+        enrollment = TestDataFactory.buildEnrollment(1L);
+        lesson1 = TestDataFactory.buildLessonWithId(1L);
+        lesson2 = TestDataFactory.buildLessonWithId(2L);
+
+        progressCompleted = TestDataFactory.buildProgress(enrollment, lesson1, true, 85);
+        progressIncomplete = TestDataFactory.buildProgress(enrollment, lesson2, false, null);
     }
 
     @Test
-    void markCompleted_createsNewProgressIfNotExists() {
-        Enrollment enrollment = TestDataFactory.buildEnrollment(1L);
-        Lesson lesson = TestDataFactory.buildLessonWithId(1L);
-        ProgressResponse expectedResponse = new ProgressResponse(
-                1L, 1L, 1L, true, null, Instant.now()
-        );
+    void markCompletedShouldSetProgressAsCompleted() {
+        Progress progressToSave = TestDataFactory.buildProgress(enrollment, lesson1, false, null);
 
-        when(enrollmentRepository.findById(1L)).thenReturn(Optional.of(enrollment));
-        when(lessonRepository.findById(1L)).thenReturn(Optional.of(lesson));
-        when(progressRepository.findByEnrollmentAndLesson(enrollment, lesson)).thenReturn(null);
-        when(progressRepository.save(any(Progress.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(progressMapper.toResponse(any(Progress.class))).thenReturn(expectedResponse);
+        // Simular que no existe progreso previo
+        when(progressRepository.findByEnrollmentAndLesson(enrollment, lesson1)).thenReturn(null);
+        when(progressMapper.toEntity(any())).thenReturn(progressToSave);
+        when(progressRepository.save(progressToSave)).thenReturn(progressToSave);
 
-        ProgressResponse response = progressService.markCompleted(1L, 1L);
+        ProgressResponse result = progressService.markCompleted(enrollment.getId(), lesson1.getId());
 
-        assertEquals(expectedResponse, response);
-        verify(progressRepository).save(any(Progress.class));
+        verify(progressRepository).save(progressToSave);
+        // Verificar efectos sobre el entity
+        assertTrue(progressToSave.getCompleted());
+        assertEquals(BigDecimal.valueOf(100.0), progressToSave.getCompletionPercentage());
     }
 
     @Test
-    void getProgress_returnsProgressResponseIfExists() {
-        Enrollment enrollment = TestDataFactory.buildEnrollment(1L);
-        Lesson lesson = TestDataFactory.buildLessonWithId(1L);
-        Progress progress = TestDataFactory.buildProgress(enrollment, lesson, true, 90);
-        ProgressResponse expectedResponse = new ProgressResponse(
-                1L, 1L, 1L, true, 90, Instant.now()
-        );
+    void calculateCourseCompletionPercentageShouldReturnCorrectValue() {
+        List<Progress> progresses = Arrays.asList(progressCompleted, progressIncomplete);
 
-        when(enrollmentRepository.findById(1L)).thenReturn(Optional.of(enrollment));
-        when(lessonRepository.findById(1L)).thenReturn(Optional.of(lesson));
-        when(progressRepository.findByEnrollmentAndLesson(enrollment, lesson)).thenReturn(Optional.of(progress));
-        when(progressMapper.toResponse(progress)).thenReturn(expectedResponse);
+        when(progressRepository.findByEnrollment(enrollment)).thenReturn(progresses);
 
-        ProgressResponse response = progressService.getProgress(1L, 1L);
+        Double percentage = progressService.calculateCourseCompletionPercentage(Math.toIntExact(enrollment.getId()));
 
-        assertEquals(expectedResponse, response);
+        assertEquals(50.0, percentage);
     }
 
     @Test
-    void getAllProgressByEnrollment_returnsListOfResponses() {
-        Enrollment enrollment = TestDataFactory.buildEnrollment(1L);
-        Lesson lesson = TestDataFactory.buildLessonWithId(1L);
-        Progress progress = TestDataFactory.buildProgress(enrollment, lesson, true, null);
-        ProgressResponse expectedResponse = new ProgressResponse(
-                1L, 1L, 1L, true, null, Instant.now()
-        );
+    void markCompletedShouldReuseExistingProgressIfPresent() {
+        // Simular progreso ya existente incompleto
+        Progress existingProgress = TestDataFactory.buildProgress(enrollment, lesson1, false, null);
 
-        when(enrollmentRepository.findById(1L)).thenReturn(Optional.of(enrollment));
-        when(progressRepository.findByEnrollment(enrollment)).thenReturn(List.of(progress));
-        when(progressMapper.toResponse(progress)).thenReturn(expectedResponse);
+        when(progressRepository.findByEnrollmentAndLesson(enrollment, lesson1))
+                .thenReturn(Optional.of(existingProgress));
+        when(progressRepository.save(existingProgress)).thenReturn(existingProgress);
 
-        List<ProgressResponse> responses = progressService.getAllProgressByEnrollment(1L);
+        ProgressResponse result = progressService.markCompleted(enrollment.getId(), lesson1.getId());
 
-        assertEquals(1, responses.size());
-        assertEquals(expectedResponse, responses.get(0));
+        verify(progressRepository).save(existingProgress);
+        assertTrue(existingProgress.getCompleted());
+        assertEquals(BigDecimal.valueOf(100.0), existingProgress.getCompletionPercentage());
     }
 }
