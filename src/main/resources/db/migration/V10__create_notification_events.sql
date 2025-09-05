@@ -1,7 +1,7 @@
 CREATE TABLE notification_events (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     notification_type VARCHAR(50) NOT NULL CHECK (
-        notification_type IN ('NEW_CHAT_MESSAGE', 'NEW_ASSIGNMENT', 'SYSTEM_ALERT', 'GRADE_POSTED')
+        notification_type IN ('NEW_CHAT_MESSAGE', 'NEW_ASSIGNMENT', 'SYSTEM_ALERT', 'GRADE_POSTED', 'NOTIF_STUDENT', 'NOTIF_INSTRUCTOR', 'NOTIF_GENERAL')
     ),
     related_id BIGINT,
     content TEXT,
