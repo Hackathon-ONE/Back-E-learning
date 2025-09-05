@@ -14,23 +14,23 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface LessonMapper {
 
-    // DTO → Entidad
+    // DTO → Entidad:
     @Mapping(source = "courseId", target = "course", qualifiedByName = "mapCourse")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "durationSeconds",
             expression = "java(request != null && request.durationMinutes() != null ? request.durationMinutes() * 60L : null)")
     Lesson toEntity(LessonCreateRequest request);
 
-    // Entidad → DTO
+    // Entidad → DTO:
     @Mapping(source = "course", target = "courseId", qualifiedByName = "mapCourseId")
     @Mapping(target = "durationMinutes",
             expression = "java(lesson.getDurationSeconds() != null ? (int)(lesson.getDurationSeconds() / 60) : null)")
     LessonResponse toResponse(Lesson lesson);
 
-    // Listas
+    // Listas:
     List<LessonResponse> toResponseList(List<Lesson> lessons);
 
-    // MapCourse
+    // MapCourse:
     @Named("mapCourse")
     default Course mapCourse(Long courseId) {
         if (courseId == null) return null;
@@ -39,7 +39,7 @@ public interface LessonMapper {
         return course;
     }
 
-    // MapCourseId
+    // MapCourseId:
     @Named("mapCourseId")
     default Long mapCourseId(Course course) {
         if (course == null) return null;
