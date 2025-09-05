@@ -17,8 +17,7 @@ public interface UserMapper {
     // Mapea el DTO de registro a la entidad User
     @Mapping(source = "fullName", target = "fullName")
     @Mapping(source = "email", target = "email")
-    @Mapping(source = "role", target = "role", qualifiedByName = "mapRole")
-    @Mapping(source = "password", target = "passwordHash")
+    @Mapping(source = "passwordHash", target = "passwordHash")
     @Mapping(target = "active", constant = "true")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
@@ -29,22 +28,11 @@ public interface UserMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "fullName", target = "fullName")
     @Mapping(source = "email", target = "email")
-    @Mapping(source = "role", target = "role", qualifiedByName = "roleToString")
     @Mapping(source = "active", target = "active")
     UserResponse toResponse(User user);
 
     // Mapea una lista de entidades User a una lista de respuestas
     List<UserResponse> toResponseList(List<User> users);
 
-    // Convierte String a Enum Role
-    @Named("mapRole")
-    default Role mapRole(String role) {
-        return Role.valueOf(role.toUpperCase());
-    }
 
-    // Convierte Enum Role a String
-    @Named("roleToString")
-    default String roleToString(Role role) {
-        return role.name();
-    }
 }

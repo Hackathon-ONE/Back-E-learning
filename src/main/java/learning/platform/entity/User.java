@@ -1,8 +1,6 @@
 package learning.platform.entity;
 
 import jakarta.persistence.*;
-import learning.platform.enums.Role;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -21,11 +19,7 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    private String passwordHash; // Mantenido como campo simple, sin uso en seguridad
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+    private String passwordHash;
 
     @Column(nullable = false)
     private boolean active = true;
@@ -52,12 +46,11 @@ public class User {
     // Constructores
     public User() {}
 
-    public User(Long id, String fullName, String email, String passwordHash, Role role, boolean active) {
+    public User(Long id, String fullName, String email, String passwordHash, boolean active) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.passwordHash = passwordHash;
-        this.role = role;
         this.active = active;
         this.isSubscribed = false;
     }
@@ -75,9 +68,6 @@ public class User {
     public String getPasswordHash() { return passwordHash; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 
-    public Role getRole() { return role; }
-    public void setRole(Role role) { this.role = role; }
-
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
 
@@ -94,7 +84,6 @@ public class User {
                 "id=" + id +
                 ", fullName='" + fullName + '\'' +
                 ", email='" + email + '\'' +
-                ", role=" + role +
                 ", active=" + active +
                 '}';
     }
@@ -113,4 +102,14 @@ public class User {
     public int hashCode() {
         return Objects.hash(id, email);
     }
+
+    // Relaciones comentadas (opcional para pruebas)
+    // @OneToMany(mappedBy = "instructor")
+    // private List<Course> createdCourses;
+    //
+    // @OneToMany(mappedBy = "user")
+    // private List<Enrollment> enrollments;
+    //
+    // @OneToMany(mappedBy = "user")
+    // private List<Payment> payments;
 }
