@@ -12,6 +12,7 @@ import learning.platform.repository.ProgressRepository;
 import learning.platform.service.ProgressService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,6 +52,7 @@ public class ProgressServiceImpl implements ProgressService {
                     return newProgress;
                 });
 
+        progress.setCompletionPercentage(BigDecimal.valueOf(100.0));
         progress.setCompleted(true);
         progress.setUpdatedAt(Instant.now());
 
@@ -97,8 +99,15 @@ public class ProgressServiceImpl implements ProgressService {
                     return newProgress;
                 });
 
-        progress.setCompleted(request.completed());
+        // Actualizamos score:
         progress.setScore(request.score());
+
+        // Actualizamos completionPercentage y completed:
+        if (request.completionPercentage() != null) {
+            progress.setCompletionPercentage(request.completionPercentage());
+            progress.setCompleted(request.completionPercentage().compareTo(new BigDecimal("100.0")) >= 0);
+        }
+
         progress.setUpdatedAt(request.updatedAt() != null ? request.updatedAt() : Instant.now());
 
         progressRepository.save(progress);
@@ -116,11 +125,14 @@ public class ProgressServiceImpl implements ProgressService {
                 .orElseThrow(() -> new IllegalArgumentException("Enrollment no encontrado: " + enrollmentId));
 
         List<Progress> progressList = progressRepository.findByEnrollment(enrollment);
-
         if (progressList.isEmpty()) return 0.0;
 
-        long completedCount = progressList.stream().filter(Progress::getCompleted).count();
-        return (completedCount * 100.0) / progressList.size();
+        // Promedio de completionPercentage
+        double totalPercentage = progressList.stream()
+                .mapToDouble(p -> p.getCompletionPercentage() != null ? p.getCompletionPercentage().doubleValue() : 0.0)
+                .sum();
+
+        return totalPercentage / progressList.size();
     }
 
     @Override
@@ -135,9 +147,46 @@ public class ProgressServiceImpl implements ProgressService {
                         "Progress no encontrado para enrollmentId=" + enrollmentId + " y lessonId=" + lessonId));
 
         progress.setScore(score);
-        progress.setUpdatedAt(Instant.now());
 
+        // Marcamos completed si completionPercentage ya es 100:
+        if (progress.getCompletionPercentage() != null
+                && progress.getCompletionPercentage().compareTo(new BigDecimal("100.0")) >= 0) {
+            progress.setCompleted(true);
+        }
+
+
+        progress.setUpdatedAt(Instant.now());
         progressRepository.save(progress);
+
+        return progressMapper.toResponse(progress);
+    }
+
+    @Override
+    public ProgressResponse updateCompletionPercentage(Long enrollmentId, Long lessonId, Double completionPercentage) {
+        Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Enrollment no encontrado: " + enrollmentId));
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new IllegalArgumentException("Lesson no encontrada: " + lessonId));
+
+        Progress progress = progressRepository.findByEnrollmentAndLesson(enrollment, lesson)
+                .orElseGet(() -> {
+                    Progress newProgress = new Progress();
+                    newProgress.setEnrollment(enrollment);
+                    newProgress.setLesson(lesson);
+                    return newProgress;
+                });
+
+        // Guardamos completionPercentage como BigDecimal:
+        progress.setCompletionPercentage(completionPercentage != null ? BigDecimal.valueOf(completionPercentage) : BigDecimal.ZERO);
+
+        // Si llega a 100%, marcamos completed
+        if (completionPercentage != null && completionPercentage >= 100.0) {
+            progress.setCompleted(true);
+        }
+
+        progress.setUpdatedAt(Instant.now());
+        progressRepository.save(progress);
+
         return progressMapper.toResponse(progress);
     }
 

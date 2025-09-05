@@ -59,4 +59,15 @@ public class ProgressController {
         ProgressResponse response = progressService.updateScore(enrollmentId, lessonId, score);
         return ResponseEntity.ok(response);
     }
+
+    // Actualizar completionPercentage de una lección y ajustar completed automáticamente
+    @PatchMapping("/update-percentage")
+    public ResponseEntity<ProgressResponse> updateCompletionPercentage(
+            @RequestParam Long enrollmentId,
+            @RequestParam Long lessonId,
+            @RequestParam Double completionPercentage) {
+        ProgressResponse response = progressService.updateCompletionPercentage(enrollmentId, lessonId, completionPercentage);
+        return ResponseEntity.ok(response);
+    }
+
 }

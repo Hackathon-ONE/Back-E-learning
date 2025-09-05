@@ -29,4 +29,5 @@ public interface ProgressService {
      */
     ProgressResponse updateScore(Long enrollmentId, Long lessonId, Integer score);
 
+    ProgressResponse updateCompletionPercentage(Long enrollmentId, Long lessonId, Double completionPercentage);
 }

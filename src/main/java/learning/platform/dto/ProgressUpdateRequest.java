@@ -1,8 +1,12 @@
 package learning.platform.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+
+import java.math.BigDecimal;
 import java.time.Instant;
 
 public record ProgressUpdateRequest(
@@ -18,6 +22,10 @@ public record ProgressUpdateRequest(
         @Schema(description = "Puntaje obtenido (opcional).", example = "85")
         @PositiveOrZero(message = "El puntaje debe ser cero o positivo")
         Integer score,
+        @Schema(description = "Porcentaje de completitud de la lección. Entre 0.00 y 100.00")
+        @DecimalMin("0.00")
+        @Digits(integer = 5, fraction = 2)
+        BigDecimal completionPercentage,
         @Schema(description = "Fecha y hora de la última actualización.")
         Instant updatedAt
 ) {}

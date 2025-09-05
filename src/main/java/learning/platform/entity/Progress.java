@@ -3,6 +3,7 @@ package learning.platform.entity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
@@ -14,7 +15,7 @@ public class Progress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "ID único del progreso.")
-    private Integer id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "enrollment_id", nullable = false)
@@ -22,7 +23,7 @@ public class Progress {
     private Enrollment enrollment;
 
     @ManyToOne
-    @JoinColumn(name = "lesson_id")
+    @JoinColumn(name = "lesson_id", nullable = false)
     @Schema(description = "Lección asociada al progreso.")
     private Lesson lesson;
 
@@ -38,15 +39,19 @@ public class Progress {
     @Schema(description = "Fecha y hora de la última actualización.")
     private Instant updatedAt;
 
-    // Constructor vacío requerido por Hibernate
+    @Column(name = "completion_percentage", precision = 5, scale = 2, nullable = false)
+    @Schema(description = "Porcentaje de avance en la lección (0.00 a 100.00).")
+    private BigDecimal completionPercentage = BigDecimal.ZERO;
+
+    // Constructor vacío requerido por Hibernate:
     public Progress() {
     }
 
     // Getters and Setters:
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -83,5 +88,17 @@ public class Progress {
     }
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+
+    public BigDecimal getCompletionPercentage() {
+        return completionPercentage;
+    }
+
+    public void setCompletionPercentage(BigDecimal completionPercentage) {
+        this.completionPercentage = completionPercentage;
+        this.completed = (completionPercentage != null &&
+                completionPercentage.compareTo(BigDecimal.valueOf(100)) >= 0);
+
     }
 }
