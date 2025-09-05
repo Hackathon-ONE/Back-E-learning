@@ -1,11 +1,11 @@
 package learning.platform.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import learning.platform.enums.ContentType;
-import java.time.Duration;
 
 @Schema(description = "DTO para la creación de una lección")
 public record LessonCreateRequest(
@@ -29,6 +29,12 @@ public record LessonCreateRequest(
         @PositiveOrZero(message = "El índice de orden debe ser cero o positivo")
         Integer orderIndex,
 
-        @Schema(description = "Duración de la lección (opcional)", example = "PT30M")
-        Duration duration
-) {}
+        @NotNull(message = "La duración es obligatoria")
+        @Min(1)
+        @Schema(description = "Duración de la lección. En minutos.", example = "30")
+        Integer durationMinutes // 👈 minutos en el request.
+) {
+    public Long durationSeconds() {
+        return durationMinutes != null ? durationMinutes * 60L : null;
+    }
+}

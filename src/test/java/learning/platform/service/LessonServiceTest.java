@@ -19,12 +19,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static learning.platform.testutil.TestDataFactory.buildCourse;
+import static learning.platform.testutil.TestDataFactory.buildLesson;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-/**
- * Tests unitarios para LessonServiceImpl.
- */
 @ExtendWith(MockitoExtension.class)
 public class LessonServiceTest {
 
@@ -47,20 +46,12 @@ public class LessonServiceTest {
 
     @BeforeEach
     void setUp() {
-        course = new Course();
-        course.setId(1L);
-
-        lesson = new Lesson();
-        lesson.setId(1L);
-        lesson.setCourse(course);
-
-        request = new LessonCreateRequest(1L, "Test Lesson", "https://example.com", null, 1, null);
+        course = buildCourse(1L);
+        request = new LessonCreateRequest(1L, "Test Lesson", "https://example.com", null, 1, 30);
         response = new LessonResponse(1L, 1L, "Test Lesson", "https://example.com", null, 1, null);
+        lesson = buildLesson(1L, request, course);
     }
 
-    /**
-     * Verifica que se pueda crear una lección correctamente.
-     */
     @Test
     void shouldCreateLesson() {
         when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
@@ -78,9 +69,6 @@ public class LessonServiceTest {
         assertEquals(response, result);
     }
 
-    /**
-     * Verifica que se lancen excepciones al crear una lección con curso no existente.
-     */
     @Test
     void shouldThrowExceptionWhenCourseNotFoundOnCreate() {
         when(courseRepository.findById(1L)).thenReturn(Optional.empty());
@@ -93,15 +81,11 @@ public class LessonServiceTest {
         verifyNoInteractions(lessonMapper, lessonRepository);
     }
 
-    /**
-     * Verifica que se obtengan lecciones por curso, ordenadas por orderIndex.
-     */
     @Test
     void shouldGetLessonsByCourseOrdered() {
-        List<Lesson> lessons = Arrays.asList(
-                new Lesson(request, course),
-                new Lesson(new LessonCreateRequest(1L, "Lesson 2", "https://example.com/2", null, 2, null), course)
-        );
+        Lesson lesson2 = buildLesson(2L, new LessonCreateRequest(1L, "Lesson 2", "https://example.com/2", null, 2, 25), course);
+        List<Lesson> lessons = Arrays.asList(lesson, lesson2);
+
         List<LessonResponse> responses = Arrays.asList(
                 new LessonResponse(1L, 1L, "Test Lesson", "https://example.com", null, 1, null),
                 new LessonResponse(2L, 1L, "Lesson 2", "https://example.com/2", null, 2, null)
@@ -109,8 +93,8 @@ public class LessonServiceTest {
 
         when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
         when(lessonRepository.findByCourseOrderByOrderIndex(course)).thenReturn(lessons);
-        when(lessonMapper.toResponse(lessons.get(0))).thenReturn(responses.get(0));
-        when(lessonMapper.toResponse(lessons.get(1))).thenReturn(responses.get(1));
+        when(lessonMapper.toResponse(lesson)).thenReturn(responses.get(0));
+        when(lessonMapper.toResponse(lesson2)).thenReturn(responses.get(1));
 
         List<LessonResponse> result = lessonService.getLessonsByCourse(1L);
 
@@ -120,13 +104,10 @@ public class LessonServiceTest {
         assertEquals(responses, result);
     }
 
-    /**
-     * Verifica que se actualice una lección correctamente.
-     */
     @Test
     void shouldUpdateLesson() {
-        Lesson updatedLesson = new Lesson(request, course);
-        updatedLesson.setId(1L);
+        Lesson updatedLesson = buildLesson(1L, request, course);
+
         when(lessonRepository.findById(1L)).thenReturn(Optional.of(lesson));
         when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
         when(lessonRepository.save(any(Lesson.class))).thenReturn(updatedLesson);
@@ -141,9 +122,6 @@ public class LessonServiceTest {
         assertEquals(response, result);
     }
 
-    /**
-     * Verifica que se elimine una lección correctamente.
-     */
     @Test
     void shouldDeleteLesson() {
         when(lessonRepository.existsById(1L)).thenReturn(true);
@@ -154,17 +132,10 @@ public class LessonServiceTest {
         verify(lessonRepository).deleteById(1L);
     }
 
-    /**
-     * Verifica que se reordenen las lecciones correctamente.
-     */
     @Test
     void shouldReorderLessons() {
-        List<Lesson> lessons = Arrays.asList(
-                new Lesson(request, course),
-                new Lesson(new LessonCreateRequest(1L, "Lesson 2", "https://example.com/2", null, 2, null), course)
-        );
-        lessons.get(0).setId(1L);
-        lessons.get(1).setId(2L);
+        Lesson lesson2 = buildLesson(2L, new LessonCreateRequest(1L, "Lesson 2", "https://example.com/2", null, 2, 25), course);
+        List<Lesson> lessons = Arrays.asList(lesson, lesson2);
         List<Long> newOrder = Arrays.asList(2L, 1L);
 
         when(courseRepository.findById(1L)).thenReturn(Optional.of(course));

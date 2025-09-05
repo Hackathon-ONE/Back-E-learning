@@ -1,5 +1,6 @@
 package learning.platform.repository;
 
+import learning.platform.entity.Course;
 import learning.platform.entity.Lesson;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;

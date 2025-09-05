@@ -1,15 +1,11 @@
 package learning.platform.entity;
 
 import jakarta.persistence.*;
-import learning.platform.dto.LessonCreateRequest;
 import learning.platform.enums.ContentType;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
 
-import java.time.Duration;
 import java.util.Objects;
 
-@Getter
 @Entity
 @Table(name = "lessons")
 @Schema(description = "Entidad que representa una lección en un curso.")
@@ -20,8 +16,8 @@ public class Lesson {
     @Schema(description = "ID único de la lección.", example = "1")
     private Long id;
 
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "course_id", nullable=false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id", nullable = false)
     @Schema(description = "Curso al que pertenece la lección.")
     private Course course;
 
@@ -35,108 +31,44 @@ public class Lesson {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "content_type")
-    @Schema(description = "URL del contenido de la lección", example = "https://example.com/video.mp4")
     private ContentType contentType;
 
     @Column(name = "order_index")
-    @Schema(description = "Índice de orden de la lección dentro del curso", example = "1")
     private Integer orderIndex;
 
-    @Column(name = "duration", columnDefinition = "INTERVAL")
-    @Schema(description = "Duración de la lección.")
-    private Duration duration;
+    @Column(name = "duration", columnDefinition = "INTERVAL", nullable = false)
+    @org.hibernate.annotations.ColumnTransformer(
+            write = "? * INTERVAL '1 SECOND'",
+            read = "EXTRACT(EPOCH FROM duration)::bigint"
+    )
+    private Long durationSeconds;
 
-    /**
-     * Constructor vacío requerido por Hibernate.
-     */
+    // Constructor vacío obligatorio para JPA:
     public Lesson() {
     }
 
-    /**
-     * Constructor para crear una lección a partir de un DTO y un curso.
-     *
-     * @param request DTO con los datos de la lección
-     * @param course  Curso al que pertenece la lección
-     */
+    // Getters y setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Lesson(LessonCreateRequest request, Course course) {
-            this.course = course;
-            this.title = request.title();
-            this.contentUrl = request.contentUrl();
-            this.contentType = request.contentType();
-            this.orderIndex = request.orderIndex();
-            this.duration = request.duration();
-    }
+    public Course getCourse() { return course; }
+    public void setCourse(Course course) { this.course = course; }
 
-    // Getters y Setters:
-
-    public Long getId() {
-        return id;
-    }
-
-    public Course getCourse() {
-        return course;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContentUrl() {
-        return contentUrl;
-    }
-
-    public ContentType getContentType() {
-        return contentType;
-    }
-
-    public Integer getOrderIndex() {
-        return orderIndex;
-    }
-
-    public Duration getDuration() {
-        return duration;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setCourse(Course course) {
-        this.course = course;
-    }
-
+    public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
-    public void setContentUrl(String contentUrl) {
-        this.contentUrl = contentUrl;
-    }
+    public String getContentUrl() { return contentUrl; }
+    public void setContentUrl(String contentUrl) { this.contentUrl = contentUrl; }
 
-    public void setContentType(ContentType contentType) {
-        this.contentType = contentType;
-    }
+    public ContentType getContentType() { return contentType; }
+    public void setContentType(ContentType contentType) { this.contentType = contentType; }
 
-    public void setOrderIndex(Integer orderIndex) {
-        this.orderIndex = orderIndex;
-    }
+    public Integer getOrderIndex() { return orderIndex; }
+    public void setOrderIndex(Integer orderIndex) { this.orderIndex = orderIndex; }
 
-    public void setDuration(Duration duration) {
-        this.duration = duration;
-    }
-
-    // toString:
-    @Override
-    public String toString() {
-        return "Lesson{" +
-                "id=" + id +
-                ", courseId=" + (course != null ? course.getId() : null) +
-                ", title='" + title + '\'' +
-                ", contentUrl='" + contentUrl + '\'' +
-                ", contentType=" + contentType +
-                ", orderIndex=" + orderIndex +
-                ", duration=" + duration +
-                '}';
-    }
+    public Long getDurationSeconds() { return durationSeconds; }
+    public void setDurationSeconds(Long durationSeconds)
+    { this.durationSeconds = durationSeconds; }
 
     // equals y hashCode:
     @Override
@@ -151,5 +83,18 @@ public class Lesson {
     public int hashCode() {
         return Objects.hash(id);
     }
-}
 
+    // toString:
+    @Override
+    public String toString() {
+        return "Lesson{" +
+                "id=" + id +
+                ", courseId=" + (course != null ? course.getId() : null) +
+                ", title='" + title + '\'' +
+                ", contentUrl='" + contentUrl + '\'' +
+                ", contentType=" + contentType +
+                ", orderIndex=" + orderIndex +
+                ", durationSeconds=" + durationSeconds +
+                '}';
+    }
+}

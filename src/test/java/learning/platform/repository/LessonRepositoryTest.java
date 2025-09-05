@@ -1,21 +1,18 @@
 package learning.platform.repository;
 
+import learning.platform.dto.LessonCreateRequest;
+import learning.platform.entity.Course;
 import learning.platform.entity.Lesson;
+import learning.platform.testutil.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.util.List;
 
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Tests de integración para LessonRepository.
- */
 @DataJpaTest
 public class LessonRepositoryTest {
 
@@ -23,35 +20,30 @@ public class LessonRepositoryTest {
     private LessonRepository lessonRepository;
 
     @Autowired
-    private TestEntityManager entityManager;
+    private CourseRepository courseRepository;
 
     private Course course;
+    private Lesson lesson1;
+    private Lesson lesson2;
 
-    /**
-     * Configura los datos de prueba antes de cada test.
-     */
     @BeforeEach
     void setUp() {
-        course = new Course();
-        course.setId(1L);
-        entityManager.persist(course);
+        // Creamos curso usando el helper y lo guardamos con su repositorio
+        course = TestDataFactory.buildCourse(1L);
+        courseRepository.save(course);
 
-        Lesson lesson1 = new Lesson();
-        lesson1.setCourse(course);
-        lesson1.setTitle("Lesson 1");
-        lesson1.setOrderIndex(1);
-        entityManager.persist(lesson1);
+        // Creamos lecciones usando el helper y las guardamos
+        lesson1 = TestDataFactory.buildLesson(null,
+                new LessonCreateRequest(1L, "Lesson 1", "https://example.com/1", null, 1, 10),
+                course);
+        lesson2 = TestDataFactory.buildLesson(null,
+                new LessonCreateRequest(1L, "Lesson 2", "https://example.com/2", null, 2, 15),
+                course);
 
-        Lesson lesson2 = new Lesson();
-        lesson2.setCourse(course);
-        lesson2.setTitle("Lesson 2");
-        lesson2.setOrderIndex(2);
-        entityManager.persist(lesson2);
+        lessonRepository.save(lesson1);
+        lessonRepository.save(lesson2);
     }
 
-    /**
-     * Verifica que las lecciones se devuelvan ordenadas por orderIndex.
-     */
     @Test
     void shouldFindLessonsByCourseOrderedByOrderIndex() {
         List<Lesson> lessons = lessonRepository.findByCourseOrderByOrderIndex(course);
@@ -63,52 +55,37 @@ public class LessonRepositoryTest {
         assertEquals(2, lessons.get(1).getOrderIndex());
     }
 
-    /**
-     * Verifica que se guarde una lección correctamente.
-     */
     @Test
     void shouldSaveLesson() {
-        Lesson lesson = new Lesson();
-        lesson.setCourse(course);
-        lesson.setTitle("Lesson 3");
-        lesson.setOrderIndex(3);
-
-        Lesson savedLesson = lessonRepository.save(lesson);
+        Lesson newLesson = TestDataFactory.buildLesson(null,
+                new LessonCreateRequest(1L, "Lesson 3", "https://example.com/3", null, 3, 20),
+                course);
+        Lesson savedLesson = lessonRepository.save(newLesson);
 
         assertNotNull(savedLesson.getId());
         assertEquals("Lesson 3", savedLesson.getTitle());
         assertEquals(3, savedLesson.getOrderIndex());
     }
 
-    /**
-     * Verifica que se encuentre una lección por ID.
-     */
     @Test
     void shouldFindLessonById() {
-        Lesson lesson = lessonRepository.findById(1L).orElseThrow();
+        Lesson lesson = lessonRepository.findById(lesson1.getId()).orElseThrow();
 
         assertEquals("Lesson 1", lesson.getTitle());
         assertEquals(1, lesson.getOrderIndex());
     }
 
-    /**
-     * Verifica que se elimine una lección correctamente.
-     */
     @Test
     void shouldDeleteLesson() {
-        lessonRepository.deleteById(1L);
+        lessonRepository.deleteById(lesson1.getId());
 
-        assertTrue(lessonRepository.findById(1L).isEmpty());
+        assertTrue(lessonRepository.findById(lesson1.getId()).isEmpty());
     }
 
-    /**
-     * Verifica que un curso sin lecciones devuelva una lista vacía.
-     */
     @Test
     void shouldReturnEmptyListForCourseWithoutLessons() {
-        Course newCourse = new Course();
-        newCourse.setId(2L);
-        entityManager.persist(newCourse);
+        Course newCourse = TestDataFactory.buildCourse(2L);
+        courseRepository.save(newCourse);
 
         List<Lesson> lessons = lessonRepository.findByCourseOrderByOrderIndex(newCourse);
 
