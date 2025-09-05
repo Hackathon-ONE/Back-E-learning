@@ -14,4 +14,6 @@ public interface UserService {
     UserResponse getById(Long id);
 
     void setActive(Long id, boolean active);
+
 }
+
