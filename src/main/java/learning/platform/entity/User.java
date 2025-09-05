@@ -1,19 +1,12 @@
 package learning.platform.entity;
 
 import jakarta.persistence.*;
-import learning.platform.enums.Role;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-public class User implements UserDetails { // ✅ Implementa UserDetails para integrarse con Spring Security
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,15 +21,11 @@ public class User implements UserDetails { // ✅ Implementa UserDetails para in
     @Column(nullable = false)
     private String passwordHash;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
-
     @Column(nullable = false)
     private boolean active = true;
 
     @Column(nullable = false)
-    private  boolean isSubscribed;
+    private boolean isSubscribed;
 
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -57,12 +46,11 @@ public class User implements UserDetails { // ✅ Implementa UserDetails para in
     // Constructores
     public User() {}
 
-    public User(Long id, String fullName, String email, String passwordHash, Role role, boolean active) {
+    public User(Long id, String fullName, String email, String passwordHash, boolean active) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.passwordHash = passwordHash;
-        this.role = role;
         this.active = active;
         this.isSubscribed = false;
     }
@@ -80,60 +68,14 @@ public class User implements UserDetails { // ✅ Implementa UserDetails para in
     public String getPasswordHash() { return passwordHash; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 
-    public Role getRole() { return role; }
-    public void setRole(Role role) { this.role = role; }
-
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
 
-    public boolean isSubscribed() {
-        return isSubscribed;
-    }
-
-    public void setSubscribed(boolean subscribed) {
-        isSubscribed = subscribed;
-    }
+    public boolean isSubscribed() { return isSubscribed; }
+    public void setSubscribed(boolean subscribed) { isSubscribed = subscribed; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
-
-    // Métodos requeridos por UserDetails 👇
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Convierte el enum Role en una autoridad reconocida por Spring Security
-        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
-    }
-
-    @Override
-    public String getPassword() {
-        return this.passwordHash;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true; // Podés personalizarlo si tenés lógica de expiración
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true; // Podés usar el campo `active` si querés bloquear usuarios
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return this.active;
-    }
 
     // toString
     @Override
@@ -142,7 +84,6 @@ public class User implements UserDetails { // ✅ Implementa UserDetails para in
                 "id=" + id +
                 ", fullName='" + fullName + '\'' +
                 ", email='" + email + '\'' +
-                ", role=" + role +
                 ", active=" + active +
                 '}';
     }
@@ -162,13 +103,13 @@ public class User implements UserDetails { // ✅ Implementa UserDetails para in
         return Objects.hash(id, email);
     }
 
-    // Relaciones (activá cuando estés lista)
+    // Relaciones comentadas (opcional para pruebas)
     // @OneToMany(mappedBy = "instructor")
     // private List<Course> createdCourses;
-
+    //
     // @OneToMany(mappedBy = "user")
     // private List<Enrollment> enrollments;
-
+    //
     // @OneToMany(mappedBy = "user")
     // private List<Payment> payments;
 }

@@ -34,7 +34,7 @@ public class CourseController {
 
     // Crear un curso (solo INSTRUCTOR)
     @PostMapping
-    @PreAuthorize("hasRole('INSTRUCTOR')")
+    //@PreAuthorize("hasRole('INSTRUCTOR')")
     public ResponseEntity<CourseResponseDTO> createCourse(@Valid @RequestBody CourseRequestDTO dto, @AuthenticationPrincipal User instructor) {
 
         //Simula el instructor obteniéndolo de la BD
@@ -71,7 +71,7 @@ public class CourseController {
      * Actualizar el curso (Solamente puede el instructor)
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('INSTRUCTOR')")
+    //@PreAuthorize("hasRole('INSTRUCTOR')")
     public ResponseEntity<CourseResponseDTO> updateCourse(@Valid @PathVariable Long id, @RequestBody CourseRequestDTO dto) {
         return ResponseEntity.ok(courseService.updateCourse(id, dto));
     }
@@ -80,7 +80,7 @@ public class CourseController {
      * Delete a course (INSTRUCTOR or ADMIN)
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('INSTRUCTOR', 'ADMIN')")
+    //@PreAuthorize("hasAnyRole('INSTRUCTOR', 'ADMIN')")
     public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
         courseService.deleteCourse(id);
         return ResponseEntity.noContent().build(); // Returns a 204 No Content status

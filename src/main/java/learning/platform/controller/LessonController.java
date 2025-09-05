@@ -22,7 +22,7 @@ public class LessonController {
     }
 
     // Crear una lección (sólo un instructor):
-    @PreAuthorize("hasRole('INSTRUCTOR')")
+    //@PreAuthorize("hasRole('INSTRUCTOR')")
     @PostMapping
     public ResponseEntity<LessonResponse> createLesson(@Valid @RequestBody LessonCreateRequest request) {
         LessonResponse response = lessonService.createLesson(request);
@@ -37,7 +37,7 @@ public class LessonController {
     }
 
     // Editar una lección (sólo instructor):
-    @PreAuthorize("hasRole('INSTRUCTOR')")
+    //@PreAuthorize("hasRole('INSTRUCTOR')")
     @PutMapping("/{lessonId}")
     public ResponseEntity<LessonResponse> updateLesson(@PathVariable Long lessonId, @Valid @RequestBody LessonCreateRequest request) {
         LessonResponse response = lessonService.updateLesson(lessonId, request);
@@ -53,7 +53,7 @@ public class LessonController {
     }
 
     // Reordenar lecciones (sólo instructor):
-    @PreAuthorize("hasRole('INSTRUCTOR')")
+    //@PreAuthorize("hasRole('INSTRUCTOR')")
     @PostMapping("/{courseId}/reorder")
     public ResponseEntity<List<LessonResponse>> reorderLessons(@PathVariable Long courseId, @RequestBody List<Long> newOrder) {
         List<LessonResponse> responses = lessonService.reorderLessons(courseId, newOrder);
