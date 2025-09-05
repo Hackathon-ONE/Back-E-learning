@@ -17,14 +17,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    // Registro de usuario
-    @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@Valid @RequestBody UserRegisterRequest request) {
-        UserResponse response = userService.register(request);
-        return ResponseEntity.ok(response);
-    }
-
-    // Obtener usuario por email
+   // Obtener usuario por email
     @GetMapping("/email/{email}")
     public ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email) {
         return userService.findByEmail(email)
