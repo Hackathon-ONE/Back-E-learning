@@ -2,7 +2,10 @@ CREATE TABLE progress(
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     enrollment_id BIGINT NOT NULL,
     lesson_id BIGINT NOT NULL,
+    score INTEGER,
     completion_percentage NUMERIC (5,2) DEFAULT 0.00,
+    completed BOOLEAN NOT NULL DEFAULT false,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_enrollment
         FOREIGN KEY (enrollment_id) REFERENCES enrollments(id)
