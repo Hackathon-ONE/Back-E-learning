@@ -4,6 +4,7 @@ import learning.platform.dto.ProgressUpdateRequest;
 import learning.platform.dto.ProgressResponse;
 import learning.platform.service.ProgressService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class ProgressController {
 
     // Crear o actualizar progreso en una lección:
     @PostMapping
+    @PreAuthorize("hasRole('INSTRUCTOR')")
     public ResponseEntity<ProgressResponse> createOrUpdateProgress(
             @RequestBody ProgressUpdateRequest request) {
         ProgressResponse response = progressService.createOrUpdateProgress(request);
@@ -52,6 +54,7 @@ public class ProgressController {
 
     // Actualizar puntaje de una lección para un alumno:
     @PatchMapping("/update-score")
+    @PreAuthorize("hasRole('INSTRUCTOR')")
     public ResponseEntity<ProgressResponse> updateScore(
             @RequestParam Long enrollmentId,
             @RequestParam Long lessonId,
@@ -62,6 +65,7 @@ public class ProgressController {
 
     // Actualizar completionPercentage de una lección y ajustar completed automáticamente
     @PatchMapping("/update-percentage")
+    @PreAuthorize("hasRole('INSTRUCTOR')")
     public ResponseEntity<ProgressResponse> updateCompletionPercentage(
             @RequestParam Long enrollmentId,
             @RequestParam Long lessonId,
