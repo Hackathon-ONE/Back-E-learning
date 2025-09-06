@@ -17,7 +17,7 @@ public class SwaggerConfig {
         return new OpenAPI()
                 // 🔹 Información de la API
                 .info(new Info()
-                        .title("Lumia API")
+                        .title("Lumina API")
                         .version("1.0")
                         .description("Documentación de la API para la plataforma de aprendizaje electrónico")
                         .termsOfService("http://localhost:8080/terms")

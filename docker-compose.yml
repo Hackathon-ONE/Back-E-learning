@@ -8,6 +8,13 @@ services:
       - "8082:8080"
     depends_on:
       - db
+    environment:
+      # Si quieres usar la DB local de Docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/elearning_o16m
+      SPRING_DATASOURCE_USERNAME: elearning_o16m_user
+      SPRING_DATASOURCE_PASSWORD: SE4LCmYpTzmwm9FDwhf0MjgTnLg4GSko
+      SPRING_PROFILES_ACTIVE: dev  # opcional, si quieres perfiles
+    restart: unless-stopped
 
   db:
     image: postgres:15
@@ -17,3 +24,9 @@ services:
       POSTGRES_PASSWORD: SE4LCmYpTzmwm9FDwhf0MjgTnLg4GSko
     ports:
       - "5432:5432"
+    volumes:
+      - elearning_db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  elearning_db_data:

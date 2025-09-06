@@ -1,16 +1,14 @@
-# Build stage
-FROM maven:3.9.11-amazoncorretto-17 AS build
+# Usar Java 17
+FROM openjdk:17-jdk-alpine
+
+# Crear directorio de la app
 WORKDIR /app
 
-# Copiar todo el proyecto
-COPY pom.xml .
-COPY src ./src
+# Copiar el JAR generado por Maven (asegúrate del nombre exacto)
+COPY target/*.jar app.jar
 
-# Construir el jar
-RUN mvn clean package -DskipTests
+# Exponer el puerto que usa tu app (8080 por defecto)
+EXPOSE 8080
 
-# Run stage
-FROM amazoncorretto:17
-WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
-CMD ["java", "-jar", "app.jar"]
+# Ejecutar la app
+ENTRYPOINT ["java", "-jar", "app.jar"]
