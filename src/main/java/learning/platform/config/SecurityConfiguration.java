@@ -58,7 +58,7 @@ public class SecurityConfiguration {
                             .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                             .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/users/**").hasRole("ADMIN")
-                            .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
+                            .requestMatchers("/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/webjars/**", "/swagger-resources/**").permitAll();
                     req.anyRequest().authenticated();
                 }) .headers(headers -> headers
                         // activa X-Content-Type-Options
