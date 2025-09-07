@@ -57,7 +57,7 @@ public class User implements UserDetails { // ✅ Implementa UserDetails para in
     // Constructores
     public User() {}
 
-    public User(Long id, String fullName, String email, String passwordHash, Role role, boolean active) {
+    public User(Long id, String fullName, String email) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
