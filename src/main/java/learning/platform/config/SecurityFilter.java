@@ -7,11 +7,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import learning.platform.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Filtro de seguridad que se ejecuta una vez por cada solicitud HTTP.
@@ -44,15 +46,20 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         // Validación del token JWT
         var authHeader = request.getHeader("Authorization");
-        if (authHeader != null && !authHeader.isEmpty() && authHeader.startsWith("Bearer ")) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
             var token = authHeader.replace("Bearer ", "");
             var subject = tokenService.getSubject(token);
             if (subject != null) {
                 var usuarioOptional = repository.findByEmail(subject);
                 if (usuarioOptional.isPresent()) {
                     var usuario = usuarioOptional.get();
+
+                    // Extraer rol directamente del token
+                    String roleFromToken = tokenService.getClaimRole(token);
+                    var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + roleFromToken));
+
                     var authentication = new UsernamePasswordAuthenticationToken(
-                            usuario, null, usuario.getAuthorities()
+                            usuario, null, authorities
                     );
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
