@@ -50,10 +50,10 @@ public class NotificationServiceImpl implements NotificationService {
         // 2. Determinar los destinatarios según el tipo de notificación
         List<User> recipients;
         switch (request.getNotificationType()) {
-            case NOTIF_STUDENT:
+            case NOTIF_STUDENTS:
                 recipients = userRepository.findByRole(Role.STUDENT);
                 break;
-            case NOTIF_INSTRUCTOR:
+            case NOTIF_INSTRUCTORS:
                 recipients = userRepository.findByRole(Role.INSTRUCTOR);
                 break;
             case NOTIF_GENERAL:

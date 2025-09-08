@@ -6,6 +6,6 @@ public enum NotificationType {
     SYSTEM_ALERT,
     GRADE_POSTED,
     NOTIF_GENERAL,      // Para todos (STUDENT e INSTRUCTOR)
-    NOTIF_STUDENT,     // Solo para STUDENT
-    NOTIF_INSTRUCTOR;  // Solo para INSTRUCTOR
+    NOTIF_STUDENTS,     // Solo para STUDENT
+    NOTIF_INSTRUCTORS;  // Solo para INSTRUCTOR
 }

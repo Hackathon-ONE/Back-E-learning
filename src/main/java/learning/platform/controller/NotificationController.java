@@ -7,16 +7,23 @@ import learning.platform.enums.Role;
 import learning.platform.repository.UserRepository;
 import learning.platform.service.NotificationService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/notifications")
@@ -31,13 +38,18 @@ public class NotificationController {
         this.userRepository = userRepository; // <-- 2. Inicialízalo
     }
 
-    // Nuevo DTO para que el controlador reciba el rol de destino
-    public record TargetedNotificationRequestDTO(String content, String role) {}
+    // DTO para que el controlador reciba el tipo de notificación y el contenido con validaciones
+    public record TargetedNotificationRequestDTO(
+            @NotBlank(message = "El contenido no puede estar vacío.")
+            String content,
+            @NotBlank(message = "El tipo de notificación no puede estar vacío.")
+            String notificationType
+    ) {}
 
     // Este es el endpoint que manejará el envío con lógica de roles
     @PostMapping("/send")
     @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
-    public ResponseEntity<Void> sendTargetedNotification(@RequestBody TargetedNotificationRequestDTO request) {
+    public ResponseEntity<Void> sendTargetedNotification(@Valid @RequestBody TargetedNotificationRequestDTO request) {
         // SIMULACIÓN: En un entorno real, @AuthenticationPrincipal te daría el usuario
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         //User currentUser = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("Usuario de prueba no encontrado"));
@@ -48,21 +60,21 @@ public class NotificationController {
             case ADMIN:
                 // ADMIN puede enviar a cualquier rol
                 notificationService.createSystemNotification(
-                        new SystemNotificationRequestDTO(request.content(), request.role())
+                        new SystemNotificationRequestDTO(request.content(), request.notificationType())
                 );
                 break;
             case INSTRUCTOR:
                 // INSTRUCTOR solo puede enviar a estudiantes o a sí mismo (para el sistema)
-                if (request.role().equals("STUDENT")) {
+                if (request.notificationType().equals("STUDENT")) {
                     notificationService.createSystemNotification(
-                            new SystemNotificationRequestDTO(request.content(), request.role())
+                            new SystemNotificationRequestDTO(request.content(), request.notificationType())
                     );
                 } else {
-                    return ResponseEntity.status(403).build(); // Forbidden
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // Forbidden
                 }
                 break;
             default:
-                return ResponseEntity.status(403).build(); // Forbidden
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // Forbidden
         }
         return ResponseEntity.ok().build();
     }
@@ -93,5 +105,18 @@ public class NotificationController {
 
         notificationService.markNotificationAsRead(user.getId(), eventId);
         return ResponseEntity.ok().build();
+    }
+
+    // Nuevo método para manejar los errores de validación de los DTOs
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, List<String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, List<String>> errors = new HashMap<>();
+        List<String> errorMessages = ex.getBindingResult().getFieldErrors().stream()
+                .map(error -> error.getDefaultMessage())
+                .collect(Collectors.toList());
+
+        errors.put("errors", errorMessages);
+        return errors;
     }
 }
