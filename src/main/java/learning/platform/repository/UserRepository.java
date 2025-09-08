@@ -1,7 +1,7 @@
 package learning.platform.repository;
 import learning.platform.entity.User;
-import learning.platform.enums.Role; // Asegúrate de importar tu Enum
-import java.util.List; // Import the List class
+import learning.platform.enums.Role;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
