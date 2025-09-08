@@ -10,6 +10,7 @@ import learning.platform.repository.PaymentRepository;
 import learning.platform.repository.UserRepository;
 import learning.platform.service.PaymentService;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -58,5 +59,13 @@ public class PaymentServiceImpl implements PaymentService {
         userRepository.save(user);
         repository.save(payment);
         return new PaymentResponse(payment);
+    }
+
+    @Override
+    public List<PaymentResponse> findAll() {
+        return repository.findAll()
+                .stream()
+                .map(PaymentResponse::new)
+                .toList();
     }
 }

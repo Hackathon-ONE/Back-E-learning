@@ -1,4 +1,4 @@
-# Back-E-learning  
+# Back-Lumina 
 Plataforma de aprendizaje electrónico
 
 ---
