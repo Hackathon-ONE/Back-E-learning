@@ -65,4 +65,8 @@ public class Enrollment {
     public void setStatus(EnrollmentStatus status) {
         this.status = status;
     }
+
+    public void setStudent(User student) { this.student = student; }
+    public void setCourse(Course course) { this.course = course; }
+    public void setProgressPercent(Integer progressPercent) { this.progressPercent = progressPercent; }
 }
