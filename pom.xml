@@ -146,6 +146,14 @@
 			<version>4.5.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.19.0</version>
+		</dependency>
+
+
+
 		<!-- MapStruct processor NOT here; se configura como annotationProcessor in compiler plugin -->
 	</dependencies>
 
