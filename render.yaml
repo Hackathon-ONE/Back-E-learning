@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: back-e-learning-staging
+    runtime: docker
+    plan: free
+    branch: feature/deploy
+    dockerfilePath: ./Dockerfile   # Si tu Dockerfile está en la raíz de feature/deploy
+    dockerContext: .
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: dev
+      - key: DATABASE_URL
+        value: jdbc:postgresql://dpg-d2vdr87diees73e0t6d0-a.oregon-postgres.render.com:5432/elearning_8xpu?sslmode=require
+      - key: DATABASE_USERNAME
+        value: elearning_8xpu_user
+      - key: DATABASE_PASSWORD
+        value: dd23oHDEQSpd7WEsoy8YKl2tYlhkGg1d
+      - key: SECRET
+        value: 1eJMHjhk3oqdzIi6g+ZBSe8ymN+5uwyVlApTD97Fb2k=
+
