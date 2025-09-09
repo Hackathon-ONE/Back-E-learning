@@ -10,11 +10,11 @@ services:
       - key: SPRING_PROFILES_ACTIVE
         value: dev
       - key: DATABASE_URL
-        value: jdbc:postgresql://dpg-d2vdr87diees73e0t6d0-a.oregon-postgres.render.com:5432/elearning_8xpu?sslmode=require
+        value: ${DATASOURCE_URL}
       - key: DATABASE_USERNAME
-        value: elearning_8xpu_user
+        value: ${DATASOURCE_USERNAME}
       - key: DATABASE_PASSWORD
-        value: dd23oHDEQSpd7WEsoy8YKl2tYlhkGg1d
+        value: ${DATASOURCE_PASSWORD}
       - key: SECRET
-        value: 1eJMHjhk3oqdzIi6g+ZBSe8ymN+5uwyVlApTD97Fb2k=
+        value: ${SECRET}
 
