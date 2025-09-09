@@ -5,15 +5,15 @@ services:
     image: postgres:15
     container_name: elearning-postgres
     environment:
-      POSTGRES_DB: elearning
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 14156390
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     networks:
       - elearning-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s
       retries: 5
       timeout: 5s
@@ -24,9 +24,9 @@ services:
     depends_on:
       - postgres
     environment:
-      FLYWAY_URL: jdbc:postgresql://postgres:5432/elearning
-      FLYWAY_USER: postgres
-      FLYWAY_PASSWORD: 14156390
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      FLYWAY_USER: ${POSTGRES_USER}
+      FLYWAY_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - ./db/migrations:/flyway/sql
     networks:
@@ -39,9 +39,9 @@ services:
       - postgres
       - flyway
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/elearning
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 14156390
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
     ports:
       - "8080:8080"
