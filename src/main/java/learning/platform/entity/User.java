@@ -13,7 +13,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-public class User implements UserDetails { // ✅ Implementa UserDetails para integrarse con Spring Security
+public class User extends Profile implements UserDetails { // ✅ Implementa UserDetails para integrarse con Spring Security
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

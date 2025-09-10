@@ -6,6 +6,7 @@ import learning.platform.entity.Course;
 import learning.platform.entity.User;
 import learning.platform.mapper.CourseMapper;
 import learning.platform.repository.CourseRepository;
+import learning.platform.service.impl.CourseServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

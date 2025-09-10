@@ -9,7 +9,28 @@ public class CourseResponseDTO {
     private boolean published;
     private String instructorName;
 
+    private String urlPhoto;
+    private String about;
+
+
     // --- Getters y Setters añadidos manualmente ---
+
+
+    public String getUrlPhoto() {
+        return urlPhoto;
+    }
+
+    public void setUrlPhoto(String urlPhoto) {
+        this.urlPhoto = urlPhoto;
+    }
+
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
+    }
 
     public Long getId() {
         return id;
