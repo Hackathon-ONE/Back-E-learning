@@ -88,7 +88,9 @@ class AuthAndUserTests {
                 "New User",
                 "newuser@example.com",
                 "SecurePass456!",
-                Role.STUDENT.name()
+                Role.STUDENT.name(),
+                "http://photo.jpg",
+                "hola"
         );
 
         mockMvc.perform(post("/api/auth/register")
@@ -126,7 +128,9 @@ class AuthAndUserTests {
                 "Existing User",
                 STUDENT_EMAIL, // Usamos un email que ya existe
                 "SecurePass789!",
-                Role.STUDENT.name()
+                Role.STUDENT.name(),
+                "http://photo.jpg",
+                "hola"
         );
 
         mockMvc.perform(post("/api/auth/register")
