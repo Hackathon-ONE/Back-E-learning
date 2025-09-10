@@ -1,0 +1,12 @@
+CREATE TABLE materials (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    lesson_id BIGINT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    content_url VARCHAR(200) NOT NULL,
+    content_type VARCHAR(25) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_lesson
+    FOREIGN KEY (lesson_id) REFERENCES lessons(id)
+    ON DELETE CASCADE
+);

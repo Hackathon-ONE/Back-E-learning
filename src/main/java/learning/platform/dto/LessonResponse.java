@@ -1,8 +1,6 @@
 package learning.platform.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import learning.platform.enums.ContentType;
-import java.time.Duration;
 
 @Schema(description = "DTO de respuesta para datos de una lección")
 public record LessonResponse(
@@ -14,12 +12,6 @@ public record LessonResponse(
 
         @Schema(description = "Título de la lección", example = "Introducción a Java")
         String title,
-
-        @Schema(description = "URL del contenido de la lección", example = "https://example.com/video.mp4")
-        String contentUrl,
-
-        @Schema(description = "Tipo de contenido de la lección", example = "VIDEO")
-        ContentType contentType,
 
         @Schema(description = "Índice de orden de la lección dentro del curso", example = "1")
         Integer orderIndex,

@@ -25,16 +25,16 @@ public class Material {
 
     @Column(nullable = false)
     @Schema(description = "URL del contenido del material (pdf, video, etc.)", example = "https://example.com/video.mp4")
-    private String url;
+    private String contentUrl;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "content_type", nullable = false)
     @Schema(description = "Tipo de contenido del material.")
-    private ContentType type;
+    private ContentType contentType;
 
     public Material() {}
 
-    // Getters y Setters
+    // Getters y Setters:
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -44,9 +44,36 @@ public class Material {
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
-    public String getUrl() { return url; }
-    public void setUrl(String url) { this.url = url; }
+    public String getContentUrl() { return contentUrl; }
+    public void setContentUrl(String contentUrl) { this.contentUrl = contentUrl; }
 
-    public ContentType getType() { return type; }
-    public void setType(ContentType type) { this.type = type; }
+    public ContentType getContentType() { return contentType; }
+    public void setContentType(ContentType contentType) { this.contentType = contentType; }
+
+    // Equals & hashCode:
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Material)) return false;
+        Material that = (Material) o;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Material{" +
+                "id=" + id +
+                ", lessonId=" + (lesson != null ? lesson.getId() : null) +
+                ", title='" + title + '\'' +
+                ", contentUrl='" + contentUrl + '\'' +
+                ", contentType=" + contentType +
+                '}';
+    }
+
+
 }
