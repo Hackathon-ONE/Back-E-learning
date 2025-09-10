@@ -2,6 +2,7 @@ package learning.platform.service;
 
 import learning.platform.dto.MaterialCreateRequest;
 import learning.platform.dto.MaterialResponse;
+import learning.platform.dto.MaterialUpdateRequest;
 
 import java.util.List;
 
@@ -33,4 +34,8 @@ public interface MaterialService {
      * @param materialId ID del material
      */
     void deleteMaterial(Long materialId);
+
+    MaterialResponse getMaterialById(Long materialId);
+    MaterialResponse updateMaterial(Long materialId, MaterialUpdateRequest request);
+
 }

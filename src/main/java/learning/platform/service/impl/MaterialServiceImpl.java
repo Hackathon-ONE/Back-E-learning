@@ -2,6 +2,7 @@ package learning.platform.service.impl;
 
 import learning.platform.dto.MaterialCreateRequest;
 import learning.platform.dto.MaterialResponse;
+import learning.platform.dto.MaterialUpdateRequest;
 import learning.platform.entity.Lesson;
 import learning.platform.entity.Material;
 import learning.platform.mapper.MaterialMapper;
@@ -62,5 +63,25 @@ public class MaterialServiceImpl implements MaterialService {
             throw new IllegalArgumentException("Material no encontrado con ID: " + materialId);
         }
         materialRepository.deleteById(materialId);
+    }
+
+    @Override
+    public MaterialResponse getMaterialById(Long materialId) {
+        Material material = materialRepository.findById(materialId)
+                .orElseThrow(() -> new IllegalArgumentException("Material no encontrado con ID: " + materialId));
+        return materialMapper.toResponse(material);
+    }
+
+    @Override
+    public MaterialResponse updateMaterial(Long materialId, MaterialUpdateRequest request) {
+        Material material = materialRepository.findById(materialId)
+                .orElseThrow(() -> new IllegalArgumentException("Material no encontrado con ID: " + materialId));
+
+        material.setTitle(request.title());
+        material.setContentUrl(request.contentUrl());
+        material.setContentType(request.contentType());
+
+        Material updated = materialRepository.save(material);
+        return materialMapper.toResponse(updated);
     }
 }
