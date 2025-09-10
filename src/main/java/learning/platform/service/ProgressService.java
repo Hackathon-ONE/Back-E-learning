@@ -1,5 +1,6 @@
 package learning.platform.service;
 
+import learning.platform.dto.ProgressCourseResponse;
 import learning.platform.dto.ProgressUpdateRequest;
 import learning.platform.dto.ProgressResponse;
 
@@ -30,4 +31,7 @@ public interface ProgressService {
     ProgressResponse updateScore(Long enrollmentId, Long lessonId, Integer score);
 
     ProgressResponse updateCompletionPercentage(Long enrollmentId, Long lessonId, Double completionPercentage);
+
+    ProgressCourseResponse getProgressByCourse(Long studentId, Long courseId);
+
 }

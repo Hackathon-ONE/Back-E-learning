@@ -1,5 +1,6 @@
 package learning.platform.controller;
 
+import learning.platform.dto.ProgressCourseResponse;
 import learning.platform.dto.ProgressUpdateRequest;
 import learning.platform.dto.ProgressResponse;
 import learning.platform.service.ProgressService;
@@ -71,6 +72,14 @@ public class ProgressController {
             @RequestParam Long lessonId,
             @RequestParam Double completionPercentage) {
         ProgressResponse response = progressService.updateCompletionPercentage(enrollmentId, lessonId, completionPercentage);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/course/{courseId}")
+    public ResponseEntity<ProgressCourseResponse> getProgressByCourse(
+            @PathVariable Long courseId,
+            @RequestParam Long studentId) { // o tomarlo del JWT si es el mismo estudiante
+        ProgressCourseResponse response = progressService.getProgressByCourse(studentId, courseId);
         return ResponseEntity.ok(response);
     }
 

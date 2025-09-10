@@ -1,5 +1,6 @@
 package learning.platform.service.impl;
 
+import learning.platform.dto.ProgressCourseResponse;
 import learning.platform.dto.ProgressUpdateRequest;
 import learning.platform.dto.ProgressResponse;
 import learning.platform.entity.Enrollment;
@@ -188,6 +189,11 @@ public class ProgressServiceImpl implements ProgressService {
         progressRepository.save(progress);
 
         return progressMapper.toResponse(progress);
+    }
+
+    @Override
+    public ProgressCourseResponse getProgressByCourse(Long studentId, Long courseId) {
+        return null;
     }
 
 }
