@@ -2,28 +2,34 @@ package learning.platform.service.impl;
 
 import learning.platform.dto.UserRegisterRequest;
 import learning.platform.dto.UserResponse;
+import learning.platform.entity.Course;
 import learning.platform.entity.User;
 import learning.platform.enums.Role;
 import learning.platform.mapper.UserMapper;
+import learning.platform.repository.CourseRepository;
 import learning.platform.repository.UserRepository;
 import learning.platform.service.UserService;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final CourseRepository courseRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
     public UserServiceImpl(UserRepository userRepository,
+                           CourseRepository courseRepository,
                            PasswordEncoder passwordEncoder,
                            UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.courseRepository = courseRepository;
         this.passwordEncoder = passwordEncoder;
         this.userMapper = userMapper;
     }
@@ -34,7 +40,6 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("El email ya está registrado");
         }
 
-        // Validación defensiva del rol (ya validado por @Pattern en el DTO)
         Role roleEnum;
         try {
             roleEnum = Role.valueOf(request.role().toUpperCase());
@@ -42,9 +47,8 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Rol inválido: " + request.role());
         }
 
-        // Mapeo del DTO a entidad
         User user = userMapper.toEntity(request);
-        user.setRole(roleEnum); // Asignación explícita del enum
+        user.setRole(roleEnum);
         user.setPasswordHash(passwordEncoder.encode(request.password()));
         user.setActive(true);
 
@@ -70,6 +74,39 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + id));
         user.setActive(active);
+        userRepository.save(user);
+    }
+
+    @Override
+    public UserResponse mapToUserResponse(User user) {
+        List<String> roles = List.of(user.getRole().name());
+        List<Long> enrolledCourses = user.getEnrolledCourseIds();
+
+        return new UserResponse(
+                user.getId(),
+                user.getFullName(),
+                user.getEmail(),
+                roles,
+                enrolledCourses
+        );
+    }
+
+    // ✅ Nuevo método para evitar LazyInitializationException
+    @Override
+    public UserResponse getCurrentUser(String email) {
+        User user = userRepository.findByEmailWithCourses(email)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con email: " + email));
+        return mapToUserResponse(user);
+    }
+
+    // (Opcional) Método para inscribir cursos si lo necesitás
+    @Override
+    public void enrollUserInCourses(Long userId, List<Long> courseIds) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + userId));
+
+        List<Course> courses = courseRepository.findAllById(courseIds);
+        user.setEnrolledCourses(courses);
         userRepository.save(user);
     }
 }

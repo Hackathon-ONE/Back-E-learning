@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -55,8 +56,8 @@ class UserServiceImplTest {
                 1L,
                 "Ángeles Escudero",
                 "angeles@example.com",
-                "ADMIN",
-                true
+                List.of("ADMIN"),
+                List.of()
         );
 
         when(userRepository.existsByEmail(request.email())).thenReturn(false);
@@ -70,8 +71,8 @@ class UserServiceImplTest {
         assertNotNull(result);
         assertEquals(expectedResponse.email(), result.email());
         assertEquals(expectedResponse.fullName(), result.fullName());
-        assertEquals(expectedResponse.role(), result.role());
-        assertEquals(expectedResponse.active(), result.active());
+        assertEquals(expectedResponse.roles(), result.roles());
+        assertEquals(expectedResponse.enrolledCourses(), result.enrolledCourses());
         verify(userRepository).save(userEntity);
     }
 
@@ -80,16 +81,16 @@ class UserServiceImplTest {
         User user = new User();
         user.setId(1L);
         user.setFullName("Ángeles Escudero");
-        user.setEmail("angeles@example.com");
+        user.setEmail("angeles@lumina.com");
         user.setRole(Role.ADMIN);
         user.setActive(true);
 
         UserResponse expectedResponse = new UserResponse(
                 1L,
                 "Ángeles Escudero",
-                "angeles@example.com",
-                "ADMIN",
-                true
+                "angeles@lumina.com",
+                List.of("ADMIN"),
+                List.of()
         );
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -105,16 +106,16 @@ class UserServiceImplTest {
         User user = new User();
         user.setId(1L);
         user.setFullName("Ángeles Escudero");
-        user.setEmail("angeles@example.com");
+        user.setEmail("angeles@lumina.com");
         user.setRole(Role.ADMIN);
         user.setActive(true);
 
         UserResponse expectedResponse = new UserResponse(
                 1L,
                 "Ángeles Escudero",
-                "angeles@example.com",
-                "ADMIN",
-                true
+                "angeles@lumina.com",
+                List.of("ADMIN"),
+                List.of()
         );
 
         when(userRepository.findByEmail("angeles@example.com")).thenReturn(Optional.of(user));

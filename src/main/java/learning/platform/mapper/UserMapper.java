@@ -29,8 +29,8 @@ public interface UserMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "fullName", target = "fullName")
     @Mapping(source = "email", target = "email")
-    @Mapping(source = "role", target = "role", qualifiedByName = "roleToString")
-    @Mapping(source = "active", target = "active")
+    @Mapping(target = "roles", expression = "java(List.of(user.getRole().name()))")
+    @Mapping(target = "enrolledCourses", expression = "java(user.getEnrolledCourseIds())")
     UserResponse toResponse(User user);
 
     // Mapea una lista de entidades User a una lista de respuestas
@@ -40,11 +40,5 @@ public interface UserMapper {
     @Named("mapRole")
     default Role mapRole(String role) {
         return Role.valueOf(role.toUpperCase());
-    }
-
-    // Convierte Enum Role a String
-    @Named("roleToString")
-    default String roleToString(Role role) {
-        return role.name();
     }
 }

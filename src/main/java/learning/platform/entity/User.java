@@ -13,7 +13,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-public class User implements UserDetails { // ✅ Implementa UserDetails para integrarse con Spring Security
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,12 +36,20 @@ public class User implements UserDetails { // ✅ Implementa UserDetails para in
     private boolean active = true;
 
     @Column(nullable = false)
-    private  boolean isSubscribed;
+    private boolean isSubscribed;
 
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_courses",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private List<Course> enrolledCourses = List.of();
 
     @PrePersist
     protected void onCreate() {
@@ -54,16 +62,12 @@ public class User implements UserDetails { // ✅ Implementa UserDetails para in
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Constructores
     public User() {}
 
     public User(Long id, String fullName, String email) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
-        this.passwordHash = passwordHash;
-        this.role = role;
-        this.active = active;
         this.isSubscribed = false;
     }
 
@@ -86,56 +90,51 @@ public class User implements UserDetails { // ✅ Implementa UserDetails para in
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
 
-    public boolean isSubscribed() {
-        return isSubscribed;
-    }
-
-    public void setSubscribed(boolean subscribed) {
-        isSubscribed = subscribed;
-    }
+    public boolean isSubscribed() { return isSubscribed; }
+    public void setSubscribed(boolean subscribed) { isSubscribed = subscribed; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 
-    // Métodos requeridos por UserDetails 👇
+    public List<Course> getEnrolledCourses() { return enrolledCourses; }
+    public void setEnrolledCourses(List<Course> enrolledCourses) { this.enrolledCourses = enrolledCourses; }
 
+    /**
+     * Devuelve los IDs de los cursos en los que el usuario está inscripto.
+     * Útil para construir el DTO UserResponse sin exponer la entidad completa.
+     */
+    public List<Long> getEnrolledCourseIds() {
+        return enrolledCourses == null
+                ? List.of()
+                : enrolledCourses.stream()
+                .map(Course::getId)
+                .toList();
+    }
+
+    // Métodos requeridos por UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Convierte el enum Role en una autoridad reconocida por Spring Security
         return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
     }
 
     @Override
-    public String getPassword() {
-        return this.passwordHash;
-    }
+    public String getPassword() { return this.passwordHash; }
 
     @Override
-    public String getUsername() {
-        return this.email;
-    }
+    public String getUsername() { return this.email; }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true; // Podés personalizarlo si tenés lógica de expiración
-    }
+    public boolean isAccountNonExpired() { return true; }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true; // Podés usar el campo `active` si querés bloquear usuarios
-    }
+    public boolean isAccountNonLocked() { return true; }
 
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+    public boolean isCredentialsNonExpired() { return true; }
 
     @Override
-    public boolean isEnabled() {
-        return this.active;
-    }
+    public boolean isEnabled() { return this.active; }
 
-    // toString
     @Override
     public String toString() {
         return "User{" +
@@ -147,7 +146,6 @@ public class User implements UserDetails { // ✅ Implementa UserDetails para in
                 '}';
     }
 
-    // equals y hashCode
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -161,14 +159,4 @@ public class User implements UserDetails { // ✅ Implementa UserDetails para in
     public int hashCode() {
         return Objects.hash(id, email);
     }
-
-    // Relaciones (activá cuando estés lista)
-    // @OneToMany(mappedBy = "instructor")
-    // private List<Course> createdCourses;
-
-    // @OneToMany(mappedBy = "user")
-    // private List<Enrollment> enrollments;
-
-    // @OneToMany(mappedBy = "user")
-    // private List<Payment> payments;
 }
