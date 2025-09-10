@@ -1,4 +1,4 @@
-package learning.platform.service;
+package learning.platform.service.impl;
 
 import learning.platform.dto.LessonCreateRequest;
 import learning.platform.dto.LessonResponse;
@@ -7,7 +7,6 @@ import learning.platform.entity.Lesson;
 import learning.platform.mapper.LessonMapper;
 import learning.platform.repository.CourseRepository;
 import learning.platform.repository.LessonRepository;
-import learning.platform.service.impl.LessonServiceImpl;
 import learning.platform.testutil.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
