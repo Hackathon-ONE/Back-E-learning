@@ -2,6 +2,7 @@ package learning.platform.service;
 
 import learning.platform.dto.LessonCreateRequest;
 import learning.platform.dto.LessonResponse;
+import learning.platform.entity.User;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public interface LessonService {
      * @param request DTO con los datos de la lección
      * @return DTO de respuesta con los datos de la lección creada
      */
-    LessonResponse createLesson(LessonCreateRequest request);
+    LessonResponse createLesson(LessonCreateRequest request, User user);
 
     /**
      * Obtiene todas las lecciones asociadas a un curso, ordenadas por orderIndex.
@@ -33,14 +34,14 @@ public interface LessonService {
      * @param request DTO con los nuevos datos de la lección
      * @return DTO de respuesta con los datos de la lección actualizada
      */
-    LessonResponse updateLesson(Long id, LessonCreateRequest request);
+    LessonResponse updateLesson(Long id, LessonCreateRequest request,User user);
 
     /**
      * Elimina una lección por su ID.
      *
      * @param id ID de la lección a eliminar
      */
-    void deleteLesson(Long id);
+    void deleteLesson(Long id, User user);
 
     /**
      * Reordena las lecciones de un curso según una lista de IDs.

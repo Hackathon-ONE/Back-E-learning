@@ -3,8 +3,10 @@ package learning.platform.controller;
 import jakarta.validation.Valid;
 import learning.platform.dto.UserRegisterRequest;
 import learning.platform.dto.UserResponse;
+import learning.platform.entity.User;
 import learning.platform.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,8 +36,8 @@ public class UserController {
 
     // Activar o desactivar usuario
     @PutMapping("/{id}/active")
-    public ResponseEntity<Void> setActive(@PathVariable Long id, @RequestParam boolean active) {
-        userService.setActive(id, active);
+    public ResponseEntity<Void> setActive(@PathVariable Long id, @RequestParam boolean active, @AuthenticationPrincipal User user) {
+        userService.setActive(id, active, user);
         return ResponseEntity.noContent().build();
     }
 }

@@ -28,6 +28,8 @@ public class Payment {
 
     public  Payment(long l, User user, BigDecimal bigDecimal, LocalDateTime now, LocalDateTime localDateTime){}
 
+    public Payment(){}
+
     public Payment(PaymentRequest paymentRequest, User user) {
         this.user = user;
         this.amount = paymentRequest.amount();

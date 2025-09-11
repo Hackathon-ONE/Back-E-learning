@@ -44,3 +44,24 @@ CREATE TRIGGER users_audit_trigger
 AFTER INSERT OR UPDATE OR DELETE ON users
 FOR EACH ROW
 EXECUTE FUNCTION log_table_change();
+
+-- Triggers de payment
+DROP TRIGGER IF EXISTS payments_audit_trigger ON payments;
+CREATE TRIGGER payments_audit_trigger
+AFTER INSERT OR UPDATE OR DELETE ON payments
+FOR EACH ROW
+EXECUTE FUNCTION log_table_change();
+
+-- Trigger courses
+DROP TRIGGER IF EXISTS courses_audit_trigger ON courses;
+CREATE TRIGGER courses_audit_trigger
+AFTER INSERT OR UPDATE OR DELETE ON courses
+FOR EACH ROW
+EXECUTE FUNCTION log_table_change();
+
+--Trigger lessons
+DROP TRIGGER IF EXISTS lessons_audit_trigger ON lessons;
+CREATE TRIGGER lessons_audit_trigger
+AFTER INSERT OR UPDATE OR DELETE ON lessons
+FOR EACH ROW
+EXECUTE FUNCTION log_table_change();

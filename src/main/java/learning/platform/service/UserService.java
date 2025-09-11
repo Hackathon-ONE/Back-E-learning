@@ -2,6 +2,7 @@ package learning.platform.service;
 
 import learning.platform.dto.UserRegisterRequest;
 import learning.platform.dto.UserResponse;
+import learning.platform.entity.User;
 
 import java.util.Optional;
 
@@ -13,7 +14,7 @@ public interface UserService {
 
     UserResponse getById(Long id);
 
-    void setActive(Long id, boolean active);
+    void setActive(Long id, boolean active, User user);
 
 }
 

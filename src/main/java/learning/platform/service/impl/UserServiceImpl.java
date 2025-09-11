@@ -4,6 +4,8 @@ import learning.platform.dto.UserRegisterRequest;
 import learning.platform.dto.UserResponse;
 import learning.platform.entity.User;
 import learning.platform.enums.Role;
+import learning.platform.helper.AuditContext;
+import learning.platform.helper.AuditPropagator;
 import learning.platform.mapper.UserMapper;
 import learning.platform.repository.UserRepository;
 import learning.platform.service.UserService;
@@ -19,14 +21,17 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final AuditContext auditContext;
+    private final AuditPropagator auditPropagator;
 
-    public UserServiceImpl(UserRepository userRepository,
-                           PasswordEncoder passwordEncoder,
-                           UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper, AuditContext auditContext, AuditPropagator auditPropagator) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userMapper = userMapper;
+        this.auditContext = auditContext;
+        this.auditPropagator = auditPropagator;
     }
+
 
     @Override
     public UserResponse register(UserRegisterRequest request) {
@@ -74,7 +79,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void setActive(Long id, boolean active) {
+    public void setActive(Long id, boolean active, User userAuth) {
+        auditContext.setCurrentUser("user:" + userAuth.getId());
+        auditContext.setSessionId("session-" + System.currentTimeMillis());
+
+        auditPropagator.propagate();
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + id));
         user.setActive(active);
