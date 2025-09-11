@@ -11,9 +11,12 @@ import learning.platform.dto.QuizCreateRequest;
 import learning.platform.dto.QuizResponse;
 import learning.platform.dto.QuizSubmissionRequest;
 import learning.platform.dto.QuizSubmissionResponse;
+import learning.platform.entity.User;
 import learning.platform.service.QuizService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -92,8 +95,9 @@ public class QuizController {
     @PostMapping("/{quizId}/submit")
     public ResponseEntity<QuizSubmissionResponse> submitQuiz(
             @Parameter(description = "ID del quiz a resolver") @PathVariable Long quizId,
-            @Valid @RequestBody QuizSubmissionRequest request) {
-        QuizSubmissionResponse response = quizService.submitQuiz(quizId, request);
+            @Valid @RequestBody QuizSubmissionRequest request,
+            @AuthenticationPrincipal User student) {
+        QuizSubmissionResponse response = quizService.submitQuiz(quizId, request, student);
         return ResponseEntity.ok(response);
     }
 
