@@ -9,7 +9,8 @@ COPY pom.xml .
 COPY src ./src
 
 # Construir el JAR sin ejecutar tests
-RUN mvn clean package -DskipTests
+# RUN mvn clean package -DskipTests
+RUN mvn clean package -Dmaven.test.skip=true
 
 # Etapa 2: Imagen ligera para ejecutar la app
 FROM eclipse-temurin:20-jre
