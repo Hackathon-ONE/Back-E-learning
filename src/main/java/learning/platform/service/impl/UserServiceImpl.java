@@ -52,11 +52,11 @@ public class UserServiceImpl implements UserService {
         user.setPasswordHash(passwordEncoder.encode(request.password()));
         user.setActive(true);
 
-        if (request.urlPhoto() != null && !request.urlPhoto().isEmpty()){
+        if (request.urlPhoto() != null && !request.urlPhoto().isEmpty()) {
             user.setProfilePhoto(request.urlPhoto());
         }
 
-        if (request.about() != null && !request.about().isEmpty()){
+        if (request.about() != null && !request.about().isEmpty()) {
             user.setAbout(request.about());
         }
 
@@ -85,29 +85,14 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    // ✅ Método corregido: carga el usuario con cursos inscriptos
     @Override
-    public UserResponse mapToUserResponse(User user) {
-        List<String> roles = List.of(user.getRole().name());
-        List<Long> enrolledCourses = user.getEnrolledCourseIds();
-
-        return new UserResponse(
-                user.getId(),
-                user.getFullName(),
-                user.getEmail(),
-                roles,
-                enrolledCourses
-        );
+    public UserResponse getCurrentUser(User user) {
+        User fullUser = userRepository.findByEmailWithCourses(user.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con email: " + user.getEmail()));
+        return userMapper.toResponse(fullUser);
     }
 
-    // ✅ Nuevo método para evitar LazyInitializationException
-    @Override
-    public UserResponse getCurrentUser(String email) {
-        User user = userRepository.findByEmailWithCourses(email)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con email: " + email));
-        return mapToUserResponse(user);
-    }
-
-    // (Opcional) Método para inscribir cursos si lo necesitás
     @Override
     public void enrollUserInCourses(Long userId, List<Long> courseIds) {
         User user = userRepository.findById(userId)

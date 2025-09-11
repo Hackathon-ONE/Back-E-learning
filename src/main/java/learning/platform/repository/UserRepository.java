@@ -12,11 +12,17 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+
     Optional<User> findByEmail(String email);
+
     boolean existsByEmail(String email);
+
     List<User> findByRole(Role role);
 
-    // Carga el usuario junto con los cursos inscriptos
+    /**
+     * Carga el usuario junto con los cursos inscriptos para evitar LazyInitializationException.
+     * Se usa en el endpoint /api/users/me para devolver el perfil completo.
+     */
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.enrolledCourses WHERE u.email = :email")
     Optional<User> findByEmailWithCourses(@Param("email") String email);
 }

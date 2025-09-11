@@ -19,11 +19,10 @@ public class UserController {
         this.userService = userService;
     }
 
-    // ✅ Corregido: usa el método que carga cursos con JOIN FETCH
+    // ✅ Devuelve el perfil del usuario logueado, incluyendo cursos inscriptos
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal User user) {
-        UserResponse response = userService.getCurrentUser(user.getEmail());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(userService.getCurrentUser(user));
     }
 
     // Obtener usuario por email (solo para ADMIN)
@@ -37,8 +36,7 @@ public class UserController {
     // Obtener usuario por ID (solo para ADMIN)
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
-        UserResponse response = userService.getById(id);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(userService.getById(id));
     }
 
     // Activar o desactivar usuario (solo para ADMIN)

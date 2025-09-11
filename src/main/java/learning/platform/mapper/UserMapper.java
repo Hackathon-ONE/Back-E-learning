@@ -2,6 +2,7 @@ package learning.platform.mapper;
 
 import learning.platform.dto.UserRegisterRequest;
 import learning.platform.dto.UserResponse;
+import learning.platform.entity.Course;
 import learning.platform.entity.User;
 import learning.platform.enums.Role;
 import org.mapstruct.Mapper;
@@ -14,7 +15,6 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
 
-    // Mapea el DTO de registro a la entidad User
     @Mapping(source = "fullName", target = "fullName")
     @Mapping(source = "email", target = "email")
     @Mapping(source = "role", target = "role", qualifiedByName = "mapRole")
@@ -25,7 +25,6 @@ public interface UserMapper {
     @Mapping(target = "updatedAt", ignore = true)
     User toEntity(UserRegisterRequest request);
 
-    // Mapea la entidad User al DTO de respuesta
     @Mapping(source = "id", target = "id")
     @Mapping(source = "fullName", target = "fullName")
     @Mapping(source = "email", target = "email")
@@ -33,20 +32,24 @@ public interface UserMapper {
     @Mapping(source = "active", target = "active")
     @Mapping(source = "profilePhoto", target = "profilePhoto")
     @Mapping(source = "about", target = "about")
+    @Mapping(source = "enrolledCourses", target = "enrolledCourses", qualifiedByName = "courseListToIdList")
     UserResponse toResponse(User user);
 
-    // Mapea una lista de entidades User a una lista de respuestas
     List<UserResponse> toResponseList(List<User> users);
 
-    // Convierte String a Enum Role
     @Named("mapRole")
     default Role mapRole(String role) {
         return Role.valueOf(role.toUpperCase());
     }
 
-    // Convierte Enum Role a String
     @Named("roleToString")
     default String roleToString(Role role) {
         return role.name();
+    }
+
+    @Named("courseListToIdList")
+    static List<Long> courseListToIdList(List<Course> courses) {
+        if (courses == null) return List.of();
+        return courses.stream().map(Course::getId).toList();
     }
 }

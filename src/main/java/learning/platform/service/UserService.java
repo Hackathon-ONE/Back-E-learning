@@ -9,28 +9,34 @@ import java.util.Optional;
 
 public interface UserService {
 
+    /**
+     * Registra un nuevo usuario en la plataforma.
+     */
     UserResponse register(UserRegisterRequest request);
 
+    /**
+     * Busca un usuario por email.
+     */
     Optional<UserResponse> findByEmail(String email);
 
+    /**
+     * Obtiene un usuario por su ID.
+     */
     UserResponse getById(Long id);
 
+    /**
+     * Activa o desactiva un usuario.
+     */
     void setActive(Long id, boolean active);
 
     /**
-     * Mapea la entidad User autenticada al DTO de respuesta.
-     * Usado en el endpoint /api/users/me para devolver datos del usuario logueado.
+     * ✅ Método para obtener los datos del usuario logueado desde el token JWT.
+     * Usado en el endpoint /api/users/me con @AuthenticationPrincipal.
      */
-    UserResponse mapToUserResponse(User user);
+    UserResponse getCurrentUser(User user);
 
     /**
-     * ✅ Nuevo método para obtener el usuario con cursos inscriptos.
-     * Evita LazyInitializationException usando JOIN FETCH.
-     */
-    UserResponse getCurrentUser(String email);
-
-    /**
-     * (Opcional) Método para inscribir cursos si lo necesitás.
+     * Inscribe al usuario en una lista de cursos.
      */
     void enrollUserInCourses(Long userId, List<Long> courseIds);
 }
