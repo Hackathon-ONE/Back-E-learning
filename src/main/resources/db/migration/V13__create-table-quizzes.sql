@@ -1,11 +1,9 @@
-CREATE TABLE lessons(
+CREATE TABLE quizzes (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     course_id BIGINT NOT NULL,
-    title VARCHAR(100) NOT NULL,
-    order_index INTEGER NOT NULL,
-    duration INTERVAL NOT NULL,
+    title VARCHAR(150) NOT NULL,
 
-    CONSTRAINT fk_course
+    CONSTRAINT fk_quiz_course
         FOREIGN KEY (course_id) REFERENCES courses(id)
         ON DELETE CASCADE
 );
