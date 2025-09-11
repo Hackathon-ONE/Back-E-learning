@@ -48,6 +48,14 @@ public class UserServiceImpl implements UserService {
         user.setPasswordHash(passwordEncoder.encode(request.password()));
         user.setActive(true);
 
+        if (request.urlPhoto() != null && !request.urlPhoto().isEmpty()){
+            user.setProfilePhoto(request.urlPhoto());
+        }
+
+        if (request.about() != null && !request.about().isEmpty()){
+            user.setAbout(request.about());
+        }
+
         User savedUser = userRepository.save(user);
         return userMapper.toResponse(savedUser);
     }

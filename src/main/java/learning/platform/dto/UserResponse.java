@@ -8,5 +8,8 @@ public record UserResponse(
         @Schema(description = "Nombre completo", example = "Ángeles Escudero") String fullName,
         @Schema(description = "Correo electrónico", example = "angeles@example.com") String email,
         @Schema(description = "Rol asignado", example = "ADMIN") String role,
-        @Schema(description = "Estado de activación del usuario", example = "true") boolean active
+        @Schema(description = "Estado de activación del usuario", example = "true") boolean active,
+
+        String profilePhoto,
+        String about
 ) {}
