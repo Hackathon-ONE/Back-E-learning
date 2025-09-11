@@ -28,7 +28,7 @@ services:
       FLYWAY_USER: ${POSTGRES_USER}
       FLYWAY_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - ./db/migrations:/flyway/sql
+      - ./src/main/resources/db/migration:/flyway/sql
     networks:
       - elearning-network
 
@@ -38,6 +38,8 @@ services:
     depends_on:
       - postgres
       - flyway
+    env_file:
+      - .env.docker
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
