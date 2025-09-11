@@ -1,5 +1,7 @@
 CREATE TABLE courses (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    profile_photo VARCHAR(150),
+    about TEXT,
     slug VARCHAR(100) UNIQUE,
     title VARCHAR(100) NOT NULL,
     description TEXT,

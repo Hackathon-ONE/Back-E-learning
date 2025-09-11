@@ -15,6 +15,16 @@ public class CourseMapper {
         course.setDescription(dto.getDescription());
         course.setCategory(dto.getCategory());
         course.setPublished(dto.getPublished() != null && dto.getPublished());
+
+        if (dto.getUrlPhoto() != null && !dto.getUrlPhoto().isEmpty()){
+            course.setProfilePhoto(dto.getUrlPhoto());
+        }
+
+        if (dto.getAbout() != null && !dto.getAbout().isEmpty()){
+            course.setAbout(dto.getAbout());
+        }
+
+
         return course;
     }
 
@@ -26,6 +36,13 @@ public class CourseMapper {
         dto.setSlug(course.getSlug());
         if (course.getInstructor() != null) {
             dto.setInstructorName(course.getInstructor().getFullName());
+        }
+        if (course.getProfilePhoto() != null && !course.getProfilePhoto().isEmpty()){
+            dto.setUrlPhoto(course.getProfilePhoto());
+        }
+
+        if (course.getAbout() != null && !course.getAbout().isEmpty()){
+            dto.setAbout(course.getAbout());
         }
         return dto;
     }
