@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 // Se elimina @Data de Lombok
 @Entity
 @Table(name = "courses")
-public class Course {
+public class Course extends Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

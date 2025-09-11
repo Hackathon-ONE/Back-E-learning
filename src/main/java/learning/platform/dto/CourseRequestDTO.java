@@ -19,7 +19,30 @@ public class CourseRequestDTO {
     @NotNull(message = "El estado de publicación es requerido.")
     private Boolean published;
 
+    @Size(max = 150)
+    private String urlPhoto;
+
+    @Size(max = 255)
+    private String about;
+
     //Agregamos los getters y setters
+
+
+    public @Size(max = 150) String getUrlPhoto() {
+        return urlPhoto;
+    }
+
+    public void setUrlPhoto(@Size(max = 150) String urlPhoto) {
+        this.urlPhoto = urlPhoto;
+    }
+
+    public @Size(max = 255) String getAbout() {
+        return about;
+    }
+
+    public void setAbout(@Size(max = 255) String about) {
+        this.about = about;
+    }
 
     public String getTitle() {
         return title;

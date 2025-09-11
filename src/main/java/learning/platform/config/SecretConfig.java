@@ -1,21 +1,59 @@
 package learning.platform.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
+
+@Component
 @ConfigurationProperties(prefix = "app.config")
 public class SecretConfig {
-
-    // Variable que se llenará desde app.config.secret
+    private String pass;
     private String secret;
+    private String user;
+    private String dpath;
+    private String dburl;
 
-    // Setter necesario para @ConfigurationProperties
+    //Setter del valor del secreto
+
+
+    public void setDburl(String dburl) {
+        this.dburl = dburl;
+    }
+
+    public void setDpath(String dpath) {
+        this.dpath = dpath;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
+    }
+
     public void setSecret(String secret) {
         this.secret = secret;
     }
+    //Getter del valor del proyecto
 
-    // Getter para usar el valor en tu app
+
+    public String getDburl() {
+        return dburl;
+    }
+
+    public String getDpath() {
+        return dpath;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public String getPass() {
+        return pass;
+    }
+
     public String getSecret() {
         return secret;
     }
