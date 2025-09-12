@@ -3,7 +3,7 @@ package learning.platform.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import learning.platform.dto.CourseRequestDTO;
 import learning.platform.dto.CourseResponseDTO;
-import learning.platform.service.CourseServiceImpl;
+import learning.platform.service.impl.CourseServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

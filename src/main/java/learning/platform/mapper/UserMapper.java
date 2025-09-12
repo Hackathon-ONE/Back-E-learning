@@ -31,6 +31,8 @@ public interface UserMapper {
     @Mapping(source = "email", target = "email")
     @Mapping(source = "role", target = "role", qualifiedByName = "roleToString")
     @Mapping(source = "active", target = "active")
+    @Mapping(source = "profilePhoto", target = "profilePhoto")
+    @Mapping(source = "about", target = "about")
     UserResponse toResponse(User user);
 
     // Mapea una lista de entidades User a una lista de respuestas
