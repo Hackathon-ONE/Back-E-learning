@@ -33,6 +33,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     @Override
+    @Transactional
     public PaymentResponse pay(PaymentRequest paymentRequest) {
         auditContext.setCurrentUser("user:" + paymentRequest.userId());
         auditContext.setSessionId("session-" + System.currentTimeMillis());
@@ -67,6 +68,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     @Override
+    @Transactional
     public PaymentResponse cancelTransaction(Long userId) {
         auditContext.setCurrentUser("user:" + userId);
         auditContext.setSessionId("session-" + System.currentTimeMillis());

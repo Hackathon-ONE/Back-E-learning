@@ -15,6 +15,7 @@ import learning.platform.service.CourseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -37,6 +38,7 @@ public class CourseServiceImpl implements CourseService {
 
 
     // Lógica para el crear un curso
+    @Transactional
     @Override
     public CourseResponseDTO createCourse(CourseRequestDTO dto, User instructor) {
         auditContext.setCurrentUser("user:" + instructor.getId());
@@ -58,6 +60,7 @@ public class CourseServiceImpl implements CourseService {
     /**
      * Actualiza un curso existente.
      */
+    @Transactional
     @Override
     public CourseResponseDTO updateCourse(Long courseId, CourseRequestDTO dto, User user) {
         auditContext.setCurrentUser("user:" + user.getId());
@@ -82,6 +85,7 @@ public class CourseServiceImpl implements CourseService {
     /**
      * Elimina un curso por su ID.
      */
+    @Transactional
     @Override
     public void deleteCourse(Long courseId, User user) {
         auditContext.setCurrentUser("user:" + user.getId());

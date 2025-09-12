@@ -117,6 +117,7 @@ public class LessonServiceImpl implements LessonService {
      * @throws IllegalArgumentException si la lección o el curso no existen
      */
     @Override
+    @Transactional
     public LessonResponse updateLesson(Long id, LessonCreateRequest request, User user) {
         auditContext.setCurrentUser("user:" + user.getId());
         auditContext.setSessionId("session-" + System.currentTimeMillis());
@@ -150,6 +151,7 @@ public class LessonServiceImpl implements LessonService {
      * @throws IllegalArgumentException si la lección no existe
      */
     @Override
+    @Transactional
     public void deleteLesson(Long id, User user) {
         auditContext.setCurrentUser("user:" + user.getId());
         auditContext.setSessionId("session-" + System.currentTimeMillis());

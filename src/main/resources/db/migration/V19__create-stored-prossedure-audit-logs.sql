@@ -65,3 +65,10 @@ CREATE TRIGGER lessons_audit_trigger
 AFTER INSERT OR UPDATE OR DELETE ON lessons
 FOR EACH ROW
 EXECUTE FUNCTION log_table_change();
+
+--Trigger quizzes
+DROP TRIGGER IF EXISTS lessons_audit_trigger ON quizzes;
+CREATE TRIGGER quizzes_audit_trigger
+AFTER INSERT OR UPDATE OR DELETE ON quizzes
+FOR EACH ROW
+EXECUTE FUNCTION log_table_change();
