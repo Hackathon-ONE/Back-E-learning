@@ -6,9 +6,9 @@ import learning.platform.dto.MaterialUpdateRequest;
 import learning.platform.service.MaterialService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-
 import java.util.List;
 
 @RestController
@@ -31,17 +31,21 @@ public class MaterialController {
         return ResponseEntity.status(201).body(response);
     }
 
-    // Obtener todos los materiales de una lección (acceso según reglas de BE-011)
+    // Obtener todos los materiales de una lección (control BE-011)
     @GetMapping("/lessons/{lessonId}/materials")
-    public ResponseEntity<List<MaterialResponse>> getMaterialsByLesson(@PathVariable Long lessonId) {
-        List<MaterialResponse> responses = materialService.getMaterialsByLesson(lessonId);
+    public ResponseEntity<List<MaterialResponse>> getMaterialsByLesson(
+            @PathVariable Long lessonId,
+            @AuthenticationPrincipal(expression = "id") Long userId) {
+        List<MaterialResponse> responses = materialService.getMaterialsByLesson(lessonId, userId);
         return ResponseEntity.ok(responses);
     }
 
-    // Obtener un material por ID (acceso según reglas de BE-011)
+    // Obtener un material por ID (control BE-011)
     @GetMapping("/materials/{materialId}")
-    public ResponseEntity<MaterialResponse> getMaterialById(@PathVariable Long materialId) {
-        MaterialResponse response = materialService.getMaterialById(materialId);
+    public ResponseEntity<MaterialResponse> getMaterialById(
+            @PathVariable Long materialId,
+            @AuthenticationPrincipal(expression = "id") Long userId) {
+        MaterialResponse response = materialService.getMaterialById(materialId, userId);
         return ResponseEntity.ok(response);
     }
 

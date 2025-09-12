@@ -8,9 +8,6 @@ import jakarta.validation.constraints.PositiveOrZero;
 
 @Schema(description = "DTO para la creación de una lección")
 public record LessonCreateRequest(
-        @Schema(description = "ID del curso al que pertenece la lección", example = "1")
-        @NotNull(message = "El ID del curso es obligatorio")
-        Long courseId,
 
         @Schema(description = "Título de la lección", example = "Introducción a Java")
         @NotBlank(message = "El título no puede estar vacío")

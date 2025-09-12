@@ -78,7 +78,7 @@ public class ProgressController {
     @GetMapping("/course/{courseId}")
     public ResponseEntity<ProgressCourseResponse> getProgressByCourse(
             @PathVariable Long courseId,
-            @RequestParam Long studentId) { // o tomarlo del JWT si es el mismo estudiante
+            @RequestParam Long studentId) { // o tomarlo del JWT si es el mismo estudiante.
         ProgressCourseResponse response = progressService.getProgressByCourse(studentId, courseId);
         return ResponseEntity.ok(response);
     }

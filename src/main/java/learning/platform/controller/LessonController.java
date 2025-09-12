@@ -22,9 +22,11 @@ public class LessonController {
 
     // Crear una lección (sólo instructor):
     @PreAuthorize("hasRole('INSTRUCTOR')")
-    @PostMapping
-    public ResponseEntity<LessonResponse> createLesson(@Valid @RequestBody LessonCreateRequest request) {
-        LessonResponse response = lessonService.createLesson(request);
+    @PostMapping("/courses/{courseId}/lessons")
+    public ResponseEntity<LessonResponse> createLesson(
+            @PathVariable Long courseId,
+            @Valid @RequestBody LessonCreateRequest request) {
+        LessonResponse response = lessonService.createLesson(courseId, request);
         return ResponseEntity.status(201).body(response);
     }
 
@@ -36,8 +38,9 @@ public class LessonController {
     }
 
     // Obtener lecciones por curso (todos):
-    @GetMapping("/course/{courseId}")
-    public ResponseEntity<List<LessonResponse>> getLessonsByCourse(@PathVariable Long courseId) {
+    @GetMapping("/courses/{courseId}/lessons")
+    public ResponseEntity<List<LessonResponse>> getLessonsByCourse(
+            @PathVariable Long courseId) {
         List<LessonResponse> responses = lessonService.getLessonsByCourse(courseId);
         return ResponseEntity.ok(responses);
     }
@@ -62,7 +65,7 @@ public class LessonController {
 
     // Reordenar lecciones (sólo instructor):
     @PreAuthorize("hasRole('INSTRUCTOR')")
-    @PostMapping("/{courseId}/reorder")
+    @PostMapping("/courses/{courseId}/lessons/reorder")
     public ResponseEntity<List<LessonResponse>> reorderLessons(
             @PathVariable Long courseId,
             @RequestBody List<Long> newOrder) {

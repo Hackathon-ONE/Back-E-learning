@@ -34,13 +34,12 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public LessonResponse createLesson(LessonCreateRequest request) {
-        Course course = courseRepository.findById(request.courseId())
-                .orElseThrow(() -> new IllegalArgumentException("Curso no encontrado con ID: " + request.courseId()));
-
+    public LessonResponse createLesson(Long courseId, LessonCreateRequest request) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("Curso no encontrado con ID: " +
+                        courseId));
         Lesson lesson = lessonMapper.toEntity(request);
         lesson.setCourse(course);
-
         Lesson saved = lessonRepository.save(lesson);
         return lessonMapper.toResponse(saved);
     }
@@ -68,17 +67,14 @@ public class LessonServiceImpl implements LessonService {
         Lesson lesson = lessonRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Lección no encontrada con ID: " + id));
 
-        Course course = courseRepository.findById(request.courseId())
-                .orElseThrow(() -> new IllegalArgumentException("Curso no encontrado con ID: " + request.courseId()));
-
         lesson.setTitle(request.title());
         lesson.setOrderIndex(request.orderIndex());
         lesson.setDurationSeconds(request.durationSeconds());
-        lesson.setCourse(course);
 
         Lesson updated = lessonRepository.save(lesson);
         return lessonMapper.toResponse(updated);
     }
+
 
     @Override
     public void deleteLesson(Long id) {
