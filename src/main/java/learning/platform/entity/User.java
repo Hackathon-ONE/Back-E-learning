@@ -54,7 +54,9 @@ public class User extends Profile implements UserDetails {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // ✅ Relación con cursos inscriptos
+    // ✅ Relación muchos a muchos entre usuarios y cursos inscriptos.
+    // Se utiliza una tabla intermedia 'user_courses' creada manualmente en PostgreSQL.
+    // El fetch es LAZY para evitar carga innecesaria, y se usa JOIN FETCH en consultas específicas.
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_courses",
