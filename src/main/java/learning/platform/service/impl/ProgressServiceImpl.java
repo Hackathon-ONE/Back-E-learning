@@ -128,7 +128,7 @@ public class ProgressServiceImpl implements ProgressService {
         List<Progress> progressList = progressRepository.findByEnrollment(enrollment);
         if (progressList.isEmpty()) return 0.0;
 
-        // Promedio de completionPercentage
+        // Promedio de completionPercentage:
         double totalPercentage = progressList.stream()
                 .mapToDouble(p -> p.getCompletionPercentage() != null ? p.getCompletionPercentage().doubleValue() : 0.0)
                 .sum();
@@ -191,6 +191,7 @@ public class ProgressServiceImpl implements ProgressService {
         return progressMapper.toResponse(progress);
     }
 
+    // Completar cuando la entidad Quiz esté completa:
     @Override
     public ProgressCourseResponse getProgressByCourse(Long studentId, Long courseId) {
         return null;
