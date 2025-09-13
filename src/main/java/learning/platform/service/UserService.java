@@ -4,7 +4,6 @@ import learning.platform.dto.UserRegisterRequest;
 import learning.platform.dto.UserResponse;
 import learning.platform.entity.User;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -34,9 +33,4 @@ public interface UserService {
      * Usado en el endpoint /api/users/me con @AuthenticationPrincipal.
      */
     UserResponse getCurrentUser(User user);
-
-    /**
-     * Inscribe al usuario en una lista de cursos.
-     */
-    void enrollUserInCourses(Long userId, List<Long> courseIds);
 }

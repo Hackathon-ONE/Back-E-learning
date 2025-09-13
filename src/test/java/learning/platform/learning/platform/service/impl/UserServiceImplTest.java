@@ -41,7 +41,9 @@ class UserServiceImplTest {
                 "Ángeles Escudero",
                 "angeles@example.com",
                 "SecurePass123!",
-                "ADMIN"
+                "ADMIN",
+                "https://example.com/photos/angeles.jpg",
+                "Consultora experta en ERP y automatización de procesos"
         );
 
         User userEntity = new User();
@@ -51,12 +53,17 @@ class UserServiceImplTest {
         userEntity.setRole(Role.ADMIN);
         userEntity.setPasswordHash("encodedPass123");
         userEntity.setActive(true);
+        userEntity.setProfilePhoto("https://example.com/photos/angeles.jpg");
+        userEntity.setAbout("Consultora experta en ERP y automatización de procesos");
 
         UserResponse expectedResponse = new UserResponse(
                 1L,
                 "Ángeles Escudero",
                 "angeles@example.com",
-                List.of("ADMIN"),
+                "ADMIN",
+                true,
+                "https://example.com/photos/angeles.jpg",
+                "Consultora experta en ERP y automatización de procesos",
                 List.of()
         );
 
@@ -71,7 +78,10 @@ class UserServiceImplTest {
         assertNotNull(result);
         assertEquals(expectedResponse.email(), result.email());
         assertEquals(expectedResponse.fullName(), result.fullName());
-        assertEquals(expectedResponse.roles(), result.roles());
+        assertEquals(expectedResponse.role(), result.role());
+        assertEquals(expectedResponse.active(), result.active());
+        assertEquals(expectedResponse.profilePhoto(), result.profilePhoto());
+        assertEquals(expectedResponse.about(), result.about());
         assertEquals(expectedResponse.enrolledCourses(), result.enrolledCourses());
         verify(userRepository).save(userEntity);
     }
@@ -84,12 +94,17 @@ class UserServiceImplTest {
         user.setEmail("angeles@lumina.com");
         user.setRole(Role.ADMIN);
         user.setActive(true);
+        user.setProfilePhoto("https://example.com/photos/angeles.jpg");
+        user.setAbout("Consultora experta en ERP y automatización de procesos");
 
         UserResponse expectedResponse = new UserResponse(
                 1L,
                 "Ángeles Escudero",
                 "angeles@lumina.com",
-                List.of("ADMIN"),
+                "ADMIN",
+                true,
+                "https://example.com/photos/angeles.jpg",
+                "Consultora experta en ERP y automatización de procesos",
                 List.of()
         );
 
@@ -109,12 +124,17 @@ class UserServiceImplTest {
         user.setEmail("angeles@lumina.com");
         user.setRole(Role.ADMIN);
         user.setActive(true);
+        user.setProfilePhoto("https://example.com/photos/angeles.jpg");
+        user.setAbout("Consultora experta en ERP y automatización de procesos");
 
         UserResponse expectedResponse = new UserResponse(
                 1L,
                 "Ángeles Escudero",
                 "angeles@lumina.com",
-                List.of("ADMIN"),
+                "ADMIN",
+                true,
+                "https://example.com/photos/angeles.jpg",
+                "Consultora experta en ERP y automatización de procesos",
                 List.of()
         );
 

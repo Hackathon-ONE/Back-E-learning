@@ -2,34 +2,36 @@ package learning.platform.service.impl;
 
 import learning.platform.dto.UserRegisterRequest;
 import learning.platform.dto.UserResponse;
-import learning.platform.entity.Course;
+import learning.platform.entity.Enrollment;
 import learning.platform.entity.User;
 import learning.platform.enums.Role;
 import learning.platform.mapper.UserMapper;
-import learning.platform.repository.CourseRepository;
+import learning.platform.repository.EnrollmentRepository;
 import learning.platform.repository.UserRepository;
 import learning.platform.service.UserService;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final CourseRepository courseRepository;
+    private final EnrollmentRepository enrollmentRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
     public UserServiceImpl(UserRepository userRepository,
-                           CourseRepository courseRepository,
+                           EnrollmentRepository enrollmentRepository,
                            PasswordEncoder passwordEncoder,
                            UserMapper userMapper) {
         this.userRepository = userRepository;
-        this.courseRepository = courseRepository;
+        this.enrollmentRepository = enrollmentRepository;
         this.passwordEncoder = passwordEncoder;
         this.userMapper = userMapper;
     }
@@ -85,21 +87,26 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    // ✅ Método corregido: carga el usuario con cursos inscriptos
+    // ✅ Método corregido: obtiene el usuario actual y sus cursos inscriptos
     @Override
     public UserResponse getCurrentUser(User user) {
-        User fullUser = userRepository.findByEmailWithCourses(user.getEmail())
+        User fullUser = userRepository.findByEmail(user.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con email: " + user.getEmail()));
-        return userMapper.toResponse(fullUser);
-    }
 
-    @Override
-    public void enrollUserInCourses(Long userId, List<Long> courseIds) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + userId));
+        List<Long> enrolledCourseIds = enrollmentRepository.findByStudentId(fullUser.getId(), Pageable.unpaged())
+                .stream()
+                .map(enrollment -> enrollment.getCourse().getId())
+                .collect(Collectors.toList());
 
-        List<Course> courses = courseRepository.findAllById(courseIds);
-        user.setEnrolledCourses(courses);
-        userRepository.save(user);
+        return new UserResponse(
+                fullUser.getId(),
+                fullUser.getFullName(),
+                fullUser.getEmail(),
+                fullUser.getRole().name(),
+                fullUser.isActive(),
+                fullUser.getProfilePhoto(),
+                fullUser.getAbout(),
+                enrolledCourseIds
+        );
     }
 }

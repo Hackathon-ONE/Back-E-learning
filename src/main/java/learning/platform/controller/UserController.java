@@ -19,10 +19,11 @@ public class UserController {
         this.userService = userService;
     }
 
-    // ✅ Devuelve el perfil del usuario logueado, incluyendo cursos inscriptos
+    // ✅ Devuelve el perfil del usuario logueado, incluyendo IDs de cursos inscriptos
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(userService.getCurrentUser(user));
+    public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal User authenticatedUser) {
+        UserResponse response = userService.getCurrentUser(authenticatedUser);
+        return ResponseEntity.ok(response);
     }
 
     // Obtener usuario por email (solo para ADMIN)
