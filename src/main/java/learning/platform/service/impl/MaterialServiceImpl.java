@@ -69,7 +69,7 @@ public class MaterialServiceImpl implements MaterialService {
         materialRepository.deleteById(materialId);
     }
 
-    // -------------------- CONTROL DE ACCESO BE-011 --------------------
+    // -------------------- CONTROL DE ACCESO --------------------
 
     @Override
     public MaterialResponse getMaterialById(Long materialId, Long userId) {

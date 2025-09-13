@@ -7,9 +7,6 @@ import learning.platform.enums.ContentType;
 
 @Schema(description = "DTO para la creación de un material dentro de una lección.")
 public record MaterialCreateRequest(
-        @Schema(description = "ID de la lección a la que pertenece el material", example = "10")
-        @NotNull(message = "El ID de la lección es obligatorio")
-        Long lessonId,
 
         @Schema(description = "Título del material", example = "Video introductorio")
         @NotBlank(message = "El título no puede estar vacío")

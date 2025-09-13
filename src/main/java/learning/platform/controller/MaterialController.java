@@ -21,7 +21,7 @@ public class MaterialController {
         this.materialService = materialService;
     }
 
-    // Crear un material (solo instructor)
+    // Crear un material (solo instructor):
     @PreAuthorize("hasRole('INSTRUCTOR')")
     @PostMapping("/lessons/{lessonId}/materials")
     public ResponseEntity<MaterialResponse> createMaterial(
