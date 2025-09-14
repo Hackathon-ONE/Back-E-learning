@@ -2,7 +2,6 @@ package learning.platform.service.impl;
 
 import learning.platform.dto.UserRegisterRequest;
 import learning.platform.dto.UserResponse;
-import learning.platform.entity.Enrollment;
 import learning.platform.entity.User;
 import learning.platform.enums.Role;
 import learning.platform.mapper.UserMapper;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -63,20 +61,20 @@ public class UserServiceImpl implements UserService {
         }
 
         User savedUser = userRepository.save(user);
-        return userMapper.toResponse(savedUser);
+        return userMapper.toResponse(savedUser, List.of()); // ✅ lista vacía al registrar
     }
 
     @Override
     public Optional<UserResponse> findByEmail(String email) {
         return userRepository.findByEmail(email)
-                .map(userMapper::toResponse);
+                .map(user -> userMapper.toResponse(user, List.of())); // ✅ lista vacía
     }
 
     @Override
     public UserResponse getById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + id));
-        return userMapper.toResponse(user);
+        return userMapper.toResponse(user, List.of()); // ✅ lista vacía
     }
 
     @Override
@@ -87,7 +85,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    // ✅ Método corregido: obtiene el usuario actual y sus cursos inscriptos
     @Override
     public UserResponse getCurrentUser(User user) {
         User fullUser = userRepository.findByEmail(user.getEmail())
@@ -96,17 +93,8 @@ public class UserServiceImpl implements UserService {
         List<Long> enrolledCourseIds = enrollmentRepository.findByStudentId(fullUser.getId(), Pageable.unpaged())
                 .stream()
                 .map(enrollment -> enrollment.getCourse().getId())
-                .collect(Collectors.toList());
+                .toList();
 
-        return new UserResponse(
-                fullUser.getId(),
-                fullUser.getFullName(),
-                fullUser.getEmail(),
-                fullUser.getRole().name(),
-                fullUser.isActive(),
-                fullUser.getProfilePhoto(),
-                fullUser.getAbout(),
-                enrolledCourseIds
-        );
+        return userMapper.toResponse(fullUser, enrolledCourseIds); // ✅ cursos reales
     }
 }

@@ -2,7 +2,6 @@ package learning.platform.mapper;
 
 import learning.platform.dto.UserRegisterRequest;
 import learning.platform.dto.UserResponse;
-import learning.platform.entity.Course;
 import learning.platform.entity.User;
 import learning.platform.enums.Role;
 import org.mapstruct.Mapper;
@@ -25,15 +24,19 @@ public interface UserMapper {
     @Mapping(target = "updatedAt", ignore = true)
     User toEntity(UserRegisterRequest request);
 
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "fullName", target = "fullName")
-    @Mapping(source = "email", target = "email")
-    @Mapping(source = "role", target = "role", qualifiedByName = "roleToString")
-    @Mapping(source = "active", target = "active")
-    @Mapping(source = "profilePhoto", target = "profilePhoto")
-    @Mapping(source = "about", target = "about")
-    @Mapping(source = "enrolledCourses", target = "enrolledCourses", qualifiedByName = "courseListToIdList")
-    UserResponse toResponse(User user);
+    // ✅ Método manual para construir el DTO con cursos
+    default UserResponse toResponse(User user, List<Long> enrolledCourseIds) {
+        return new UserResponse(
+                user.getId(),
+                user.getFullName(),
+                user.getEmail(),
+                user.getRole().name(),
+                user.isActive(),
+                user.getProfilePhoto(),
+                user.getAbout(),
+                enrolledCourseIds
+        );
+    }
 
     List<UserResponse> toResponseList(List<User> users);
 
@@ -45,11 +48,5 @@ public interface UserMapper {
     @Named("roleToString")
     default String roleToString(Role role) {
         return role.name();
-    }
-
-    @Named("courseListToIdList")
-    static List<Long> courseListToIdList(List<Course> courses) {
-        if (courses == null) return List.of();
-        return courses.stream().map(Course::getId).toList();
     }
 }

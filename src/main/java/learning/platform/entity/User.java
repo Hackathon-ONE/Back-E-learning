@@ -54,25 +54,6 @@ public class User extends Profile implements UserDetails {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // ✅ Relación muchos a muchos entre usuarios y cursos inscriptos.
-    // Se utiliza una tabla intermedia 'user_courses' creada manualmente en PostgreSQL.
-    // El fetch es LAZY para evitar carga innecesaria, y se usa JOIN FETCH en consultas específicas.
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "user_courses",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id")
-    )
-    private List<Course> enrolledCourses;
-
-    public List<Course> getEnrolledCourses() {
-        return enrolledCourses;
-    }
-
-    public void setEnrolledCourses(List<Course> enrolledCourses) {
-        this.enrolledCourses = enrolledCourses;
-    }
-
     // Constructores
     public User() {}
 
@@ -158,14 +139,4 @@ public class User extends Profile implements UserDetails {
     public int hashCode() {
         return Objects.hash(id, email);
     }
-
-    // Relaciones futuras (comentadas)
-    // @OneToMany(mappedBy = "instructor")
-    // private List<Course> createdCourses;
-
-    // @OneToMany(mappedBy = "user")
-    // private List<Enrollment> enrollments;
-
-    // @OneToMany(mappedBy = "user")
-    // private List<Payment> payments;
 }
