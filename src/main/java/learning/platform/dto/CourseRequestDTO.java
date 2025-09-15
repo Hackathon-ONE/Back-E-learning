@@ -16,17 +16,13 @@ public class CourseRequestDTO {
     @NotBlank(message = "La categoría no puede estar vacía.")
     private String category;
 
-    @NotNull(message = "El estado de publicación es requerido.")
-    private Boolean published;
-
     @Size(max = 150)
     private String urlPhoto;
 
     @Size(max = 255)
     private String about;
 
-    //Agregamos los getters y setters
-
+    //getters y setters
 
     public @Size(max = 150) String getUrlPhoto() {
         return urlPhoto;
@@ -68,11 +64,4 @@ public class CourseRequestDTO {
         this.category = category;
     }
 
-    public Boolean getPublished() {
-        return published;
-    }
-
-    public void setPublished(Boolean published) {
-        this.published = published;
-    }
 }
