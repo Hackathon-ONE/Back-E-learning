@@ -77,6 +77,18 @@ public class CourseController {
     }
 
     /**
+     * Publicar o despublicar un curso (Solamente puede el ADMIN)
+     */
+    @PatchMapping("/{id}/publish")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CourseResponseDTO> publishCourse(
+            @PathVariable Long id,
+            @RequestParam boolean published
+    ) {
+        return ResponseEntity.ok(courseService.publishCourse(id, published));
+    }
+
+    /**
      * Delete a course (INSTRUCTOR or ADMIN)
      */
     @DeleteMapping("/{id}")

@@ -23,4 +23,6 @@ public interface CourseService {
     //void enrollStudentInCourse(Long courseId, User student);
     // Buscar un curso por su ID y devolver la entidad
     Course findCourseById(Long id);
+    // Método en la interfaz CourseService
+    CourseResponseDTO publishCourse(Long courseId, boolean published);
 }
