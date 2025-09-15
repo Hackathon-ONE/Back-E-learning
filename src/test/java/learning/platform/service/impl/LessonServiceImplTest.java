@@ -45,9 +45,19 @@ public class LessonServiceImplTest {
     @BeforeEach
     void setUp() {
         course = TestDataFactory.buildCourse(1L);
-        request = new LessonCreateRequest(1L, "Test Lesson", "https://example.com", null, 1, 30);
+        request = new LessonCreateRequest(
+                "Test Lesson",
+                1,
+                60
+                );
         lesson = TestDataFactory.buildLesson(1L, request, course);
-        response = new LessonResponse(1L, 1L, "Test Lesson", "https://example.com", null, 1, 30);
+        response = new LessonResponse(
+                1L,
+                1L,
+                "Test Lesson",
+                1,
+                60
+        );
     }
 
     @Test
@@ -57,7 +67,7 @@ public class LessonServiceImplTest {
         when(lessonRepository.save(lesson)).thenReturn(lesson);
         when(lessonMapper.toResponse(lesson)).thenReturn(response);
 
-        LessonResponse result = lessonService.createLesson(request);
+        LessonResponse result = lessonService.createLesson(1L, request);
 
         verify(courseRepository).findById(course.getId());
         verify(lessonMapper).toEntity(request);
@@ -72,7 +82,7 @@ public class LessonServiceImplTest {
         when(courseRepository.findById(course.getId())).thenReturn(Optional.empty());
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> lessonService.createLesson(request));
+                () -> lessonService.createLesson(1L, request));
 
         assertEquals("Curso no encontrado con ID: " + course.getId(), exception.getMessage());
         verify(courseRepository).findById(course.getId());
@@ -83,14 +93,23 @@ public class LessonServiceImplTest {
     void shouldGetLessonsByCourseOrdered() {
         Lesson lesson2 = TestDataFactory.buildLesson(
                 2L,
-                new LessonCreateRequest(course.getId(), "Lesson 2", "https://example.com/2", null, 2, 30),
+                new LessonCreateRequest(
+                        "Lesson 2",
+                        2,
+                        50),
                 course
         );
 
         List<Lesson> lessons = Arrays.asList(lesson, lesson2);
         List<LessonResponse> responses = Arrays.asList(
                 response,
-                new LessonResponse(2L, course.getId(), "Lesson 2", "https://example.com/2", null, 2, 30)
+                new LessonResponse(
+                        2L,
+                        course.getId(),
+                        "Lesson 2",
+                        2,
+                        50
+                )
         );
 
         when(courseRepository.findById(course.getId())).thenReturn(Optional.of(course));
@@ -138,7 +157,11 @@ public class LessonServiceImplTest {
     void shouldReorderLessons() {
         Lesson lesson2 = TestDataFactory.buildLesson(
                 2L,
-                new LessonCreateRequest(course.getId(), "Lesson 2", "https://example.com/2", null, 2, 30),
+                new LessonCreateRequest(
+                        "Lesson 2",
+                        2,
+                        50
+                ),
                 course
         );
 
@@ -160,7 +183,11 @@ public class LessonServiceImplTest {
     void shouldThrowExceptionWhenReorderingWithInvalidIds() {
         Lesson lesson2 = TestDataFactory.buildLesson(
                 2L,
-                new LessonCreateRequest(course.getId(), "Lesson 2", "https://example.com/2", null, 2, 30),
+                new LessonCreateRequest(
+                        "Lesson 2",
+                        2,
+                        50
+                ),
                 course
         );
 

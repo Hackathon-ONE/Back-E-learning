@@ -59,7 +59,7 @@ public class LessonServiceTest {
         when(lessonRepository.save(lesson)).thenReturn(lesson);
         when(lessonMapper.toResponse(lesson)).thenReturn(response);
 
-        LessonResponse result = lessonService.createLesson(request);
+        LessonResponse result = lessonService.createLesson(1L, request);
 
         verify(courseRepository).findById(1L);
         verify(lessonMapper).toEntity(request);
@@ -74,7 +74,7 @@ public class LessonServiceTest {
         when(courseRepository.findById(1L)).thenReturn(Optional.empty());
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> lessonService.createLesson(request));
+                () -> lessonService.createLesson(1L,request));
 
         assertEquals("Curso no encontrado con ID: 1", exception.getMessage());
         verify(courseRepository).findById(1L);
@@ -83,12 +83,12 @@ public class LessonServiceTest {
 
     @Test
     void shouldGetLessonsByCourseOrdered() {
-        Lesson lesson2 = buildLesson(2L, new LessonCreateRequest(1L, "Lesson 2", "https://example.com/2", null, 2, 25), course);
+        Lesson lesson2 = buildLesson(2L, new LessonCreateRequest("Lesson2", 2, 50), course);
         List<Lesson> lessons = Arrays.asList(lesson, lesson2);
 
         List<LessonResponse> responses = Arrays.asList(
-                new LessonResponse(1L, 1L, "Test Lesson", "https://example.com", null, 1, null),
-                new LessonResponse(2L, 1L, "Lesson 2", "https://example.com/2", null, 2, null)
+                new LessonResponse(1L, 1L, "Test Lesson", 1, 25),
+                new LessonResponse(2L, 1L, "Lesson 2", 2, 50)
         );
 
         when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
@@ -134,7 +134,7 @@ public class LessonServiceTest {
 
     @Test
     void shouldReorderLessons() {
-        Lesson lesson2 = buildLesson(2L, new LessonCreateRequest(1L, "Lesson 2", "https://example.com/2", null, 2, 25), course);
+        Lesson lesson2 = buildLesson(2L, new LessonCreateRequest("New Lesson", 3, 50), course);
         List<Lesson> lessons = Arrays.asList(lesson, lesson2);
         List<Long> newOrder = Arrays.asList(2L, 1L);
 

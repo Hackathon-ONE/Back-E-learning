@@ -44,10 +44,7 @@ class ProgressRepositoryTest {
         entityManager.persist(course);
 
         LessonCreateRequest lessonRequest = new LessonCreateRequest(
-                course.getId(),       // courseId
                 "título-prueba",      // title
-                "https://dummy.url",  // contentUrl
-                ContentType.VIDEO,    // contentType
                 1,                    // orderIndex
                 30                    // durationMinutes
         );
