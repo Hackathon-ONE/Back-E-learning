@@ -25,7 +25,6 @@ public class TestDataFactory {
         lesson.setId(id);
         lesson.setCourse(course);
         lesson.setTitle(request.title());        // ⚠️ getter de record.
-        lesson.setContentUrl(request.contentUrl()); // ⚠️ getter de record.
         lesson.setOrderIndex(request.orderIndex()); // ⚠️ getter de record.
         return lesson;
     }

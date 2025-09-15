@@ -47,8 +47,8 @@ public class LessonServiceTest {
     @BeforeEach
     void setUp() {
         course = buildCourse(1L);
-        request = new LessonCreateRequest(1L, "Test Lesson", "https://example.com", null, 1, 30);
-        response = new LessonResponse(1L, 1L, "Test Lesson", "https://example.com", null, 1, null);
+        request = new LessonCreateRequest("TestLesson", 1, 30);
+        response = new LessonResponse(1L, 1L, "Test Lesson", 1, null);
         lesson = buildLesson(1L, request, course);
     }
 
