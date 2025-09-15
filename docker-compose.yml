@@ -13,13 +13,13 @@ services:
     networks:
       - elearning-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
       interval: 5s
-      retries: 5
+      retries: 10
       timeout: 5s
 
   flyway:
-    image: flyway/flyway:9
+    image: flyway/flyway:11
     container_name: elearning-flyway
     depends_on:
       - postgres
@@ -28,7 +28,7 @@ services:
       FLYWAY_USER: ${POSTGRES_USER}
       FLYWAY_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - ./db/migrations:/flyway/sql
+      - ./src/main/resources/db/migration
     networks:
       - elearning-network
 
@@ -39,6 +39,7 @@ services:
       - postgres
       - flyway
     environment:
+      SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
