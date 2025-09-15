@@ -63,9 +63,9 @@ public class EnrollmentController {
     }
 
     @Operation(summary = "Inscripciones de un curso", description = "Obtiene todas las inscripciones de un curso, accesible para instructores")
-    @GetMapping("/course-enrollments")
-    public ResponseEntity<Page<EnrollmentResponse>> courseEnrolls(@AuthenticationPrincipal User user, Pageable pageable){
-        return ResponseEntity.ok(enrollmentService.findByCourse(user.getId(), pageable));
+    @GetMapping("/course-enrollments/{courseId}")
+    public ResponseEntity<Page<EnrollmentResponse>> courseEnrolls(@PathVariable Long courseId, Pageable pageable){
+        return ResponseEntity.ok(enrollmentService.findByCourse(courseId, pageable));
     }
 
 

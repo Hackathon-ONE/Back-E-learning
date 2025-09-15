@@ -4,6 +4,9 @@ import learning.platform.dto.LessonCreateRequest;
 import learning.platform.dto.LessonResponse;
 import learning.platform.entity.Course;
 import learning.platform.entity.Lesson;
+import learning.platform.entity.User;
+import learning.platform.helper.AuditContext;
+import learning.platform.helper.AuditPropagator;
 import learning.platform.mapper.LessonMapper;
 import learning.platform.repository.CourseRepository;
 import learning.platform.repository.LessonRepository;
@@ -27,12 +30,17 @@ public class LessonServiceImpl implements LessonService {
     private final LessonRepository lessonRepository;
     private final CourseRepository courseRepository;
     private final LessonMapper lessonMapper;
+    private final AuditContext auditContext;
+    private final AuditPropagator auditPropagator;
 
-    public LessonServiceImpl(LessonRepository lessonRepository, CourseRepository courseRepository, LessonMapper lessonMapper) {
+    public LessonServiceImpl(LessonRepository lessonRepository, CourseRepository courseRepository, LessonMapper lessonMapper, AuditContext auditContext, AuditPropagator auditPropagator) {
         this.lessonRepository = lessonRepository;
         this.courseRepository = courseRepository;
         this.lessonMapper = lessonMapper;
+        this.auditContext = auditContext;
+        this.auditPropagator = auditPropagator;
     }
+
 
     /**
      * Constructor para inyección de dependencias.
@@ -58,7 +66,12 @@ public class LessonServiceImpl implements LessonService {
      * @throws IllegalArgumentException si el curso no existe
      */
     @Override
-    public LessonResponse createLesson(LessonCreateRequest request) {
+    public LessonResponse createLesson(LessonCreateRequest request, User user) {
+
+        auditContext.setCurrentUser("user:" + user.getId());
+        auditContext.setSessionId("session-" + System.currentTimeMillis());
+
+        auditPropagator.propagate();
         // Buscar el curso:
         Course course = courseRepository.findById(request.courseId())
                 .orElseThrow(() -> new IllegalArgumentException("Curso no encontrado con ID: " + request.courseId()));
@@ -104,7 +117,12 @@ public class LessonServiceImpl implements LessonService {
      * @throws IllegalArgumentException si la lección o el curso no existen
      */
     @Override
-    public LessonResponse updateLesson(Long id, LessonCreateRequest request) {
+    @Transactional
+    public LessonResponse updateLesson(Long id, LessonCreateRequest request, User user) {
+        auditContext.setCurrentUser("user:" + user.getId());
+        auditContext.setSessionId("session-" + System.currentTimeMillis());
+
+        auditPropagator.propagate();
         // Buscar la lección:
         Lesson lesson = lessonRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Lección no encontrada con ID: " + id));
@@ -133,7 +151,12 @@ public class LessonServiceImpl implements LessonService {
      * @throws IllegalArgumentException si la lección no existe
      */
     @Override
-    public void deleteLesson(Long id) {
+    @Transactional
+    public void deleteLesson(Long id, User user) {
+        auditContext.setCurrentUser("user:" + user.getId());
+        auditContext.setSessionId("session-" + System.currentTimeMillis());
+
+        auditPropagator.propagate();
         if (!lessonRepository.existsById(id)) {
             throw new IllegalArgumentException("Lección no encontrada con ID: " + id);
         }
