@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -80,9 +81,10 @@ public class AdminCourseController {
     @PutMapping("/{id}")
     public ResponseEntity<CourseResponseDTO> updateCourse(
             @PathVariable Long id,
-            @Valid @RequestBody CourseRequestDTO dto
+            @Valid @RequestBody CourseRequestDTO dto,
+            @AuthenticationPrincipal User user
     ) {
-        CourseResponseDTO updatedCourse = courseService.updateCourse(id, dto);
+        CourseResponseDTO updatedCourse = courseService.updateCourse(id, dto,user);
         return ResponseEntity.ok(updatedCourse);
     }
 
@@ -93,8 +95,8 @@ public class AdminCourseController {
             @ApiResponse(responseCode = "404", description = "Curso no encontrado")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
-        courseService.deleteCourse(id);
+    public ResponseEntity<Void> deleteCourse(@PathVariable Long id, @AuthenticationPrincipal User user) {
+        courseService.deleteCourse(id, user);
         return ResponseEntity.noContent().build();
     }
 }

@@ -23,10 +23,7 @@ public interface UserService {
      */
     UserResponse getById(Long id);
 
-    /**
-     * Activa o desactiva un usuario.
-     */
-    void setActive(Long id, boolean active);
+    void setActive(Long id, boolean active, User user);
 
     /**
      * ✅ Método para obtener los datos del usuario logueado desde el token JWT.

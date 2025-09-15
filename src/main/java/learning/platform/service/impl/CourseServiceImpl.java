@@ -4,6 +4,8 @@ import learning.platform.dto.CourseRequestDTO;
 import learning.platform.dto.CourseResponseDTO;
 import learning.platform.entity.Course;
 import learning.platform.entity.User;
+import learning.platform.helper.AuditContext;
+import learning.platform.helper.AuditPropagator;
 import learning.platform.mapper.CourseMapper;
 import learning.platform.repository.CourseRepository;
 import learning.platform.repository.EnrollmentRepository;
@@ -13,6 +15,7 @@ import learning.platform.service.CourseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -21,17 +24,28 @@ public class CourseServiceImpl implements CourseService {
     private final EnrollmentRepository enrollmentRepository;
     private final UserRepository userRepository;
     private final CourseMapper courseMapper; // Inyectamos el Mapper
+    private final AuditContext auditContext;
+    private final AuditPropagator auditPropagator;
 
-    public CourseServiceImpl(CourseRepository courseRepository, CourseMapper courseMapper, EnrollmentRepository enrollmentRepository, UserRepository userRepository) {
+    public CourseServiceImpl(CourseRepository courseRepository, EnrollmentRepository enrollmentRepository, UserRepository userRepository, CourseMapper courseMapper, AuditContext auditContext, AuditPropagator auditPropagator) {
         this.courseRepository = courseRepository;
         this.enrollmentRepository = enrollmentRepository;
         this.userRepository = userRepository;
         this.courseMapper = courseMapper;
+        this.auditContext = auditContext;
+        this.auditPropagator = auditPropagator;
     }
 
+
     // Lógica para el crear un curso
+    @Transactional
     @Override
     public CourseResponseDTO createCourse(CourseRequestDTO dto, User instructor) {
+        auditContext.setCurrentUser("user:" + instructor.getId());
+        auditContext.setSessionId("session-" + System.currentTimeMillis());
+
+        auditPropagator.propagate();
+
         // 1. Convertir DTO a Entidad
         Course course = courseMapper.toEntity(dto);
         course.setInstructor(instructor);
@@ -46,8 +60,13 @@ public class CourseServiceImpl implements CourseService {
     /**
      * Actualiza un curso existente.
      */
+    @Transactional
     @Override
-    public CourseResponseDTO updateCourse(Long courseId, CourseRequestDTO dto) {
+    public CourseResponseDTO updateCourse(Long courseId, CourseRequestDTO dto, User user) {
+        auditContext.setCurrentUser("user:" + user.getId());
+        auditContext.setSessionId("session-" + System.currentTimeMillis());
+
+        auditPropagator.propagate();
         Course existingCourse = courseRepository.findById(courseId)
                 .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + courseId));
 
@@ -66,8 +85,13 @@ public class CourseServiceImpl implements CourseService {
     /**
      * Elimina un curso por su ID.
      */
+    @Transactional
     @Override
-    public void deleteCourse(Long courseId) {
+    public void deleteCourse(Long courseId, User user) {
+        auditContext.setCurrentUser("user:" + user.getId());
+        auditContext.setSessionId("session-" + System.currentTimeMillis());
+
+        auditPropagator.propagate();
         if (!courseRepository.existsById(courseId)) {
             throw new EntityNotFoundException("Course not found with id: " + courseId);
         }

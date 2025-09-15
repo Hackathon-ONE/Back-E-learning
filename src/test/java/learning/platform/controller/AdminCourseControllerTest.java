@@ -67,7 +67,6 @@ class AdminCourseControllerTest {
         updatedDTO.setTitle(requestDTO.getTitle());
         updatedDTO.setDescription(requestDTO.getDescription());
 
-        when(courseService.updateCourse(eq(1L), any(CourseRequestDTO.class))).thenReturn(updatedDTO);
 
         mockMvc.perform(put("/api/admin/courses/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -79,7 +78,7 @@ class AdminCourseControllerTest {
 
     @Test
     void shouldDeleteCourse() throws Exception {
-        doNothing().when(courseService).deleteCourse(1L);
+//        doNothing().when(courseService).deleteCourse(1l);
 
         mockMvc.perform(delete("/api/admin/courses/1"))
                 .andExpect(status().isNoContent());
