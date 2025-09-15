@@ -14,7 +14,6 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
 
-    // Mapea el DTO de registro a la entidad User
     @Mapping(source = "fullName", target = "fullName")
     @Mapping(source = "email", target = "email")
     @Mapping(source = "role", target = "role", qualifiedByName = "mapRole")
@@ -25,26 +24,27 @@ public interface UserMapper {
     @Mapping(target = "updatedAt", ignore = true)
     User toEntity(UserRegisterRequest request);
 
-    // Mapea la entidad User al DTO de respuesta
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "fullName", target = "fullName")
-    @Mapping(source = "email", target = "email")
-    @Mapping(source = "role", target = "role", qualifiedByName = "roleToString")
-    @Mapping(source = "active", target = "active")
-    @Mapping(source = "profilePhoto", target = "profilePhoto")
-    @Mapping(source = "about", target = "about")
-    UserResponse toResponse(User user);
+    // ✅ Método manual para construir el DTO con cursos
+    default UserResponse toResponse(User user, List<Long> enrolledCourseIds) {
+        return new UserResponse(
+                user.getId(),
+                user.getFullName(),
+                user.getEmail(),
+                user.getRole().name(),
+                user.isActive(),
+                user.getProfilePhoto(),
+                user.getAbout(),
+                enrolledCourseIds
+        );
+    }
 
-    // Mapea una lista de entidades User a una lista de respuestas
     List<UserResponse> toResponseList(List<User> users);
 
-    // Convierte String a Enum Role
     @Named("mapRole")
     default Role mapRole(String role) {
         return Role.valueOf(role.toUpperCase());
     }
 
-    // Convierte Enum Role a String
     @Named("roleToString")
     default String roleToString(Role role) {
         return role.name();

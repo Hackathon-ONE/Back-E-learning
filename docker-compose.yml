@@ -20,15 +20,15 @@ services:
 
   flyway:
     image: flyway/flyway:9
-    command: -url=jdbc:postgresql://dpg-d2vdr87diees73e0t6d0-a.oregon-postgres.render.com:5432/elearning_8xpu?sslmode=require -user=elearning_8xpu_user -password=dd23oHDEQSpd7WEsoy8YKl2tYlhkGg1d -locations=filesystem:/flyway/sql migrate
-    volumes:
-      - ./src/main/resources/db/migration:/flyway/sql
+    container_name: elearning-flyway
     depends_on:
-      - elearning-postgres
+      - postgres
     environment:
       FLYWAY_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
       FLYWAY_USER: ${POSTGRES_USER}
       FLYWAY_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./db/migrations:/flyway/sql
     networks:
       - elearning-network
 
@@ -38,8 +38,6 @@ services:
     depends_on:
       - postgres
       - flyway
-    env_file:
-      - .env.docker
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
