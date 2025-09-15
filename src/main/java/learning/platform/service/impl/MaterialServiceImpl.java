@@ -49,13 +49,13 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
+    @Transactional
     public MaterialResponse updateMaterial(Long materialId, MaterialUpdateRequest request) {
         Material material = materialRepository.findById(materialId)
                 .orElseThrow(() -> new IllegalArgumentException("Material no encontrado con ID: " + materialId));
 
-        material.setTitle(request.title());
-        material.setContentUrl(request.contentUrl());
-        material.setContentType(request.contentType());
+        // MapStruct actualiza los campos title, contentUrl y contentType
+        materialMapper.updateFromDto(request, material);
 
         Material updated = materialRepository.save(material);
         return materialMapper.toResponse(updated);

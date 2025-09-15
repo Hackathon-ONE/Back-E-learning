@@ -2,12 +2,10 @@ package learning.platform.mapper;
 
 import learning.platform.dto.MaterialCreateRequest;
 import learning.platform.dto.MaterialResponse;
+import learning.platform.dto.MaterialUpdateRequest;
 import learning.platform.entity.Lesson;
 import learning.platform.entity.Material;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 import java.util.List;
 
@@ -29,4 +27,8 @@ public interface MaterialMapper {
     default Long mapLessonId(Lesson lesson) {
         return lesson != null ? lesson.getId() : null;
     }
+
+    // Editar materiales:
+    void updateFromDto(MaterialUpdateRequest request, @MappingTarget Material material);
+
 }
