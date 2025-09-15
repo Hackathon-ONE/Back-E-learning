@@ -13,7 +13,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-public class User extends Profile implements UserDetails { // ✅ Implementa UserDetails para integrarse con Spring Security
+public class User extends Profile implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +36,7 @@ public class User extends Profile implements UserDetails { // ✅ Implementa Use
     private boolean active = true;
 
     @Column(nullable = false)
-    private  boolean isSubscribed;
+    private boolean isSubscribed;
 
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -61,9 +61,6 @@ public class User extends Profile implements UserDetails { // ✅ Implementa Use
         this.id = id;
         this.fullName = fullName;
         this.email = email;
-        this.passwordHash = passwordHash;
-        this.role = role;
-        this.active = active;
         this.isSubscribed = false;
     }
 
@@ -86,54 +83,35 @@ public class User extends Profile implements UserDetails { // ✅ Implementa Use
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
 
-    public boolean isSubscribed() {
-        return isSubscribed;
-    }
-
-    public void setSubscribed(boolean subscribed) {
-        isSubscribed = subscribed;
-    }
+    public boolean isSubscribed() { return isSubscribed; }
+    public void setSubscribed(boolean subscribed) { isSubscribed = subscribed; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 
-    // Métodos requeridos por UserDetails 👇
-
+    // Métodos requeridos por UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Convierte el enum Role en una autoridad reconocida por Spring Security
         return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
     }
 
     @Override
-    public String getPassword() {
-        return this.passwordHash;
-    }
+    public String getPassword() { return this.passwordHash; }
 
     @Override
-    public String getUsername() {
-        return this.email;
-    }
+    public String getUsername() { return this.email; }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true; // Podés personalizarlo si tenés lógica de expiración
-    }
+    public boolean isAccountNonExpired() { return true; }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true; // Podés usar el campo `active` si querés bloquear usuarios
-    }
+    public boolean isAccountNonLocked() { return true; }
 
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+    public boolean isCredentialsNonExpired() { return true; }
 
     @Override
-    public boolean isEnabled() {
-        return this.active;
-    }
+    public boolean isEnabled() { return this.active; }
 
     // toString
     @Override
@@ -161,14 +139,4 @@ public class User extends Profile implements UserDetails { // ✅ Implementa Use
     public int hashCode() {
         return Objects.hash(id, email);
     }
-
-    // Relaciones (activá cuando estés lista)
-    // @OneToMany(mappedBy = "instructor")
-    // private List<Course> createdCourses;
-
-    // @OneToMany(mappedBy = "user")
-    // private List<Enrollment> enrollments;
-
-    // @OneToMany(mappedBy = "user")
-    // private List<Payment> payments;
 }

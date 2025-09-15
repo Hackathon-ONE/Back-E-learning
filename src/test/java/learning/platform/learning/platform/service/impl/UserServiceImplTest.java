@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,7 +41,9 @@ class UserServiceImplTest {
                 "Ángeles Escudero",
                 "angeles@example.com",
                 "SecurePass123!",
-                "ADMIN"
+                "ADMIN",
+                "https://example.com/photos/angeles.jpg",
+                "Consultora experta en ERP y automatización de procesos"
         );
 
         User userEntity = new User();
@@ -50,13 +53,18 @@ class UserServiceImplTest {
         userEntity.setRole(Role.ADMIN);
         userEntity.setPasswordHash("encodedPass123");
         userEntity.setActive(true);
+        userEntity.setProfilePhoto("https://example.com/photos/angeles.jpg");
+        userEntity.setAbout("Consultora experta en ERP y automatización de procesos");
 
         UserResponse expectedResponse = new UserResponse(
                 1L,
                 "Ángeles Escudero",
                 "angeles@example.com",
                 "ADMIN",
-                true
+                true,
+                "https://example.com/photos/angeles.jpg",
+                "Consultora experta en ERP y automatización de procesos",
+                List.of()
         );
 
         when(userRepository.existsByEmail(request.email())).thenReturn(false);
@@ -72,6 +80,9 @@ class UserServiceImplTest {
         assertEquals(expectedResponse.fullName(), result.fullName());
         assertEquals(expectedResponse.role(), result.role());
         assertEquals(expectedResponse.active(), result.active());
+        assertEquals(expectedResponse.profilePhoto(), result.profilePhoto());
+        assertEquals(expectedResponse.about(), result.about());
+        assertEquals(expectedResponse.enrolledCourses(), result.enrolledCourses());
         verify(userRepository).save(userEntity);
     }
 
@@ -80,16 +91,21 @@ class UserServiceImplTest {
         User user = new User();
         user.setId(1L);
         user.setFullName("Ángeles Escudero");
-        user.setEmail("angeles@example.com");
+        user.setEmail("angeles@lumina.com");
         user.setRole(Role.ADMIN);
         user.setActive(true);
+        user.setProfilePhoto("https://example.com/photos/angeles.jpg");
+        user.setAbout("Consultora experta en ERP y automatización de procesos");
 
         UserResponse expectedResponse = new UserResponse(
                 1L,
                 "Ángeles Escudero",
-                "angeles@example.com",
+                "angeles@lumina.com",
                 "ADMIN",
-                true
+                true,
+                "https://example.com/photos/angeles.jpg",
+                "Consultora experta en ERP y automatización de procesos",
+                List.of()
         );
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -105,16 +121,21 @@ class UserServiceImplTest {
         User user = new User();
         user.setId(1L);
         user.setFullName("Ángeles Escudero");
-        user.setEmail("angeles@example.com");
+        user.setEmail("angeles@lumina.com");
         user.setRole(Role.ADMIN);
         user.setActive(true);
+        user.setProfilePhoto("https://example.com/photos/angeles.jpg");
+        user.setAbout("Consultora experta en ERP y automatización de procesos");
 
         UserResponse expectedResponse = new UserResponse(
                 1L,
                 "Ángeles Escudero",
-                "angeles@example.com",
+                "angeles@lumina.com",
                 "ADMIN",
-                true
+                true,
+                "https://example.com/photos/angeles.jpg",
+                "Consultora experta en ERP y automatización de procesos",
+                List.of()
         );
 
         when(userRepository.findByEmail("angeles@example.com")).thenReturn(Optional.of(user));
