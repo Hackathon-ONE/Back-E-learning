@@ -7,26 +7,32 @@ import learning.platform.enums.Role;
 import learning.platform.helper.AuditContext;
 import learning.platform.helper.AuditPropagator;
 import learning.platform.mapper.UserMapper;
+import learning.platform.repository.EnrollmentRepository;
 import learning.platform.repository.UserRepository;
 import learning.platform.service.UserService;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final EnrollmentRepository enrollmentRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final AuditContext auditContext;
     private final AuditPropagator auditPropagator;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper, AuditContext auditContext, AuditPropagator auditPropagator) {
+
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper, AuditContext auditContext, AuditPropagator auditPropagator, EnrollmentRepository enrollmentRepository) {
         this.userRepository = userRepository;
+        this.enrollmentRepository = enrollmentRepository;
         this.passwordEncoder = passwordEncoder;
         this.userMapper = userMapper;
         this.auditContext = auditContext;
@@ -40,7 +46,6 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("El email ya está registrado");
         }
 
-        // Validación defensiva del rol (ya validado por @Pattern en el DTO)
         Role roleEnum;
         try {
             roleEnum = Role.valueOf(request.role().toUpperCase());
@@ -48,35 +53,34 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Rol inválido: " + request.role());
         }
 
-        // Mapeo del DTO a entidad
         User user = userMapper.toEntity(request);
-        user.setRole(roleEnum); // Asignación explícita del enum
+        user.setRole(roleEnum);
         user.setPasswordHash(passwordEncoder.encode(request.password()));
         user.setActive(true);
 
-        if (request.urlPhoto() != null && !request.urlPhoto().isEmpty()){
+        if (request.urlPhoto() != null && !request.urlPhoto().isEmpty()) {
             user.setProfilePhoto(request.urlPhoto());
         }
 
-        if (request.about() != null && !request.about().isEmpty()){
+        if (request.about() != null && !request.about().isEmpty()) {
             user.setAbout(request.about());
         }
 
         User savedUser = userRepository.save(user);
-        return userMapper.toResponse(savedUser);
+        return userMapper.toResponse(savedUser, List.of()); // ✅ lista vacía al registrar
     }
 
     @Override
     public Optional<UserResponse> findByEmail(String email) {
         return userRepository.findByEmail(email)
-                .map(userMapper::toResponse);
+                .map(user -> userMapper.toResponse(user, List.of())); // ✅ lista vacía
     }
 
     @Override
     public UserResponse getById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + id));
-        return userMapper.toResponse(user);
+        return userMapper.toResponse(user, List.of()); // ✅ lista vacía
     }
 
     @Override
@@ -90,5 +94,18 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + id));
         user.setActive(active);
         userRepository.save(user);
+    }
+
+    @Override
+    public UserResponse getCurrentUser(User user) {
+        User fullUser = userRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con email: " + user.getEmail()));
+
+        List<Long> enrolledCourseIds = enrollmentRepository.findByStudentId(fullUser.getId(), Pageable.unpaged())
+                .stream()
+                .map(enrollment -> enrollment.getCourse().getId())
+                .toList();
+
+        return userMapper.toResponse(fullUser, enrolledCourseIds); // ✅ cursos reales
     }
 }

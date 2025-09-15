@@ -23,7 +23,7 @@ import java.util.List;
 public class SecurityFilter extends OncePerRequestFilter {
 
     @Autowired
-    private TokenService tokenService; // Servicio para validación y extracción de datos del token JWT
+    private TokenService tokenService;
 
     @Autowired
     private UserRepository repository;
@@ -33,9 +33,9 @@ public class SecurityFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String path = request.getServletPath();
+        String path = request.getRequestURI();
 
-        // Excluir endpoints públicos del filtro
+        // Permitir explícitamente rutas públicas sin procesar token
         if (path.equals("/api/auth/login") ||
                 path.equals("/api/auth/register") ||
                 path.startsWith("/v3/api-docs") ||
@@ -44,17 +44,16 @@ public class SecurityFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Validación del token JWT
-        var authHeader = request.getHeader("Authorization");
+        // Solo procesar si hay token presente
+        String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            var token = authHeader.replace("Bearer ", "");
-            var subject = tokenService.getSubject(token);
+            String token = authHeader.replace("Bearer ", "");
+            String subject = tokenService.getSubject(token);
+
             if (subject != null) {
                 var usuarioOptional = repository.findByEmail(subject);
                 if (usuarioOptional.isPresent()) {
                     var usuario = usuarioOptional.get();
-
-                    // Extraer rol directamente del token
                     String roleFromToken = tokenService.getClaimRole(token);
                     var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + roleFromToken));
 

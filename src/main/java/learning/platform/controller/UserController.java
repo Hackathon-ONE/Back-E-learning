@@ -19,7 +19,14 @@ public class UserController {
         this.userService = userService;
     }
 
-   // Obtener usuario por email
+    // ✅ Devuelve el perfil del usuario logueado, incluyendo IDs de cursos inscriptos
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal User authenticatedUser) {
+        UserResponse response = userService.getCurrentUser(authenticatedUser);
+        return ResponseEntity.ok(response);
+    }
+
+    // Obtener usuario por email (solo para ADMIN)
     @GetMapping("/email/{email}")
     public ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email) {
         return userService.findByEmail(email)
@@ -27,14 +34,13 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Obtener usuario por ID
+    // Obtener usuario por ID (solo para ADMIN)
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
-        UserResponse response = userService.getById(id);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(userService.getById(id));
     }
 
-    // Activar o desactivar usuario
+    // Activar o desactivar usuario (solo para ADMIN)
     @PutMapping("/{id}/active")
     public ResponseEntity<Void> setActive(@PathVariable Long id, @RequestParam boolean active, @AuthenticationPrincipal User user) {
         userService.setActive(id, active, user);

@@ -55,7 +55,8 @@ public class SecurityConfiguration {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // Define las reglas de autorización por ruta
                 .authorizeHttpRequests(req -> {
-                    req.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                    req.requestMatchers(HttpMethod.GET, "/api/users/me").authenticated()
+                            .requestMatchers(HttpMethod.GET, "/api/users/**").hasRole("ADMIN")
                             .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                             .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/users/**").hasRole("ADMIN")
