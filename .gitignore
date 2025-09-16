@@ -18,6 +18,11 @@ target/
 *.iws
 *.iml
 *.ipr
+.env
+.env.dev
+.env.docker
+# Para cualquier otro archivo de entorno
+.env.*
 
 ### NetBeans ###
 /nbproject/private/

@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: back-e-learning-staging
+    runtime: docker
+    plan: free
+    branch: feature/deploy
+    dockerfilePath: ./Dockerfile   # Si tu Dockerfile está en la raíz de feature/deploy
+    dockerContext: .
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: dev
+      - key: DATABASE_URL
+        value: ${DATASOURCE_URL}
+      - key: DATABASE_USERNAME
+        value: ${DATASOURCE_USERNAME}
+      - key: DATABASE_PASSWORD
+        value: ${DATASOURCE_PASSWORD}
+      - key: SECRET
+        value: ${SECRET}
+
