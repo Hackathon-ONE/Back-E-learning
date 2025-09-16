@@ -205,6 +205,7 @@ Content-Type: application/json
 ### 📚 Endpoints Principales
 
 #### Usuarios
+- `GET /api/users/me` - Obtener información del usuario autenticado
 - `GET /api/users` - Listar usuarios (solo ADMIN)
 - `GET /api/users/{id}` - Obtener usuario por ID
 - `PUT /api/users/{id}` - Actualizar usuario
