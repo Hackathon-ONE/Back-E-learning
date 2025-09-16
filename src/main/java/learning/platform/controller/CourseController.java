@@ -72,8 +72,8 @@ public class CourseController {
      */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('INSTRUCTOR')")
-    public ResponseEntity<CourseResponseDTO> updateCourse(@Valid @PathVariable Long id, @RequestBody CourseRequestDTO dto) {
-        return ResponseEntity.ok(courseService.updateCourse(id, dto));
+    public ResponseEntity<CourseResponseDTO> updateCourse(@Valid @PathVariable Long id, @RequestBody CourseRequestDTO dto, @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(courseService.updateCourse(id, dto, user));
     }
 
     /**
@@ -93,8 +93,8 @@ public class CourseController {
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('INSTRUCTOR', 'ADMIN')")
-    public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
-        courseService.deleteCourse(id);
+    public ResponseEntity<Void> deleteCourse(@PathVariable Long id, @AuthenticationPrincipal User user) {
+        courseService.deleteCourse(id, user);
         return ResponseEntity.noContent().build(); // Returns a 204 No Content status
     }
 }

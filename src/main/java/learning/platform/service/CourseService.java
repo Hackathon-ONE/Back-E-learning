@@ -12,9 +12,9 @@ public interface CourseService {
     //Crear curso
     CourseResponseDTO createCourse(CourseRequestDTO dto, User instructor);
     //Actualizar curso
-    CourseResponseDTO updateCourse(Long courseId, CourseRequestDTO dto);
+    CourseResponseDTO updateCourse(Long courseId, CourseRequestDTO dto, User user);
     //Borrar curso
-    void deleteCourse(Long courseId);
+    void deleteCourse(Long courseId, User user);
     //Mostrar todos los cursos
     Page<CourseResponseDTO> findAllPublicCourses(Pageable pageable);
     //Mostrar curso por Id

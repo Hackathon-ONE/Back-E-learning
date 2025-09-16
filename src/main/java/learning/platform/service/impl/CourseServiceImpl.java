@@ -4,17 +4,18 @@ import learning.platform.dto.CourseRequestDTO;
 import learning.platform.dto.CourseResponseDTO;
 import learning.platform.entity.Course;
 import learning.platform.entity.User;
+import learning.platform.helper.AuditContext;
+import learning.platform.helper.AuditPropagator;
 import learning.platform.mapper.CourseMapper;
 import learning.platform.repository.CourseRepository;
 import learning.platform.repository.EnrollmentRepository;
 import learning.platform.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityNotFoundException; // Para manejar errores
 import learning.platform.service.CourseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.UUID;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -23,23 +24,32 @@ public class CourseServiceImpl implements CourseService {
     private final EnrollmentRepository enrollmentRepository;
     private final UserRepository userRepository;
     private final CourseMapper courseMapper; // Inyectamos el Mapper
+    private final AuditContext auditContext;
+    private final AuditPropagator auditPropagator;
 
-    public CourseServiceImpl(CourseRepository courseRepository, CourseMapper courseMapper, EnrollmentRepository enrollmentRepository, UserRepository userRepository) {
+    public CourseServiceImpl(CourseRepository courseRepository, EnrollmentRepository enrollmentRepository, UserRepository userRepository, CourseMapper courseMapper, AuditContext auditContext, AuditPropagator auditPropagator) {
         this.courseRepository = courseRepository;
         this.enrollmentRepository = enrollmentRepository;
         this.userRepository = userRepository;
         this.courseMapper = courseMapper;
+        this.auditContext = auditContext;
+        this.auditPropagator = auditPropagator;
     }
 
+
     // Lógica para el crear un curso
-    @Override
     @Transactional
+    @Override
     public CourseResponseDTO createCourse(CourseRequestDTO dto, User instructor) {
+        auditContext.setCurrentUser("user:" + instructor.getId());
+        auditContext.setSessionId("session-" + System.currentTimeMillis());
+
+        auditPropagator.propagate();
+
         // 1. Convertir DTO a Entidad
         Course course = courseMapper.toEntity(dto);
         course.setInstructor(instructor);
         course.setSlug(generateSlug(dto.getTitle())); // <-- Generar y asignar el slug
-        course.setPublished(false); // Siempre false por defecto
         // 2. Guardar la Entidad
         Course savedCourse = courseRepository.save(course);
 
@@ -50,10 +60,17 @@ public class CourseServiceImpl implements CourseService {
     /**
      * Actualiza un curso existente.
      */
+    @Transactional
     @Override
-    public CourseResponseDTO updateCourse(Long courseId, CourseRequestDTO dto) {
+    public CourseResponseDTO updateCourse(Long courseId, CourseRequestDTO dto, User user) {
+        auditContext.setCurrentUser("user:" + user.getId());
+        auditContext.setSessionId("session-" + System.currentTimeMillis());
+
+        auditPropagator.propagate();
         Course existingCourse = courseRepository.findById(courseId)
-                .orElseThrow(() -> new EntityNotFoundException("No se encontró el Curso con ese Id: " + courseId));
+                .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + courseId));
+
+        // Aquí se podría añadir una validación para asegurar que solo el instructor propietario puede editar
 
         courseMapper.updateCourseFromDTO(dto, existingCourse);
         // Si el título cambia, también deberíamos actualizar el slug
@@ -68,8 +85,13 @@ public class CourseServiceImpl implements CourseService {
     /**
      * Elimina un curso por su ID.
      */
+    @Transactional
     @Override
-    public void deleteCourse(Long courseId) {
+    public void deleteCourse(Long courseId, User user) {
+        auditContext.setCurrentUser("user:" + user.getId());
+        auditContext.setSessionId("session-" + System.currentTimeMillis());
+
+        auditPropagator.propagate();
         if (!courseRepository.existsById(courseId)) {
             throw new EntityNotFoundException("Course not found with id: " + courseId);
         }
@@ -84,15 +106,9 @@ public class CourseServiceImpl implements CourseService {
                 .replaceAll("-+", "-"); // Reemplaza múltiples guiones con uno solo
     }
 
-    @Override // <-- Agregar esta anotación
-    @Transactional(readOnly = true)
-    public Course findCourseById(Long id) {
-        return courseRepository.findById(id).orElse(null);
-    }
+    public Course findCourseById(Long id) { return courseRepository.findById(id).orElse(null); }
 
     // Lógica para listar cursos con filtros y paginación
-    @Override
-    @Transactional(readOnly = true)
     public Page<CourseResponseDTO> findAllPublicCourses(Pageable pageable) {
         Page<Course> coursePage = courseRepository.findAll(pageable); // Lógica de filtros iría aquí
         // Convertimos la página de Entidades a una página de DTOs
@@ -102,24 +118,10 @@ public class CourseServiceImpl implements CourseService {
     /**
      * Busca un curso por su ID y lo devuelve como DTO.
      */
-    @Override
-    @Transactional(readOnly = true)
     public CourseResponseDTO findCourseDtoById(Long id) {
         return courseRepository.findById(id)
                 .map(courseMapper::toResponseDTO) // Convierte la entidad a DTO si la encuentra
                 .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + id));
-    }
-
-    /**
-     * Método para que solo el admin pueda cambiar el estado de published
-     */
-    @Transactional
-    public CourseResponseDTO publishCourse(Long courseId, boolean published) {
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new EntityNotFoundException("No se encontró el Id del Curso: " + courseId));
-        course.setPublished(published);
-        Course updatedCourse = courseRepository.save(course);
-        return courseMapper.toResponseDTO(updatedCourse);
     }
 
     // Lógica para la inscripción

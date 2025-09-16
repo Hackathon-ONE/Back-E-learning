@@ -25,14 +25,6 @@ public class Lesson {
     @Schema(description = "Título de la lección.", example = "Introducción a Java.")
     private String title;
 
-    @Column(name = "content_url")
-    @Schema(description = "URL del contenido de la lección", example = "https://example.com/video.mp4")
-    private String contentUrl;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "content_type")
-    private ContentType contentType;
-
     @Column(name = "order_index")
     private Integer orderIndex;
 
@@ -47,7 +39,7 @@ public class Lesson {
     public Lesson() {
     }
 
-    // Getters y setters
+    // Getters y setters:
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -56,12 +48,6 @@ public class Lesson {
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
-
-    public String getContentUrl() { return contentUrl; }
-    public void setContentUrl(String contentUrl) { this.contentUrl = contentUrl; }
-
-    public ContentType getContentType() { return contentType; }
-    public void setContentType(ContentType contentType) { this.contentType = contentType; }
 
     public Integer getOrderIndex() { return orderIndex; }
     public void setOrderIndex(Integer orderIndex) { this.orderIndex = orderIndex; }
@@ -91,8 +77,6 @@ public class Lesson {
                 "id=" + id +
                 ", courseId=" + (course != null ? course.getId() : null) +
                 ", title='" + title + '\'' +
-                ", contentUrl='" + contentUrl + '\'' +
-                ", contentType=" + contentType +
                 ", orderIndex=" + orderIndex +
                 ", durationSeconds=" + durationSeconds +
                 '}';

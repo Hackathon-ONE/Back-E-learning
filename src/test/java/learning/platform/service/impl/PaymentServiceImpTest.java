@@ -5,6 +5,8 @@ import learning.platform.dto.PaymentResponse;
 import learning.platform.entity.Payment;
 import learning.platform.entity.User;
 import learning.platform.exception.ResourceNotFoundException;
+import learning.platform.helper.AuditContext;
+import learning.platform.helper.AuditPropagator;
 import learning.platform.mapper.PaymentMapper;
 import learning.platform.repository.PaymentRepository;
 import learning.platform.repository.UserRepository;
@@ -22,7 +24,9 @@ class PaymentServiceImplTest {
 
     private PaymentRepository paymentRepository;
     private UserRepository userRepository;
-    private PaymentMapper paymentMapper; // si tu mapper hace transformaciones complejas lo puedes mockear
+    private PaymentMapper paymentMapper;// si tu mapper hace transformaciones complejas lo puedes mockear
+    private AuditContext auditContext;
+    private AuditPropagator auditPropagator;
 
     private PaymentServiceImpl paymentService;
 
@@ -32,7 +36,7 @@ class PaymentServiceImplTest {
         userRepository = mock(UserRepository.class);
         paymentMapper = mock(PaymentMapper.class);
 
-        paymentService = new PaymentServiceImpl(paymentRepository, userRepository, paymentMapper);
+        paymentService = new PaymentServiceImpl(paymentRepository, userRepository, auditContext,paymentMapper,auditPropagator);
     }
 
     @Test
