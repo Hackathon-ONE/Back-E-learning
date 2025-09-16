@@ -71,7 +71,7 @@ class UserServiceImplTest {
         when(userMapper.toEntity(request)).thenReturn(userEntity);
         when(passwordEncoder.encode(request.password())).thenReturn("encodedPass123");
         when(userRepository.save(userEntity)).thenReturn(userEntity);
-        when(userMapper.toResponse(userEntity)).thenReturn(expectedResponse);
+//        when(userMapper.toResponse(userEntity)).thenReturn(expectedResponse);
 
         UserResponse result = userService.register(request);
 
@@ -109,7 +109,7 @@ class UserServiceImplTest {
         );
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(userMapper.toResponse(user)).thenReturn(expectedResponse);
+//        when(userMapper.toResponse(user)).thenReturn(expectedResponse);
 
         UserResponse result = userService.getById(1L);
 
@@ -139,7 +139,7 @@ class UserServiceImplTest {
         );
 
         when(userRepository.findByEmail("angeles@example.com")).thenReturn(Optional.of(user));
-        when(userMapper.toResponse(user)).thenReturn(expectedResponse);
+//        when(userMapper.toResponse(user)).thenReturn(expectedResponse);
 
         Optional<UserResponse> result = userService.findByEmail("angeles@example.com");
 

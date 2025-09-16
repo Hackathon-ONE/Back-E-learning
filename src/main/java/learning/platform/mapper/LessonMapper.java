@@ -15,7 +15,6 @@ import java.util.List;
 public interface LessonMapper {
 
     // DTO → Entidad:
-    @Mapping(source = "courseId", target = "course", qualifiedByName = "mapCourse")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "durationSeconds",
             expression = "java(request != null && request.durationMinutes() != null ? request.durationMinutes() * 60L : null)")

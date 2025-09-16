@@ -16,7 +16,15 @@ public interface LessonService {
      * @param request DTO con los datos de la lección
      * @return DTO de respuesta con los datos de la lección creada
      */
-    LessonResponse createLesson(LessonCreateRequest request);
+    LessonResponse createLesson(Long courseId, LessonCreateRequest request);
+
+    /**
+     * Obtiene una lección por su ID.
+     *
+     * @param id ID de la lección
+     * @return DTO de respuesta con los datos de la lección
+     */
+    LessonResponse getLessonById(Long id);
 
     /**
      * Obtiene todas las lecciones asociadas a un curso, ordenadas por orderIndex.

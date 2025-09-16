@@ -42,8 +42,8 @@ public class UserController {
 
     // Activar o desactivar usuario (solo para ADMIN)
     @PutMapping("/{id}/active")
-    public ResponseEntity<Void> setActive(@PathVariable Long id, @RequestParam boolean active) {
-        userService.setActive(id, active);
+    public ResponseEntity<Void> setActive(@PathVariable Long id, @RequestParam boolean active, @AuthenticationPrincipal User user) {
+        userService.setActive(id, active, user);
         return ResponseEntity.noContent().build();
     }
 }
