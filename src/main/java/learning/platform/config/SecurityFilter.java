@@ -1,5 +1,6 @@
 package learning.platform.config;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,26 +47,36 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         // Solo procesar si hay token presente
         String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.replace("Bearer ", "");
-            String subject = tokenService.getSubject(token);
+        try {
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.replace("Bearer ", "");
+                String subject = tokenService.getSubject(token);
 
-            if (subject != null) {
-                var usuarioOptional = repository.findByEmail(subject);
-                if (usuarioOptional.isPresent()) {
-                    var usuario = usuarioOptional.get();
-                    String roleFromToken = tokenService.getClaimRole(token);
-                    var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + roleFromToken));
+                if (subject != null) {
+                    var usuarioOptional = repository.findByEmail(subject);
+                    if (usuarioOptional.isPresent()) {
+                        var usuario = usuarioOptional.get();
+                        String roleFromToken = tokenService.getClaimRole(token);
+                        var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + roleFromToken));
 
-                    var authentication = new UsernamePasswordAuthenticationToken(
+                        var authentication = new UsernamePasswordAuthenticationToken(
                             usuario, null, authorities
-                    );
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                        );
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
                 }
             }
-        }
+            // 🚀 continuar siempre la cadena, autenticado o no
+            filterChain.doFilter(request, response);
 
-        // Continuar con la cadena de filtros
-        filterChain.doFilter(request, response);
-    }
+    } catch (
+    ExpiredJwtException e) {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.getWriter().write("{\"error\":\"token_expired\"}");
+    } catch (Exception e) {
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setContentType("application/json");
+        response.getWriter().write("{\"error\":\"invalid_token_or_forbidden\"}");
+    }}
 }
