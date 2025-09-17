@@ -25,6 +25,9 @@ public class QuizResponse {
     @Schema(description = "ID del curso asociado", example = "10")
     private Long courseId;
 
+    @Schema(description = "ID de la lección asociada", example = "20")
+    private Long lessonId;
+
     @Schema(description = "Preguntas del quiz")
     private List<QuestionResponse> questions;
 
@@ -40,6 +43,9 @@ public class QuizResponse {
 
     public Long getCourseId() { return courseId; }
     public void setCourseId(Long courseId) { this.courseId = courseId; }
+
+    public Long getLessonId() { return lessonId; }
+    public void setLessonId(Long lessonId) { this.lessonId = lessonId; }
 
     public List<QuestionResponse> getQuestions() { return questions; }
     public void setQuestions(List<QuestionResponse> questions) { this.questions = questions; }

@@ -65,6 +65,13 @@ public class SecurityConfiguration {
                             .requestMatchers(HttpMethod.GET, "/api/users/**").hasRole("ADMIN")
                             .requestMatchers(HttpMethod.GET, "/api/courses/**").permitAll()
                             .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.GET, "/api/courses").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/courses/**").permitAll();
+                    // Rutas que requieren autenticación con roles específicos (Agregadas al final)
+                    req.requestMatchers(HttpMethod.POST, "/api/courses").hasRole("INSTRUCTOR")
+                            .requestMatchers(HttpMethod.PUT, "/api/courses/**").hasRole("INSTRUCTOR")
+                            .requestMatchers(HttpMethod.DELETE, "/api/courses/**").hasAnyRole("INSTRUCTOR", "ADMIN")
+                            .requestMatchers(HttpMethod.PATCH, "/api/courses/**").hasRole("ADMIN")
                             .requestMatchers("/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/webjars/**", "/swagger-resources/**").permitAll();
                     req.anyRequest().authenticated();
                 }) .headers(headers -> headers

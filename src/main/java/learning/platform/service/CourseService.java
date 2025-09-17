@@ -2,11 +2,12 @@ package learning.platform.service;
 
 import learning.platform.dto.CourseRequestDTO;
 import learning.platform.dto.CourseResponseDTO;
+import learning.platform.entity.Course;
 import learning.platform.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-// Interfaz, solo definimos lo que se puede hacer
+
 public interface CourseService {
     //Crear curso
     CourseResponseDTO createCourse(CourseRequestDTO dto, User instructor);
@@ -20,4 +21,8 @@ public interface CourseService {
     CourseResponseDTO findCourseDtoById(Long id);
     //enrollar al estudiante en un curso, pero lo quitamos
     //void enrollStudentInCourse(Long courseId, User student);
+    // Buscar un curso por su ID y devolver la entidad
+    Course findCourseById(Long id);
+    // Método en la interfaz CourseService
+    CourseResponseDTO publishCourse(Long courseId, boolean published);
 }

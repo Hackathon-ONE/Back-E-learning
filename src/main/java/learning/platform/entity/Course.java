@@ -2,10 +2,10 @@ package learning.platform.entity;
 
 import jakarta.persistence.*;
 
-// Se elimina @Data de Lombok
 @Entity
 @Table(name = "courses")
-public class Course extends Profile {
+public class Course {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -13,16 +13,28 @@ public class Course extends Profile {
     @Column(nullable = false, unique = true)
     private String slug;
 
+    @Column(length = 100, nullable = false)
     private String title;
+
     private String description;
+
+    @Column(length = 25, nullable = false)
     private String category;
+
+    // Se corrige el nombre del atributo para que sea el mismo que en el DTO
+    @Column(name = "profile_photo", length = 150)
+    private String urlPhoto;
+
+    @Column(length = 255)
+    private String about;
+
     private boolean published = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "instructor_id", nullable = false)
     private User instructor;
 
-    // --- Getters y Setters añadidos manualmente ---
+    // --- Getters y Setters corregidos ---
 
     public Long getId() {
         return id;
@@ -78,5 +90,22 @@ public class Course extends Profile {
 
     public void setInstructor(User instructor) {
         this.instructor = instructor;
+    }
+
+    // Se corrige el nombre del getter y setter
+    public String getUrlPhoto() {
+        return urlPhoto;
+    }
+
+    public void setUrlPhoto(String urlPhoto) {
+        this.urlPhoto = urlPhoto;
+    }
+
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
     }
 }

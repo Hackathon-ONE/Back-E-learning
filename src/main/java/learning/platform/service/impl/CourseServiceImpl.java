@@ -10,12 +10,13 @@ import learning.platform.mapper.CourseMapper;
 import learning.platform.repository.CourseRepository;
 import learning.platform.repository.EnrollmentRepository;
 import learning.platform.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException; // Para manejar errores
+import jakarta.persistence.EntityNotFoundException;
 import learning.platform.service.CourseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.UUID;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -68,9 +69,7 @@ public class CourseServiceImpl implements CourseService {
 
         auditPropagator.propagate();
         Course existingCourse = courseRepository.findById(courseId)
-                .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + courseId));
-
-        // Aquí se podría añadir una validación para asegurar que solo el instructor propietario puede editar
+                .orElseThrow(() -> new EntityNotFoundException("No se encontró el Curso con ese Id: " + courseId));
 
         courseMapper.updateCourseFromDTO(dto, existingCourse);
         // Si el título cambia, también deberíamos actualizar el slug
@@ -93,7 +92,7 @@ public class CourseServiceImpl implements CourseService {
 
         auditPropagator.propagate();
         if (!courseRepository.existsById(courseId)) {
-            throw new EntityNotFoundException("Course not found with id: " + courseId);
+            throw new EntityNotFoundException("No se encontró el curso con ese Id: " + courseId);
         }
         courseRepository.deleteById(courseId);
     }
@@ -106,11 +105,17 @@ public class CourseServiceImpl implements CourseService {
                 .replaceAll("-+", "-"); // Reemplaza múltiples guiones con uno solo
     }
 
-    public Course findCourseById(Long id) { return courseRepository.findById(id).orElse(null); }
+    @Override
+    @Transactional(readOnly = true)
+    public Course findCourseById(Long id) {
+        return courseRepository.findById(id).orElse(null);
+    }
 
     // Lógica para listar cursos con filtros y paginación
+    @Override
+    @Transactional(readOnly = true)
     public Page<CourseResponseDTO> findAllPublicCourses(Pageable pageable) {
-        Page<Course> coursePage = courseRepository.findAll(pageable); // Lógica de filtros iría aquí
+        Page<Course> coursePage = courseRepository.findAll(pageable);
         // Convertimos la página de Entidades a una página de DTOs
         return coursePage.map(courseMapper::toResponseDTO);
     }
@@ -118,26 +123,24 @@ public class CourseServiceImpl implements CourseService {
     /**
      * Busca un curso por su ID y lo devuelve como DTO.
      */
+    @Override
+    @Transactional(readOnly = true)
     public CourseResponseDTO findCourseDtoById(Long id) {
         return courseRepository.findById(id)
                 .map(courseMapper::toResponseDTO) // Convierte la entidad a DTO si la encuentra
-                .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("No se encontró el curso con ese Id: " + id));
     }
 
-    // Lógica para la inscripción
-    /*
-    @Transactional
-    public Enrollment enrollStudentInCourse(Long courseId, User student) {
-        if (enrollmentRepository.existsByStudentIdAndCourseId(student.getId(), courseId)) {
-            throw new IllegalStateException("El estudiante actualmente está inscrito en este curso.");
-        }
-        Course course = findCourseById(courseId);
-
-        Enrollment enrollment = new Enrollment();
-        enrollment.setStudent(student);
-        enrollment.setCourse(course);
-        return enrollmentRepository.save(enrollment);
-    }
-
+    /**
+     * Método para que solo el admin pueda cambiar el estado de published
      */
+    @Transactional
+    @Override
+    public CourseResponseDTO publishCourse(Long courseId, boolean published) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("No se encontró el Id del Curso: " + courseId));
+        course.setPublished(published);
+        Course updatedCourse = courseRepository.save(course);
+        return courseMapper.toResponseDTO(updatedCourse);
+    }
 }

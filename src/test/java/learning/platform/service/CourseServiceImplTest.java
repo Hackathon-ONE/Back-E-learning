@@ -12,6 +12,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import learning.platform.helper.AuditContext;
+import learning.platform.helper.AuditPropagator;
+import learning.platform.repository.EnrollmentRepository;
+import learning.platform.repository.UserRepository;
+import learning.platform.service.impl.CourseServiceImpl;
 
 import java.util.Optional;
 
@@ -27,6 +32,18 @@ class CourseServiceImplTest {
 
     @Mock
     private CourseMapper courseMapper;
+
+    @Mock
+    private EnrollmentRepository enrollmentRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private AuditContext auditContext;
+
+    @Mock
+    private AuditPropagator auditPropagator;
 
     @InjectMocks
     private CourseServiceImpl courseServiceImpl;
@@ -90,33 +107,52 @@ class CourseServiceImplTest {
         CourseResponseDTO responseDTO = new CourseResponseDTO();
         responseDTO.setTitle("Updated Title");
 
+        // Creamos un usuario de prueba para el test
+        User user = new User();
+        user.setId(1L);
+
         when(courseRepository.findById(courseId)).thenReturn(Optional.of(existingCourse));
         when(courseRepository.save(any(Course.class))).thenReturn(existingCourse);
         when(courseMapper.toResponseDTO(any(Course.class))).thenReturn(responseDTO);
 
         // Act
-        CourseResponseDTO result = courseServiceImpl.updateCourse(courseId, requestDTO);
+        // Pasamos el usuario como segundo parámetro
+        CourseResponseDTO result = courseServiceImpl.updateCourse(courseId, requestDTO, user);
 
         // Assert
         assertNotNull(result);
-        assertEquals("Updated Title", result.getTitle());
+        assertEquals("Título Actualizado", result.getTitle());
         verify(courseRepository, times(1)).findById(courseId);
         verify(courseRepository, times(1)).save(any(Course.class));
+        // Verificamos que se llamen a los métodos de auditoría
+        verify(auditContext, times(1)).setCurrentUser(anyString());
+        verify(auditPropagator, times(1)).propagate();
     }
 
     @Test
     void testDeleteCourse() {
         // Arrange
         Long courseId = 1L;
+
+        // Creamos un usuario de prueba para el test
+        User user = new User();
+        user.setId(1L);
+
         when(courseRepository.existsById(courseId)).thenReturn(true);
-        // Como deleteById no devuelve nada, usamos doNothing()
         doNothing().when(courseRepository).deleteById(courseId);
 
+        // Verificamos que los métodos de auditoría se llamen correctamente
+        doNothing().when(auditContext).setCurrentUser(anyString());
+        doNothing().when(auditPropagator).propagate();
+
         // Act
-        courseServiceImpl.deleteCourse(courseId);
+        // Pasamos el usuario como segundo parámetro
+        courseServiceImpl.deleteCourse(courseId, user);
 
         // Assert
-        // Verificamos que el método deleteById fue llamado exactamente una vez con el ID correcto
         verify(courseRepository, times(1)).deleteById(courseId);
+        // Verificamos que se llamen a los métodos de auditoría
+        verify(auditContext, times(1)).setCurrentUser(anyString());
+        verify(auditPropagator, times(1)).propagate();
     }
 }
