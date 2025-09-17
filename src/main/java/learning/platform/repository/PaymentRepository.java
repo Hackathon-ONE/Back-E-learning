@@ -1,0 +1,11 @@
+package learning.platform.repository;
+
+import learning.platform.entity.Payment;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface PaymentRepository extends JpaRepository<Payment, Long> {
+    Optional<Payment> findByUserId(Long userId);
+    Optional<Payment> findTopByUserIdOrderByPaidAtDesc(Long userId);
+}

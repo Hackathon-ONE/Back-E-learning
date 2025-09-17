@@ -1,4 +1,5 @@
-# 📚 Lumina Backend 🚀
+# Back-Lumina 
+Plataforma de aprendizaje electrónico
 
 > El motor que impulsa la plataforma de aprendizaje. Un backend robusto, seguro y escalable para gestionar usuarios, cursos, lecciones, matrículas, progreso y pagos.
 
@@ -88,19 +89,71 @@
 ## 📁 Estructura del Proyecto
 
 ```
-src/
- └─ main/
-     ├─ java/
-     │    └─ com.elearning/
-     │         ├─ config/       # Configuraciones (seguridad, Swagger, JWT, CORS)
-     │         ├─ controller/   # Controladores de la API
-     │         ├─ model/        # Entidades y DTOs
-     │         ├─ repository/   # Repositorios de datos
-     │         ├─ security/     # Configuración de seguridad
-     │         └─ service/      # Lógica de negocio
-     └─ resources/
-          ├─ application.yml    # Configuración de la aplicación
-          └─ static/            # Recursos estáticos
+src
+└─ main
+   ├─ java
+   │  └─ learning
+   │        └─ platform
+   │           ├─ config                 # Configuración general, seguridad, CORS, JWT, Swagger
+   │           │   ├─ SecurityConfig.java
+   │           │   ├─ JwtFilter.java
+   │           │   └─ SwaggerConfig.java
+   │           │
+   │           ├─ controller             # REST controllers (endpoints)
+   │           │   ├─ AuthController.java
+   │           │   ├─ UserController.java
+   │           │   ├─ CourseController.java
+   │           │   ├─ LessonController.java
+   │           │   ├─ EnrollmentController.java
+   │           │   ├─ ProgressController.java
+   │           │   └─ PaymentController.java
+   │           │
+   │           ├─ dto                    # Data Transfer Objects
+   │           │   ├─ UserDTO.java
+   │           │   ├─ CourseDTO.java
+   │           │   ├─ LessonDTO.java
+   │           │   └─ ...
+   │           │
+   │           ├─ entity                 # JPA Entities / Domain Model
+   │           │   ├─ User.java
+   │           │   ├─ Course.java
+   │           │   ├─ Lesson.java
+   │           │   ├─ Enrollment.java
+   │           │   ├─ Progress.java
+   │           │   └─ Payment.java
+   │           │
+   │           ├─ repository             # Spring Data JPA Repositories
+   │           │   ├─ UserRepository.java
+   │           │   ├─ CourseRepository.java
+   │           │   └─ ...
+   │           │
+   │           ├─ service                # Lógica de negocio / Services
+   │           │   ├─ UserService.java
+   │           │   ├─ CourseService.java
+   │           │   ├─ learning.platform.service.LessonService.java
+   │           │   └─ ...
+   │           │
+   │           ├─ mapper                 # MapStruct o ModelMapper
+   │           │   ├─ UserMapper.java
+   │           │   ├─ CourseMapper.java
+   │           │   └─ ...
+   │           │
+   │           ├─ exception              # Manejo de errores
+   │           │   ├─ GlobalExceptionHandler.java
+   │           │   └─ CustomExceptions.java
+   │           │
+   │           ├─ util                   # Utilidades
+   │           │   ├─ JWTUtil.java
+   │           │   ├─ EmailService.java
+   │           │   └─ FileService.java
+   │           │
+   │           └─ Application.java  # Clase main de Spring Boot
+   │
+   └─ resources
+      ├─ application.properties
+      ├─ application-dev.properties
+      ├─ application-prod.properties
+      └─ static / templates / uploads  # Archivos estáticos, plantillas, uploads locales
 ```
 
 ## ⚙️ Configuración
