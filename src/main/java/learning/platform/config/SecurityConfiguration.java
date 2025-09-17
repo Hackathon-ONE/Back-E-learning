@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -32,6 +33,8 @@ public class SecurityConfiguration {
 
     @Autowired
     private SecurityFilter securityFilter;
+    @Autowired
+    private CorsConfigurationSource corsConfigurationSource;
 
     // Filtro personalizado que valida tokens JWT antes del procesamiento de autenticación
 
@@ -46,9 +49,9 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                // Configuración de CORS usando la configuración por defecto
-                .cors(cors -> cors.configure(http))
+        http
+                // usar CorsConfigurationSource en la capa de seguridad
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 // Desactiva la protección CSRF
                 .csrf(AbstractHttpConfigurer::disable)
                 // Define que no se crearán sesiones HTTP
@@ -78,8 +81,8 @@ public class SecurityConfiguration {
                         )
                 )
                 // Inserta el filtro de seguridad JWT antes del filtro de autenticación por formularios
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
     }
 
     /**
